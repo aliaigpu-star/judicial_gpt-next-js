@@ -1,0 +1,11 @@
+**/.env
+**/.env.*
+node_modules/
+.DS_Store
+dist/
+build/
+.next/
+*.zip
+*.tar.gz
+*.rar
+*.7z

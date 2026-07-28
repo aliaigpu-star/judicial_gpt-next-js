@@ -1,0 +1,362 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Tell Tailwind v4 to use class-based dark mode */
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #ffffff;
+  --foreground: #0d0d0d;
+  --sidebar-bg: #f9f9f9;
+  --sidebar-hover: #ececec;
+  --main-bg: #ffffff;
+  --input-bg: #f4f4f4;
+  --input-border: #e5e5e5;
+  --text-primary: #0d0d0d;
+  --text-secondary: #666666;
+  --text-muted: #999999;
+  --border-color: #e5e5e5;
+  --accent-color: #10a37f;
+}
+
+.dark {
+  --background: #212121;
+  --foreground: #ececec;
+  --sidebar-bg: #171717;
+  --sidebar-hover: #2f2f2f;
+  --main-bg: #212121;
+  --input-bg: #2f2f2f;
+  --input-border: #424242;
+  --text-primary: #ececec;
+  --text-secondary: #b4b4b4;
+  --text-muted: #8e8e8e;
+  --border-color: #424242;
+  --accent-color: #10a37f;
+}
+
+html {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Prevent layout shift during navigation */
+html,
+body {
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Scrollbar styles - ChatGPT style thin scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* ChatGPT-style message content */
+.message-content {
+  line-height: 1.75;
+  font-size: 1rem;
+  word-wrap: break-word;
+}
+
+.message-content h1,
+.message-content h2,
+.message-content h3,
+.message-content h4 {
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.3;
+}
+
+.message-content h1 {
+  font-size: 1.5rem;
+}
+
+.message-content h2 {
+  font-size: 1.25rem;
+}
+
+.message-content h3 {
+  font-size: 1.125rem;
+}
+
+.message-content p {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.message-content p:last-child {
+  margin-bottom: 0;
+}
+
+.message-content ul,
+.message-content ol {
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+  padding-left: 0;
+}
+
+.message-content li {
+  margin-bottom: 0.5rem;
+}
+
+.message-content li::marker {
+  color: var(--text-secondary);
+}
+
+.message-content code {
+  background-color: var(--input-bg);
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+}
+
+.message-content pre {
+  background-color: #1e1e1e;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+  overflow-x: auto;
+}
+
+.message-content pre code {
+  background: transparent;
+  padding: 0;
+  color: #d4d4d4;
+}
+
+.message-content blockquote {
+  border-left: 3px solid var(--accent-color);
+  padding-left: 1rem;
+  font-style: italic;
+  margin: 1rem 0;
+  color: var(--text-secondary);
+}
+
+.message-content a {
+  color: var(--accent-color);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.message-content a:hover {
+  opacity: 0.8;
+}
+
+.message-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  contain: layout style;
+}
+
+/* Wrap tables in a scrollable container to prevent width-based shaking */
+.message-content > div:has(> table),
+.message-content > table {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.message-content th,
+.message-content td {
+  border: 1px solid var(--border-color);
+  padding: 0.75rem;
+  text-align: left;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.message-content th {
+  background-color: var(--input-bg);
+  font-weight: 600;
+}
+
+/* Prevent layout shifts during streaming - stabilize the message container */
+.message-content {
+  line-height: 1.75;
+  font-size: 1rem;
+  word-wrap: break-word;
+  contain: content;
+  overflow-wrap: break-word;
+}
+
+/* Typing animation */
+@keyframes blink {
+
+  0%,
+  50% {
+    opacity: 1;
+  }
+
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.typing-cursor::after {
+  content: '|';
+  animation: blink 1s infinite;
+}
+
+/* ChatGPT-style scrollbar - only show on hover */
+/* ChatGPT-style scrollbar - always show */
+.sidebar-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  transition: scrollbar-color 0.3s ease;
+}
+
+.dark .sidebar-scrollbar {
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+  transition: background 0.3s ease;
+}
+
+.dark .sidebar-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.dark .sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Hide scrollbar but keep functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Transition utilities */
+.transition-sidebar {
+  transition: width 200ms ease-out, transform 200ms ease-out;
+}
+
+/* ChatGPT-style input focus */
+.chatgpt-input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* ChatGPT-style button hover */
+.chatgpt-btn {
+  transition: background-color 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+}
+
+.chatgpt-btn:hover {
+  background-color: var(--sidebar-hover);
+}
+
+/* Smooth page transitions */
+.page-transition {
+  animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* Pulse animation for loading */
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ChatGPT-style gradient backgrounds */
+.chatgpt-gradient {
+  background: linear-gradient(180deg, var(--main-bg) 0%, var(--main-bg) 100%);
+}
+
+/* Focus ring removal for ChatGPT style */
+button:focus,
+input:focus,
+textarea:focus {
+  outline: none;
+}
+
+/* ChatGPT send button styles */
+.send-button-active {
+  background-color: var(--text-primary);
+  color: var(--main-bg);
+}
+
+.send-button-disabled {
+  background-color: var(--text-muted);
+  color: var(--main-bg);
+  opacity: 0.5;
+}

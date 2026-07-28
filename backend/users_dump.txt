@@ -1,0 +1,72 @@
+🔍 Debugging Users...
+📊 Total Users: 7
+
+📋 User List:
+
+
+--- User: test@example.com ---
+ID: 292f6017-269d-445a-b339-00147f29fada
+Name: 
+Role: user
+Status: active
+Verified: true
+Password Hash Present: true
+🔑 Matches 'password123': false
+
+
+--- User: zubitech906@gmail.com ---
+ID: 724f1cbb-b786-4807-9e92-ca923fb1b49b
+Name: Zubaid Rasool
+Role: user
+Status: active
+Verified: true
+Password Hash Present: false
+
+
+--- User: ali.ai.gpu@gmail.com ---
+ID: 27857678-69b1-456a-b7d4-40b76c69f918
+Name: ali
+Role: user
+Status: active
+Verified: true
+Password Hash Present: false
+
+
+--- User: admin@gmail.com ---
+ID: 219809cc-0796-46e5-8d45-6c8dfc193e77
+Name: Zubaid Rasool
+Role: admin
+Status: active
+Verified: true
+Password Hash Present: true
+🔑 Matches 'password123': false
+
+
+--- User: zubaidr26@gmail.com ---
+ID: 5c89038e-dc59-404c-b2ef-a7954349c8bb
+Name: Zubaid Rasool
+Role: user
+Status: active
+Verified: true
+Password Hash Present: true
+🔑 Matches 'password123': false
+
+
+--- User: tahalegal@gmail.com ---
+ID: 76618036-3eb3-4372-9b39-5a30dd30fed5
+Name: Muhammad Taha
+Role: user
+Status: active
+Verified: false
+Password Hash Present: true
+🔑 Matches 'password123': false
+
+
+--- User: iuzrajlegal@gmail.com ---
+ID: 4058e806-3add-4d66-81bf-0cca5934470d
+Name: Jamie Mahmood
+Role: user
+Status: active
+Verified: false
+Password Hash Present: true
+🔑 Matches 'password123': false

@@ -1281,7 +1281,7 @@ const AIToolsSection = () => {
     y: -6,
     scale: 1.015,
     boxShadow: `0 20px 44px rgba(16, 185, 129, 0.22), 0 6px 16px rgba(16, 185, 129, 0.13)`,
-    transition: { duration: 0.35, ease: 'easeOut' },
+    transition: { duration: 0.35, ease: 'easeOut' as const },
   });
 
   return (
@@ -2061,7 +2061,7 @@ const IntelligenceDashboardSection = () => {
         y: -5,
         scale: 1.01,
         boxShadow: `0 16px 36px rgba(16, 185, 129, 0.18), 0 4px 12px rgba(16, 185, 129, 0.10)`,
-        transition: { duration: 0.35, ease: 'easeOut' },
+        transition: { duration: 0.35, ease: 'easeOut' as const },
       }
       : undefined;
 
@@ -2453,7 +2453,7 @@ const TeamSection = () => {
     { name: 'Prof. Dr. M. Usman Ghani Khan', role: 'Founder', badge: 'Founder', bio: 'Founded JudicialGPT to make quality legal assistance accessible through AI. Sets company strategy, product vision, and partnerships while guiding the team to build trustworthy legal technology.', photoUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80', gradient: 'from-emerald-500 to-teal-600', initials: 'UG' },
     { name: 'Ayesha Azam', role: 'Team Lead', badge: 'Leadership', bio: 'Coordinates engineering delivery, sprint planning, and cross-functional collaboration to ship reliable AI-powered legal features on time and at scale.', photoUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80', gradient: 'from-emerald-500 to-teal-600', initials: 'AA' },
     { name: 'Syed Ali Hassan', role: 'Lead Developer / AI Engineer', badge: 'Engineering & AI', bio: 'Architects the full-stack platform and fine-tunes AI models for legal document analysis, case summarization, and intelligent query responses.', photoUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80', gradient: 'from-blue-500 to-indigo-600', initials: 'AH' },
-    { name: 'Zubaid Rasool123', role: 'Full-Stack & DevOps Engineer', badge: 'Dev & DevOps', bio: 'Builds and maintains frontend and backend features while managing CI/CD pipelines, server infrastructure, and deployment workflows on the cloud.', photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80', gradient: 'from-purple-500 to-violet-600', initials: 'ZR' },
+    { name: 'Zubaid Rasool', role: 'Full-Stack & DevOps Engineer', badge: 'Dev & DevOps', bio: 'Builds and maintains frontend and backend features while managing CI/CD pipelines, server infrastructure, and deployment workflows on the cloud.', photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80', gradient: 'from-purple-500 to-violet-600', initials: 'ZR' },
     { name: 'Laiba Saleem', role: 'Data Analyst', badge: 'Data & Analytics', bio: 'Analyzes user engagement metrics, legal dataset patterns, and AI model performance to drive data-informed product decisions and improvements.', photoUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=80', gradient: 'from-rose-500 to-pink-600', initials: 'LS' },
     { name: 'Dr. Abdul Nasir', role: 'Legal Domain Expert', badge: 'Domain Expert', bio: "As Registrar of the Lahore High Court, provides judicial domain expertise to validate legal accuracy, guide court-relevant content, and ensure JudicialGPT meets professional standards.", photoUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&q=80', icon: Scale, gradient: 'from-amber-500 to-orange-600', initials: 'AN' },
   ];

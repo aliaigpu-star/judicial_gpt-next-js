@@ -52,7 +52,7 @@ class Config:
     """Central configuration — edit here or use .env overrides."""
 
     # Groq — llama-3.3-70b-versatile has 128k context & high free-tier TPM
-    GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "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")
+    GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
     GROQ_MODEL: str = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
     GROQ_TEMPERATURE: float = 0.0     # 0 = fully deterministic; best for legal accuracy
     GROQ_MAX_TOKENS: int = 4096       # output tokens per call

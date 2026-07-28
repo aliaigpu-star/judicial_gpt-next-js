@@ -9,3 +9,7 @@ build/
 *.tar.gz
 *.rar
 *.7z
+__pycache__/
+*.pyc
+service_account.json
+client_secret_*.json

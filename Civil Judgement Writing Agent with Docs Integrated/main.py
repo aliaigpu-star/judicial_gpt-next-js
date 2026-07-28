@@ -22,6 +22,7 @@ from langchain_groq import ChatGroq
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_core.documents import Document
+
 from langchain_core.prompts import (
     ChatPromptTemplate,
     FewShotChatMessagePromptTemplate,
@@ -30,7 +31,6 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 
 load_dotenv()
-
 
 # ══════════════════════════════════════════════════════════════════════════════
 # 1. KNOWLEDGE BASE — Pakistan Civil Judgment Format & Rules
@@ -442,7 +442,7 @@ def build_rag_chain(vectorstore: FAISS):
     llm = ChatGroq(
         model="llama-3.3-70b-versatile",
         temperature=0.2,           # Low temp for deterministic legal drafting
-        groq_api_key="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",
+        groq_api_key=os.getenv("GROQ_API_KEY"),
     )
 
     # Few-shot block
@@ -519,6 +519,8 @@ def main():
         response = rag_chain.invoke(query)
         print(response)
         print("-" * 70)
+
+
 
 
 if __name__ == "__main__":

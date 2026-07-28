@@ -360,3 +360,99 @@ textarea:focus {
   color: var(--main-bg);
   opacity: 0.5;
 }
+
+/* ============================================================================
+   LANDING PAGE — Typography
+   ============================================================================ */
+.font-heading,
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading, 'Georgia', 'Times New Roman', serif);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.font-body {
+  font-family: var(--font-body, 'Source Sans 3', 'Segoe UI', system-ui, sans-serif);
+}
+
+/* ============================================================================
+   LANDING PAGE — Trust bar marquee (continuous left-to-right scroll)
+   ============================================================================ */
+@keyframes trust-marquee-ltr {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0%); }
+}
+
+.animate-trust-marquee {
+  animation: trust-marquee-ltr 40s linear infinite;
+}
+
+/* ============================================================================
+   LANDING PAGE — Hero hexagonal ring: rotate + float
+   ============================================================================ */
+@keyframes rotateRing {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes floatRing {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-14px); }
+}
+
+.hero-ring-stage {
+  position: absolute;
+  right: -2%;
+  top: 4%;
+  width: min(680px, 58vw);
+  height: min(680px, 58vw);
+  z-index: 1;
+  animation: floatRing 9s ease-in-out infinite;
+  will-change: transform;
+  pointer-events: none;
+}
+
+.hero-ring {
+  width: 100%;
+  height: 100%;
+  transform-origin: center center;
+  animation: rotateRing 55s linear infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+@media (max-width: 1024px) {
+  .hero-ring-stage {
+    right: -8%;
+    top: 6%;
+    width: min(520px, 68vw);
+    height: min(520px, 68vw);
+    opacity: 0.9;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-ring-stage {
+    right: -32%;
+    top: 2%;
+    width: min(360px, 92vw);
+    height: min(360px, 92vw);
+    opacity: 0.48;
+    animation-duration: 11s;
+  }
+
+  .hero-ring {
+    animation-duration: 60s;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-trust-marquee {
+    animation: none;
+  }
+
+  .hero-ring-stage,
+  .hero-ring {
+    animation: none;
+  }
+}

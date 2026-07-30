@@ -7,8 +7,6 @@ import {
     XCircle, AlertTriangle, ShieldAlert, BookOpen, Clock,
     ChevronDown, ChevronUp, Copy, Check, ArrowUp, Gavel
 } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 import { api } from '@/lib/api';
 import { copyCleanText } from '@/lib/textUtils';
 import { useChatLayout } from '@/app/chat/layout';
@@ -393,10 +391,8 @@ export default function CivilJudgmentWriter() {
                                                     </span>
                                                 </div>
 
-                                                <div className="message-content text-[#0d0d0d] dark:text-[#ececec] bg-[#f9f9f9] dark:bg-[#171717] p-5 rounded-2xl border border-[#e5e5e5] dark:border-[#2f2f2f]">
-                                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                                        {item.result.response}
-                                                    </ReactMarkdown>
+                                                <div className="message-content whitespace-pre-wrap font-serif text-[#0d0d0d] dark:text-[#ececec] bg-[#f9f9f9] dark:bg-[#171717] p-5 rounded-2xl border border-[#e5e5e5] dark:border-[#2f2f2f]">
+                                                    {item.result.response}
                                                 </div>
 
                                                 <div className="flex items-center gap-1 mt-3">
@@ -467,10 +463,8 @@ export default function CivilJudgmentWriter() {
                                                     </span>
                                                 </div>
 
-                                                <div className="message-content text-[#0d0d0d] dark:text-[#ececec] bg-[#f9f9f9] dark:bg-[#171717] p-5 rounded-2xl border border-[#e5e5e5] dark:border-[#2f2f2f]">
-                                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                                        {currentStreamingMessage.response + ' ▌'}
-                                                    </ReactMarkdown>
+                                                <div className="message-content whitespace-pre-wrap font-serif text-[#0d0d0d] dark:text-[#ececec] bg-[#f9f9f9] dark:bg-[#171717] p-5 rounded-2xl border border-[#e5e5e5] dark:border-[#2f2f2f]">
+                                                    {currentStreamingMessage.response + ' ▌'}
                                                 </div>
                                             </div>
                                         </div>

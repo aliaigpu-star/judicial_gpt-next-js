@@ -13,3 +13,5 @@ __pycache__/
 *.pyc
 service_account.json
 client_secret_*.json
+~$*.doc*
+dump.txt

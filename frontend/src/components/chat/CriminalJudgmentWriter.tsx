@@ -350,7 +350,7 @@ export default function CriminalJudgmentWriter() {
                         ref={resultsContainerRef}
                         className="flex-1 overflow-y-auto"
                     >
-                        <div className="max-w-3xl mx-auto py-6 px-4">
+                        <div className="max-w-4xl mx-auto py-6 px-4">
                             <AnimatePresence initial={false}>
                                 {history.map((item) => (
                                     <motion.div

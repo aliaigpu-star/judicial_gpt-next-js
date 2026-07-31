@@ -35,6 +35,11 @@ interface HistoryItem {
 
 const WRITER_API_URL = process.env.NEXT_PUBLIC_CRIMINAL_WRITER_AGENT_URL || 'https://criminaljudgement-judicial-gpt.in.ngrok.io';
 
+// Strip stray lone-underscore artifact lines the model occasionally emits
+// around section separators, without touching the real "─────" dividers.
+const cleanJudgmentText = (text: string) =>
+    text.split('\n').filter(line => !/^\s*_+\s*$/.test(line)).join('\n');
+
 export default function CriminalJudgmentWriter() {
     const [query, setQuery] = useState('');
     const [isProcessing, setIsProcessing] = useState(false);
@@ -392,7 +397,7 @@ export default function CriminalJudgmentWriter() {
                                                 </div>
 
                                                 <div className="message-content whitespace-pre-wrap font-serif text-[#0d0d0d] dark:text-[#ececec] bg-[#f9f9f9] dark:bg-[#171717] p-5 rounded-2xl border border-[#e5e5e5] dark:border-[#2f2f2f]">
-                                                    {item.result.response}
+                                                    {cleanJudgmentText(item.result.response)}
                                                 </div>
 
                                                 <div className="flex items-center gap-1 mt-3">
@@ -464,7 +469,7 @@ export default function CriminalJudgmentWriter() {
                                                 </div>
 
                                                 <div className="message-content whitespace-pre-wrap font-serif text-[#0d0d0d] dark:text-[#ececec] bg-[#f9f9f9] dark:bg-[#171717] p-5 rounded-2xl border border-[#e5e5e5] dark:border-[#2f2f2f]">
-                                                    {currentStreamingMessage.response + ' ▌'}
+                                                    {cleanJudgmentText(currentStreamingMessage.response) + ' ▌'}
                                                 </div>
                                             </div>
                                         </div>

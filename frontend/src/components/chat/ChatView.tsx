@@ -62,6 +62,11 @@ interface ChatViewProps {
 // general chat / Law Agent / other flows sharing this component) untouched.
 const isJudgmentDocument = (text: string) => text.includes('IN THE COURT OF') || text.includes('─────');
 
+// Strip stray lone-underscore artifact lines the model occasionally emits
+// around section separators, without touching the real "─────" dividers.
+const cleanJudgmentText = (text: string) =>
+    text.split('\n').filter(line => !/^\s*_+\s*$/.test(line)).join('\n');
+
 export default function ChatView({
     conversation,
     onSend,
@@ -871,7 +876,7 @@ export default function ChatView({
                                                     {message.role === 'assistant' ? (
                                                         isJudgmentDocument(message.content) ? (
                                                             <div className="message-content whitespace-pre-wrap font-serif text-[#0d0d0d] dark:text-[#ececec]">
-                                                                {message.content.replace(/^Answer:\s*/i, '').replace(/^Answer\s*/i, '') + (message.isStreaming ? ' ●' : '')}
+                                                                {cleanJudgmentText(message.content.replace(/^Answer:\s*/i, '').replace(/^Answer\s*/i, '')) + (message.isStreaming ? ' ●' : '')}
                                                             </div>
                                                         ) : (
                                                         <div className="message-content text-[#0d0d0d] dark:text-[#ececec]">

@@ -54,6 +54,14 @@ interface ChatViewProps {
     isTemporaryMode?: boolean;
 }
 
+// Judgment Writer (Civil/Criminal) responses are plain, whitespace-aligned
+// legal documents, not markdown — running them through ReactMarkdown collapses
+// the alignment spacing and turns deeply-indented lines (e.g. "VERSUS") into
+// code blocks. Detect that format by its distinctive markers and render it
+// as preserved plain text instead, while leaving genuine markdown (from the
+// general chat / Law Agent / other flows sharing this component) untouched.
+const isJudgmentDocument = (text: string) => text.includes('IN THE COURT OF') || text.includes('─────');
+
 export default function ChatView({
     conversation,
     onSend,
@@ -861,6 +869,11 @@ export default function ChatView({
                                                 // Display mode
                                                 <>
                                                     {message.role === 'assistant' ? (
+                                                        isJudgmentDocument(message.content) ? (
+                                                            <div className="message-content whitespace-pre-wrap font-serif text-[#0d0d0d] dark:text-[#ececec]">
+                                                                {message.content.replace(/^Answer:\s*/i, '').replace(/^Answer\s*/i, '') + (message.isStreaming ? ' ●' : '')}
+                                                            </div>
+                                                        ) : (
                                                         <div className="message-content text-[#0d0d0d] dark:text-[#ececec]">
                                                         <ReactMarkdown
                                                             remarkPlugins={[remarkGfm]}
@@ -876,6 +889,7 @@ export default function ChatView({
                                                             {message.content.replace(/^Answer:\s*/i, '').replace(/^Answer\s*/i, '') + (message.isStreaming ? ' ●' : '')}
                                                         </ReactMarkdown>
                                                         </div>
+                                                        )
                                                     ) : (
                                                         <div className={`text-base leading-7 whitespace-pre-wrap ${message.role === 'user'
                                                             ? 'bg-[#f4f4f4] dark:bg-[#383838] px-4 py-2.5 rounded-2xl rounded-tr-sm inline-block text-[#0d0d0d] dark:text-[#ececec]'

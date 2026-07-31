@@ -40,6 +40,17 @@ const WRITER_API_URL = process.env.NEXT_PUBLIC_CRIMINAL_WRITER_AGENT_URL || 'htt
 const cleanJudgmentText = (text: string) =>
     text.split('\n').filter(line => !/^\s*_+\s*$/.test(line)).join('\n');
 
+// Render the long "─────" separator lines as a real <hr> instead of raw
+// repeated dash characters — as plain text they have no spaces to wrap at,
+// so `.message-content`'s word-wrap:break-word forces a mid-run break that
+// strands 1-2 dashes on their own line, looking like a stray underscore.
+const renderJudgmentText = (text: string) =>
+    cleanJudgmentText(text).split('\n').map((line, i) =>
+        /^[─\-]{5,}$/.test(line.trim())
+            ? <hr key={i} className="my-2 border-t border-current opacity-20" />
+            : <div key={i} className="whitespace-pre-wrap">{line}</div>
+    );
+
 export default function CriminalJudgmentWriter() {
     const [query, setQuery] = useState('');
     const [isProcessing, setIsProcessing] = useState(false);
@@ -396,8 +407,8 @@ export default function CriminalJudgmentWriter() {
                                                     </span>
                                                 </div>
 
-                                                <div className="message-content whitespace-pre-wrap font-serif text-[#0d0d0d] dark:text-[#ececec] bg-[#f9f9f9] dark:bg-[#171717] p-5 rounded-2xl border border-[#e5e5e5] dark:border-[#2f2f2f]">
-                                                    {cleanJudgmentText(item.result.response)}
+                                                <div className="message-content font-serif text-[#0d0d0d] dark:text-[#ececec] bg-[#f9f9f9] dark:bg-[#171717] p-5 rounded-2xl border border-[#e5e5e5] dark:border-[#2f2f2f]">
+                                                    {renderJudgmentText(item.result.response)}
                                                 </div>
 
                                                 <div className="flex items-center gap-1 mt-3">
@@ -468,8 +479,8 @@ export default function CriminalJudgmentWriter() {
                                                     </span>
                                                 </div>
 
-                                                <div className="message-content whitespace-pre-wrap font-serif text-[#0d0d0d] dark:text-[#ececec] bg-[#f9f9f9] dark:bg-[#171717] p-5 rounded-2xl border border-[#e5e5e5] dark:border-[#2f2f2f]">
-                                                    {cleanJudgmentText(currentStreamingMessage.response) + ' ▌'}
+                                                <div className="message-content font-serif text-[#0d0d0d] dark:text-[#ececec] bg-[#f9f9f9] dark:bg-[#171717] p-5 rounded-2xl border border-[#e5e5e5] dark:border-[#2f2f2f]">
+                                                    {renderJudgmentText(currentStreamingMessage.response + ' ▌')}
                                                 </div>
                                             </div>
                                         </div>

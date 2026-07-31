@@ -67,6 +67,17 @@ const isJudgmentDocument = (text: string) => text.includes('IN THE COURT OF') ||
 const cleanJudgmentText = (text: string) =>
     text.split('\n').filter(line => !/^\s*_+\s*$/.test(line)).join('\n');
 
+// Render the long "─────" separator lines as a real <hr> instead of raw
+// repeated dash characters — as plain text they have no spaces to wrap at,
+// so `.message-content`'s word-wrap:break-word forces a mid-run break that
+// strands 1-2 dashes on their own line, looking like a stray underscore.
+const renderJudgmentText = (text: string) =>
+    cleanJudgmentText(text).split('\n').map((line, i) =>
+        /^[─\-]{5,}$/.test(line.trim())
+            ? <hr key={i} className="my-2 border-t border-current opacity-20" />
+            : <div key={i} className="whitespace-pre-wrap">{line}</div>
+    );
+
 export default function ChatView({
     conversation,
     onSend,
@@ -875,8 +886,8 @@ export default function ChatView({
                                                 <>
                                                     {message.role === 'assistant' ? (
                                                         isJudgmentDocument(message.content) ? (
-                                                            <div className="message-content whitespace-pre-wrap font-serif text-[#0d0d0d] dark:text-[#ececec]">
-                                                                {cleanJudgmentText(message.content.replace(/^Answer:\s*/i, '').replace(/^Answer\s*/i, '')) + (message.isStreaming ? ' ●' : '')}
+                                                            <div className="message-content font-serif text-[#0d0d0d] dark:text-[#ececec]">
+                                                                {renderJudgmentText(message.content.replace(/^Answer:\s*/i, '').replace(/^Answer\s*/i, '') + (message.isStreaming ? ' ●' : ''))}
                                                             </div>
                                                         ) : (
                                                         <div className="message-content text-[#0d0d0d] dark:text-[#ececec]">

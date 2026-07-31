@@ -790,7 +790,7 @@ export default function ChatView({
                     onWheel={handleWheel}
                     className="flex-1 overflow-y-auto"
                 >
-                    <div className="max-w-3xl mx-auto py-6 px-4">
+                    <div className="max-w-4xl mx-auto py-6 px-4">
                         <AnimatePresence initial={false}>
                             {messages.map((message, index) => (
                                 <motion.div

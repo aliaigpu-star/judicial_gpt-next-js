@@ -872,4 +872,11 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    import uvicorn
+    uvicorn.run(
+        "api_criminal:app",
+        host="0.0.0.0",
+        port=7004,
+        reload=True,        # set False in production
+        log_level="info",
+    )

@@ -1092,6 +1092,7 @@ ENDPOINTS:
 """
 
 import os
+import json
 import asyncio
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
@@ -2032,7 +2033,11 @@ async def stream_rag_response(query: str) -> AsyncGenerator[str, None]:
     async for chunk in rag_engine.llm.astream(messages):
         token = chunk.content
         if token:
-            yield f"data: {token}\n\n"
+            # JSON-encode so whitespace-only tokens (spaces, newlines) and
+            # tokens containing embedded newlines survive SSE's line-based
+            # framing intact instead of being trimmed/dropped by the client.
+            payload = json.dumps({"text": token})
+            yield f"data: {payload}\n\n"
 
     yield "data: [DONE]\n\n"
 

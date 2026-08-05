@@ -2661,7 +2661,7 @@ const TeamSection = () => {
                     {!isHidden && (
                       <div
                         className="relative z-10 h-full flex flex-col items-center text-center min-h-0"
-                        style={{ padding: isActive ? '36px 28px 24px' : isAdj ? '24px 18px 16px' : '16px 12px 12px' }}
+                        style={{ padding: isActive ? '48px 28px 24px' : isAdj ? '36px 18px 16px' : '28px 12px 12px' }}
                       >
                         {/* Avatar */}
                         <div
@@ -2709,22 +2709,26 @@ const TeamSection = () => {
                           {member.role}
                         </p>
 
-                        {/* Bio — only for active & adjacent; never clips the badge */}
-                        {isActive && (
-                          <p className="text-slate-500 text-sm leading-relaxed flex-1 min-h-0 overflow-hidden">{member.bio}</p>
-                        )}
-                        {isAdj && (
-                          <p className="text-slate-400 text-xs leading-relaxed line-clamp-3 flex-1 min-h-0 overflow-hidden">{member.bio}</p>
-                        )}
+                        {/* Bio — show complete info for all cards */}
+                        <p
+                          className={`text-slate-500 leading-relaxed flex-1 min-h-0 overflow-hidden ${isActive ? 'text-sm' : 'text-xs line-clamp-3'
+                            }`}
+                        >
+                          {member.bio}
+                        </p>
 
-                        {/* Badge — only active; pinned so it stays visible */}
-                        {isActive && (
-                          <div className="mt-auto pt-4 shrink-0">
-                            <span className="inline-block px-4 py-1.5 text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 rounded uppercase tracking-wider">
-                              {member.badge}
-                            </span>
-                          </div>
-                        )}
+                        {/* Badge — show complete info for all cards */}
+                        <div className="mt-auto pt-4 shrink-0">
+                          <span
+                            className="inline-block font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 rounded uppercase tracking-wider"
+                            style={{
+                              padding: isActive ? '6px 16px' : '4px 10px',
+                              fontSize: isActive ? '11px' : '9px',
+                            }}
+                          >
+                            {member.badge}
+                          </span>
+                        </div>
                       </div>
                     )}
                   </div>

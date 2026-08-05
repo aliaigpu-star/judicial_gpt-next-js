@@ -12,8 +12,6 @@ interface Message {
     role: 'user' | 'assistant' | 'system';
     content: string;
     responseTime?: number;
-    currentVersion?: number;
-    totalVersions?: number;
     createdAt?: string;
     isStreaming?: boolean;
 }
@@ -204,7 +202,6 @@ export default function ChatPage() {
                 finalContent = response.answer;
                 responseTime = response.responseTime || 0;
 
-                // Add with temp id first so the message appears immediately
                 setNewChatMessages(prev => [...prev, {
                     id: assistantMessageId,
                     role: 'assistant',
@@ -259,22 +256,8 @@ export default function ChatPage() {
                 }
             }
 
-            // Save assistant message to backend and capture the real DB id
-            const { message: savedAssistantMsg } = await api.createMessage(conversationId!, 'assistant', finalContent, responseTime);
-
-            // Swap the temp id for the real DB id so handleRegenerate can call api.updateMessage
-            setNewChatMessages(prev => prev.map(m =>
-                m.id === assistantMessageId
-                    ? {
-                        ...m,
-                        id: savedAssistantMsg.id,
-                        responseTime,
-                        isStreaming: false,
-                        currentVersion: savedAssistantMsg.currentVersion,
-                        totalVersions: savedAssistantMsg.totalVersions,
-                      }
-                    : m
-            ));
+            // Save assistant message to backend
+            await api.createMessage(conversationId!, 'assistant', finalContent, responseTime);
 
             // NO router.push() here — the URL is already updated, page stays mounted, no blink!
 
@@ -285,93 +268,6 @@ export default function ChatPage() {
             setIsWebSearchMode(false);
         }
     }, [router, setConversations, isTemporaryMode, newChatMessages]);
-
-    // Handle message regeneration for conversations owned by this page
-    // (chat/page.tsx stays mounted via replaceState, so it must implement this itself)
-    const handleRegenerate = useCallback(async (messageId: string) => {
-        // No regenerate in temporary mode — messages have no DB ids
-        if (isTemporaryMode) return;
-
-        const conversationId = createdConversationIdRef.current;
-        if (!conversationId) return;
-
-        const messageIndex = newChatMessages.findIndex(m => m.id === messageId);
-        if (messageIndex === -1 || newChatMessages[messageIndex].role !== 'assistant') return;
-
-        // Find the preceding user message to build context
-        let userMessageContent = '';
-        for (let i = messageIndex - 1; i >= 0; i--) {
-            if (newChatMessages[i].role === 'user') {
-                userMessageContent = newChatMessages[i].content;
-                break;
-            }
-        }
-        if (!userMessageContent) return;
-
-        setIsProcessingMessage(true);
-
-        try {
-            const messagesForAI = newChatMessages
-                .slice(0, messageIndex)
-                .map(m => ({ role: m.role, content: m.content }));
-
-            let newContent = '';
-            let responseTime = 0;
-
-            const buffer = createStreamBuffer((bufferedContent) => {
-                setNewChatMessages(prev => prev.map(m =>
-                    m.id === messageId
-                        ? { ...m, content: bufferedContent, isStreaming: true }
-                        : m
-                ));
-            }, 15);
-
-            try {
-                await api.sendChatMessageStream(
-                    messagesForAI,
-                    (streamedContent) => {
-                        buffer.push(streamedContent);
-                        newContent = streamedContent;
-                    },
-                    (time) => {
-                        responseTime = time;
-                    }
-                );
-
-                await buffer.waitForComplete();
-
-                // Clear streaming flag once animation completes
-                setNewChatMessages(prev => prev.map(m =>
-                    m.id === messageId
-                        ? { ...m, isStreaming: false }
-                        : m
-                ));
-            } finally {
-                buffer.destroy();
-            }
-
-            // Persist the new version to the DB
-            const savedMsg = await api.updateMessage(messageId, newContent);
-
-            // Update message state to match DB shape
-            setNewChatMessages(prev => prev.map(m =>
-                m.id === messageId
-                    ? {
-                        ...m,
-                        content: newContent,
-                        responseTime,
-                        isStreaming: false,
-                        currentVersion: savedMsg.current_version,
-                        totalVersions: savedMsg.total_versions,
-                      }
-                    : m
-            ));
-        } catch (error) {
-            console.error('Failed to regenerate:', error);
-        } finally {
-            setIsProcessingMessage(false);
-        }
-    }, [isTemporaryMode, newChatMessages]);
 
     // New chat - no conversation selected
     const newChatConversation: Conversation = {
@@ -390,7 +286,6 @@ export default function ChatPage() {
             isWebSearchMode={isWebSearchMode}
             webSearchEnabled={webSearchEnabled}
             setWebSearchEnabled={setWebSearchEnabled}
-            onRegenerate={isTemporaryMode ? undefined : handleRegenerate}
             isTemporaryMode={isTemporaryMode}
         />
     );

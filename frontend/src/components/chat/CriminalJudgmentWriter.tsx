@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
     Search, Loader2, FileText, ExternalLink, CheckCircle2,
     XCircle, AlertTriangle, ShieldAlert, BookOpen, Clock,
-    ChevronDown, ChevronUp, Copy, Check, ArrowUp, Gavel
+    ChevronDown, ChevronUp, Copy, Check, ArrowUp, Gavel, Download
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { copyCleanText } from '@/lib/textUtils';
@@ -19,10 +19,17 @@ interface SourceResult {
     content_preview?: string;
 }
 
+interface DocumentInfo {
+    title: string;
+    doc_type: string;
+    download_url: string;
+}
+
 interface WriterResult {
     query: string;
     response: string;
     sources: string[];
+    document?: DocumentInfo | null;
     timestamp: string;
 }
 
@@ -110,6 +117,7 @@ export default function CriminalJudgmentWriter() {
             const decoder = new TextDecoder();
             let accumulatedResponse = '';
             let finalSources: string[] = [];
+            let finalDocument: DocumentInfo | null = null;
             let sseBuffer = '';  // Buffer for incomplete SSE lines across chunks
             let streamDone = false;
 
@@ -145,6 +153,9 @@ export default function CriminalJudgmentWriter() {
                             if (data.metadata.sources) {
                                 finalSources = data.metadata.sources;
                             }
+                            if (data.metadata.document) {
+                                finalDocument = data.metadata.document;
+                            }
                         }
                     } catch (e) {
                         // If JSON parsing fails, treat raw content as text (fallback)
@@ -164,6 +175,7 @@ export default function CriminalJudgmentWriter() {
                     query: searchQuery,
                     response: accumulatedResponse,
                     sources: finalSources,
+                    document: finalDocument,
                     timestamp: new Date().toLocaleTimeString(),
                 },
                 timestamp: new Date(),
@@ -423,6 +435,20 @@ export default function CriminalJudgmentWriter() {
                                                             <Copy className="w-4 h-4 text-[#666666] dark:text-[#b4b4b4]" />
                                                         )}
                                                     </button>
+
+                                                    {item.result.document && (
+                                                        <a
+                                                            href={item.result.document.download_url}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            download
+                                                            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-[#dc2626] hover:bg-[#dc2626]/10 transition-colors"
+                                                            title="Download judgment as DOCX"
+                                                        >
+                                                            <Download className="w-3.5 h-3.5" />
+                                                            Download DOCX
+                                                        </a>
+                                                    )}
                                                 </div>
 
                                                 {item.result.sources.length > 0 && (

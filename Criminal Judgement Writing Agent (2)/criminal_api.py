@@ -1124,7 +1124,7 @@ load_dotenv()
 # Fully separate from the RAG/LLM chain — only ever called on the *final*
 # markdown string the chain has already produced.
 import document_export
-from document_export import should_generate_document, export_markdown_as_docx
+from document_export import export_markdown_as_docx
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -1985,9 +1985,11 @@ def run_document_export(query: str, response_markdown: str) -> DocumentInfo | No
     answer. Never touches the RAG chain, prompt, or model call — only
     converts+saves the string the chain already returned. Wrapped in
     try/except so an export failure never breaks the chat response.
+
+    Exports a document for every query this agent handles (drafting
+    judgments is this agent's whole purpose), rather than gating on
+    explicit "give me a docx"-style phrasing.
     """
-    if not should_generate_document(query):
-        return None
     try:
         title = _make_doc_title(query)
         result = export_markdown_as_docx(response_markdown, title)
@@ -2030,14 +2032,26 @@ async def stream_rag_response(query: str) -> AsyncGenerator[str, None]:
 
     messages = await prompt.ainvoke({"context": context, "question": query})
 
+    full_response = ""
     async for chunk in rag_engine.llm.astream(messages):
         token = chunk.content
         if token:
+            full_response += token
             # JSON-encode so whitespace-only tokens (spaces, newlines) and
             # tokens containing embedded newlines survive SSE's line-based
             # framing intact instead of being trimmed/dropped by the client.
             payload = json.dumps({"text": token})
             yield f"data: {payload}\n\n"
+
+    # Same document export the non-streaming /chat endpoint already performs
+    # (visible in /docs), just wired into the streaming path too so the
+    # frontend chat gets a download link as well.
+    document = await asyncio.get_event_loop().run_in_executor(
+        None, run_document_export, query, full_response
+    )
+    if document:
+        metadata_payload = json.dumps({"metadata": {"document": document.model_dump()}})
+        yield f"data: {metadata_payload}\n\n"
 
     yield "data: [DONE]\n\n"
 

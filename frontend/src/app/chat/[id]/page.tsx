@@ -211,12 +211,19 @@ export default function ConversationPage() {
                 responseTime
             );
 
-            // Update with saved message ID
+            // Update with saved message ID and ensure message state matches DB shape
             setCurrentConversation(prev => prev ? {
                 ...prev,
                 messages: prev.messages.map(m =>
                     m.id === assistantMessageId
-                        ? { ...m, id: savedAssistantMsg.id, responseTime }
+                        ? {
+                            ...m,
+                            id: savedAssistantMsg.id,
+                            responseTime,
+                            isStreaming: false,
+                            currentVersion: savedAssistantMsg.currentVersion,
+                            totalVersions: savedAssistantMsg.totalVersions,
+                          }
                         : m
                 )
             } : null);
@@ -224,10 +231,8 @@ export default function ConversationPage() {
         } catch (error) {
             console.error('Failed to send message:', error);
         } finally {
-            setTimeout(() => {
-                setIsProcessingMessage(false);
-                setIsWebSearchMode(false);
-            }, 100);
+            setIsProcessingMessage(false);
+            setIsWebSearchMode(false);
         }
     }, [conversationId, currentConversation, router, setConversations]);
 

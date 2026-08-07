@@ -225,7 +225,7 @@ export default function SharedChatPage() {
             {/* Footer */}
             <footer className="border-t border-gray-200 dark:border-gray-800 py-4 mt-8">
                 <p className="text-center text-sm text-gray-500 dark:text-gray-400">
-                    Powered by <span className="text-emerald-600 font-medium">JudicialGPT</span>
+                    Powere by <span className="text-emerald-600 font-medium">JudicialGPT</span>
                 </p>
             </footer>
         </div>

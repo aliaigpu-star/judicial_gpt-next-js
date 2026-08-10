@@ -103,6 +103,7 @@ export default function ChatView({
     // Message action states
     const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
     const [editContent, setEditContent] = useState('');
+    const [feedbackMenuOpenId, setFeedbackMenuOpenId] = useState<string | null>(null);
     const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
     const [feedbackState, setFeedbackState] = useState<Record<string, 'like' | 'dislike' | null>>({});
     const [showShareModal, setShowShareModal] = useState(false);
@@ -306,6 +307,12 @@ export default function ChatView({
         try {
             await api.setMessageFeedback(messageId, newFeedback);
             setFeedbackState(prev => ({ ...prev, [messageId]: newFeedback }));
+            if (newFeedback) {
+                showNotification(
+                    newFeedback === 'like' ? 'Good response' : 'Bad response',
+                    newFeedback === 'like' ? 'success' : 'warning'
+                );
+            }
         } catch (err) {
             showNotification('Failed to save feedback', 'error');
         }
@@ -964,28 +971,65 @@ export default function ChatView({
                                                     {/* Assistant-only actions */}
                                                     {message.role === 'assistant' && (
                                                         <>
-                                                            <button
-                                                                type="button"
-                                                                onClick={(e) => handleFeedback(e, message.id, 'like')}
-                                                                className="p-1.5 hover:bg-[#ececec] dark:hover:bg-[#2f2f2f] active:scale-95 rounded-lg transition-all text-[#666666] dark:text-[#b4b4b4]"
-                                                                title="Good response"
-                                                            >
-                                                                <ThumbsUp className={`w-4 h-4 ${(feedbackState[message.id] || message.metadata?.feedback) === 'like'
-                                                                    ? 'fill-current text-[#10a37f]'
-                                                                    : ''
-                                                                    }`} />
-                                                            </button>
-                                                            <button
-                                                                type="button"
-                                                                onClick={(e) => handleFeedback(e, message.id, 'dislike')}
-                                                                className="p-1.5 hover:bg-[#ececec] dark:hover:bg-[#2f2f2f] active:scale-95 rounded-lg transition-all text-[#666666] dark:text-[#b4b4b4]"
-                                                                title="Bad response"
-                                                            >
-                                                                <ThumbsDown className={`w-4 h-4 ${(feedbackState[message.id] || message.metadata?.feedback) === 'dislike'
-                                                                    ? 'fill-current'
-                                                                    : ''
-                                                                    }`} />
-                                                            </button>
+                                                            <div className="relative">
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        setFeedbackMenuOpenId(prev => prev === message.id ? null : message.id);
+                                                                    }}
+                                                                    className="p-1.5 hover:bg-[#ececec] dark:hover:bg-[#2f2f2f] active:scale-95 rounded-lg transition-all text-[#666666] dark:text-[#b4b4b4]"
+                                                                    title="Rate this response"
+                                                                >
+                                                                    <ThumbsUp className={`w-4 h-4 ${(feedbackState[message.id] || message.metadata?.feedback) === 'like'
+                                                                        ? 'fill-current text-[#10a37f]'
+                                                                        : (feedbackState[message.id] || message.metadata?.feedback) === 'dislike'
+                                                                            ? 'fill-current text-red-500 rotate-180'
+                                                                            : ''
+                                                                        }`} />
+                                                                </button>
+
+                                                                <AnimatePresence>
+                                                                    {feedbackMenuOpenId === message.id && (
+                                                                        <>
+                                                                            <div
+                                                                                className="fixed inset-0 z-40"
+                                                                                onClick={() => setFeedbackMenuOpenId(null)}
+                                                                            />
+                                                                            <motion.div
+                                                                                initial={{ opacity: 0, y: 10 }}
+                                                                                animate={{ opacity: 1, y: 0 }}
+                                                                                exit={{ opacity: 0, y: 10 }}
+                                                                                transition={{ duration: 0.1 }}
+                                                                                className="absolute bottom-full left-0 mb-2 z-50"
+                                                                            >
+                                                                                <div className="bg-white dark:bg-[#2f2f2f] rounded-xl shadow-lg border border-[#e5e5e5] dark:border-[#424242] py-1 min-w-[170px]">
+                                                                                    <button
+                                                                                        type="button"
+                                                                                        onClick={(e) => {
+                                                                                            handleFeedback(e, message.id, 'like');
+                                                                                            setFeedbackMenuOpenId(null);
+                                                                                        }}
+                                                                                        className="w-full px-3 py-2.5 text-left text-sm hover:bg-[#f4f4f4] dark:hover:bg-[#424242] flex items-center gap-3 text-[#0d0d0d] dark:text-[#ececec]"
+                                                                                    >
+                                                                                        <ThumbsUp className="w-4 h-4 text-[#10a37f]" /> Good response
+                                                                                    </button>
+                                                                                    <button
+                                                                                        type="button"
+                                                                                        onClick={(e) => {
+                                                                                            handleFeedback(e, message.id, 'dislike');
+                                                                                            setFeedbackMenuOpenId(null);
+                                                                                        }}
+                                                                                        className="w-full px-3 py-2.5 text-left text-sm hover:bg-[#f4f4f4] dark:hover:bg-[#424242] flex items-center gap-3 text-[#0d0d0d] dark:text-[#ececec]"
+                                                                                    >
+                                                                                        <ThumbsDown className="w-4 h-4 text-red-500" /> Bad response
+                                                                                    </button>
+                                                                                </div>
+                                                                            </motion.div>
+                                                                        </>
+                                                                    )}
+                                                                </AnimatePresence>
+                                                            </div>
 
                                                             {onRegenerate && (
                                                                 <button

@@ -584,7 +584,7 @@ export default function ChatView({
                     <div className="mb-3 flex flex-wrap gap-2">
                         {selectedFile && (
                             <div className="flex items-center gap-2 px-3 py-2 bg-[#f4f4f4] dark:bg-[#2f2f2f] rounded-xl border border-[#e5e5e5] dark:border-[#424242]">
-                                <FileText className="w-4 h-4 text-[#10a37f]" />
+                                <FileText className="w-4 h-4 text-[#0c9344]" />
                                 <span className="text-sm text-[#0d0d0d] dark:text-[#ececec] truncate max-w-[200px]">
                                     {selectedFile.name}
                                 </span>
@@ -673,7 +673,7 @@ export default function ChatView({
                                             }}
                                             className="w-full px-3 py-2.5 text-left text-sm hover:bg-[#f4f4f4] dark:hover:bg-[#424242] flex items-center gap-3 text-[#0d0d0d] dark:text-[#ececec]"
                                         >
-                                            <Globe className={`w-4 h-4 ${webSearchEnabled ? 'text-[#10a37f]' : 'text-[#666666] dark:text-[#b4b4b4]'}`} />
+                                            <Globe className={`w-4 h-4 ${webSearchEnabled ? 'text-[#0c9344]' : 'text-[#666666] dark:text-[#b4b4b4]'}`} />
                                             {webSearchEnabled ? 'Disable search' : 'Search the web'}
                                         </button>
                                     </div>
@@ -687,7 +687,7 @@ export default function ChatView({
                         <button
                             type="button"
                             onClick={() => setWebSearchEnabled(false)}
-                            className="flex items-center gap-1.5 px-2.5 py-1 bg-[#10a37f]/10 text-[#10a37f] rounded-full text-xs font-medium hover:bg-[#10a37f]/20 transition-colors"
+                            className="flex items-center gap-1.5 px-2.5 py-1 bg-[#0c9344]/10 text-[#0c9344] rounded-full text-xs font-medium hover:bg-[#0c9344]/20 transition-colors"
                         >
                             <Globe className="w-3.5 h-3.5" />
                             Search
@@ -780,7 +780,7 @@ export default function ChatView({
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
-                        className={`absolute top-4 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-full shadow-lg text-sm font-medium ${notification.type === 'success' ? 'bg-[#10a37f] text-white' :
+                        className={`absolute top-4 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-full shadow-lg text-sm font-medium ${notification.type === 'success' ? 'bg-[#0c9344] text-white' :
                             notification.type === 'error' ? 'bg-red-500 text-white' :
                                 'bg-yellow-500 text-white'
                             }`}
@@ -864,12 +864,12 @@ export default function ChatView({
                                                         className="w-7 h-7 rounded-full object-cover"
                                                     />
                                                 ) : (
-                                                    <div className="w-7 h-7 rounded-full bg-[#10a37f] flex items-center justify-center text-xs font-medium text-white">
+                                                    <div className="w-7 h-7 rounded-full bg-[#0c9344] flex items-center justify-center text-xs font-medium text-white">
                                                         {user?.name?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase() || 'U'}
                                                     </div>
                                                 )
                                             ) : (
-                                                <div className="w-7 h-7 rounded-sm bg-[#10a37f] flex items-center justify-center">
+                                                <div className="w-7 h-7 rounded-sm bg-[#0c9344] flex items-center justify-center">
                                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-white">
                                                         <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                                         <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -907,7 +907,7 @@ export default function ChatView({
                                                             const len = e.target.value.length;
                                                             e.target.setSelectionRange(len, len);
                                                         }}
-                                                        className="w-full bg-[#f4f4f4] dark:bg-[#2f2f2f] border border-[#e5e5e5] dark:border-[#424242] rounded-xl p-4 text-base resize-none outline-none focus:border-[#10a37f] dark:focus:border-[#10a37f] transition-colors text-[#0d0d0d] dark:text-[#ececec] min-h-[100px]"
+                                                        className="w-full bg-[#f4f4f4] dark:bg-[#2f2f2f] border border-[#e5e5e5] dark:border-[#424242] rounded-xl p-4 text-base resize-none outline-none focus:border-[#0c9344] dark:focus:border-[#0c9344] transition-colors text-[#0d0d0d] dark:text-[#ececec] min-h-[100px]"
                                                         rows={Math.min(Math.max(editContent.split('\n').length, 3), 10)}
                                                     />
                                                     <div className="flex items-center justify-end gap-2 mt-3">
@@ -997,7 +997,7 @@ export default function ChatView({
                                                         title="Copy"
                                                     >
                                                         {copiedMessageId === message.id ? (
-                                                            <Check className="w-4 h-4 text-[#10a37f]" />
+                                                            <Check className="w-4 h-4 text-[#0c9344]" />
                                                         ) : (
                                                             <Copy className="w-4 h-4" />
                                                         )}
@@ -1028,7 +1028,7 @@ export default function ChatView({
                                                                 title="Good response"
                                                             >
                                                                 <ThumbsUp className={`w-4 h-4 ${(feedbackState[message.id] || message.metadata?.feedback) === 'like'
-                                                                    ? 'fill-current text-[#10a37f]'
+                                                                    ? 'fill-current text-[#0c9344]'
                                                                     : ''
                                                                     }`} />
                                                             </button>
@@ -1177,7 +1177,7 @@ export default function ChatView({
                                 className="py-6"
                             >
                                 <div className="flex items-start gap-4">
-                                    <div className="w-7 h-7 rounded-sm bg-[#10a37f] flex items-center justify-center flex-shrink-0">
+                                    <div className="w-7 h-7 rounded-sm bg-[#0c9344] flex items-center justify-center flex-shrink-0">
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-white">
                                             <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                             <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -1188,7 +1188,7 @@ export default function ChatView({
                                         <div className="font-semibold text-sm text-[#0d0d0d] dark:text-[#ececec] mb-1">JudicialGPT</div>
                                         <div className="flex items-center gap-1">
                                             {isWebSearchMode && (
-                                                <span className="text-sm text-[#10a37f] mr-2">Searching the web...</span>
+                                                <span className="text-sm text-[#0c9344] mr-2">Searching the web...</span>
                                             )}
                                             <span className="w-2 h-2 bg-[#666666] dark:bg-[#b4b4b4] rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                                             <span className="w-2 h-2 bg-[#666666] dark:bg-[#b4b4b4] rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />

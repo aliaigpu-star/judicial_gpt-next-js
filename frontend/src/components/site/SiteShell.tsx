@@ -42,9 +42,11 @@ export function SiteHeader({ light = true }: { light?: boolean }) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 24);
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
+    const handleScroll = () => setIsScrolled(window.scrollY > 10);
+    // Set initial state immediately in case page loads mid-scroll
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const navItems = [
@@ -57,11 +59,13 @@ export function SiteHeader({ light = true }: { light?: boolean }) {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled || !light
-          ? 'bg-white/96 backdrop-blur-2xl shadow-sm shadow-slate-900/5 border-b border-slate-200/70'
-          : 'bg-[#F2FBF6]/90 backdrop-blur-xl border-b border-emerald-100/60'
-      }`}
+      className="fixed top-0 left-0 right-0 z-[9999]"
+      style={{
+        backgroundColor: (isScrolled || !light) ? '#ffffff' : 'transparent',
+        boxShadow: (isScrolled || !light) ? '0 1px 6px rgba(0,0,0,0.08)' : 'none',
+        borderBottom: (isScrolled || !light) ? '1px solid rgba(226,232,240,0.7)' : '1px solid transparent',
+        transition: 'background-color 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease',
+      }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-[4.5rem]">
@@ -70,11 +74,11 @@ export function SiteHeader({ light = true }: { light?: boolean }) {
             className="flex items-center gap-2.5 cursor-pointer flex-shrink-0"
             onClick={() => router.push('/')}
           >
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-700 flex items-center justify-center shadow-lg shadow-emerald-600/30">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#0c9344] to-[#0c9344] flex items-center justify-center shadow-lg shadow-[#0c9344]/30">
               <Scale className="w-[18px] h-[18px] text-white" />
             </div>
             <span className="text-xl font-extrabold tracking-tight text-slate-900">
-              Judicial<span className="text-emerald-500">GPT</span>
+              Judicial<span className="text-[#0c9344]">GPT</span>
             </span>
           </button>
 
@@ -83,11 +87,10 @@ export function SiteHeader({ light = true }: { light?: boolean }) {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`px-3.5 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
-                  pathname === item.href
-                    ? 'text-emerald-700 bg-emerald-50'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-emerald-50/80'
-                }`}
+                className={`px-3.5 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${pathname === item.href
+                  ? 'text-[#0c9344] bg-[#0c9344]/10'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-[#0c9344]/10/80'
+                  }`}
               >
                 {item.name}
               </Link>
@@ -98,14 +101,14 @@ export function SiteHeader({ light = true }: { light?: boolean }) {
             <button
               type="button"
               onClick={() => router.push('/login')}
-              className="px-4 py-2.5 text-sm font-semibold rounded-lg text-slate-700 hover:bg-emerald-50 transition-all"
+              className="px-4 py-2.5 text-sm font-semibold rounded-lg text-slate-700 hover:bg-[#0c9344]/10 transition-all"
             >
               Sign In
             </button>
             <button
               type="button"
               onClick={() => router.push('/signup')}
-              className="px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-lg shadow-md shadow-emerald-500/25 hover:shadow-lg hover:shadow-emerald-500/35 transition-all"
+              className="px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-[#0c9344] to-[#0c9344] rounded-lg shadow-md shadow-[#0c9344]/25 hover:shadow-lg hover:shadow-[#0c9344]/35 transition-all"
             >
               Get Started Free
             </button>
@@ -114,7 +117,7 @@ export function SiteHeader({ light = true }: { light?: boolean }) {
           <button
             type="button"
             onClick={() => setOpen(!open)}
-            className="lg:hidden p-2 rounded-lg text-slate-900 hover:bg-emerald-50"
+            className="lg:hidden p-2 rounded-lg text-slate-900 hover:bg-[#0c9344]/10"
             aria-label="Toggle menu"
           >
             {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -130,7 +133,7 @@ export function SiteHeader({ light = true }: { light?: boolean }) {
                 key={item.name}
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className="block px-4 py-3 text-slate-700 font-medium rounded-xl hover:bg-emerald-50 hover:text-emerald-700"
+                className="block px-4 py-3 text-slate-700 font-medium rounded-xl hover:bg-[#0c9344]/10 hover:text-[#0c9344]"
               >
                 {item.name}
               </Link>
@@ -146,7 +149,7 @@ export function SiteHeader({ light = true }: { light?: boolean }) {
               <button
                 type="button"
                 onClick={() => router.push('/signup')}
-                className="flex-1 px-4 py-3 text-sm font-bold text-white rounded-xl bg-emerald-500"
+                className="flex-1 px-4 py-3 text-sm font-bold text-white rounded-xl bg-[#0c9344]"
               >
                 Get Started
               </button>
@@ -163,14 +166,14 @@ export function SiteFooter() {
     <footer className="bg-[#F9FAFB] text-slate-500 border-t border-slate-200/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn>
-          <div className="py-12 lg:py-16 grid grid-cols-2 md:grid-cols-6 gap-12 lg:gap-16">
+          <div className="py-6 lg:py-8 grid grid-cols-2 md:grid-cols-6 gap-12 lg:gap-16">
             <div className="col-span-2">
               <Link href="/" className="flex items-center gap-2.5 mb-4 w-fit">
-                <div className="w-9 h-9 rounded-xl bg-emerald-500 flex items-center justify-center shadow-sm shadow-emerald-500/25">
+                <div className="w-9 h-9 rounded-xl bg-[#0c9344] flex items-center justify-center shadow-sm shadow-[#0c9344]/25">
                   <Scale className="w-[18px] h-[18px] text-white" />
                 </div>
                 <span className="text-xl font-extrabold text-slate-900 tracking-tight">
-                  Judicial<span className="text-emerald-500">GPT</span>
+                  Judicial<span className="text-[#0c9344]">GPT</span>
                 </span>
               </Link>
               <p className="text-slate-500 text-xl mb-8 leading-relaxed max-w-sm">{SITE.description}</p>
@@ -180,7 +183,7 @@ export function SiteFooter() {
                     key={i}
                     href="#"
                     aria-label={['Twitter', 'LinkedIn', 'GitHub', 'Email'][i]}
-                    className="w-12 h-12 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-emerald-600 hover:border-emerald-200 hover:bg-emerald-50/50 transition-all duration-200"
+                    className="w-12 h-12 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-[#0c9344] hover:border-[#0c9344]/25 hover:bg-[#0c9344]/10/50 transition-all duration-200"
                   >
                     <Icon className="w-6 h-6" />
                   </a>
@@ -196,7 +199,7 @@ export function SiteFooter() {
                     <li key={link.name}>
                       <Link
                         href={link.href}
-                        className="text-slate-500 text-xl hover:text-emerald-600 transition-colors duration-200"
+                        className="text-slate-500 text-xl hover:text-[#0c9344] transition-colors duration-200"
                       >
                         {link.name}
                       </Link>
@@ -209,7 +212,7 @@ export function SiteFooter() {
         </FadeIn>
 
         <FadeIn delay={0.1} y={20}>
-          <div className="py-8 flex flex-col sm:flex-row items-center justify-between gap-6 border-t border-transparent mt-6">
+          <div className="pt-6 pb-2 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-200/60 mt-4">
             <p className="text-slate-400 text-xl">© 2026 JudicialGPT. All rights reserved.</p>
             <div className="flex items-center gap-8 text-xl text-slate-400">
               <span className="inline-flex items-center gap-2">
@@ -237,7 +240,7 @@ export function Breadcrumbs({
     <nav aria-label="Breadcrumb" className="mb-6">
       <ol className="flex flex-wrap items-center gap-1.5 text-sm text-slate-500">
         <li>
-          <Link href="/" className="hover:text-emerald-600 transition-colors">
+          <Link href="/" className="hover:text-[#0c9344] transition-colors">
             Home
           </Link>
         </li>
@@ -245,7 +248,7 @@ export function Breadcrumbs({
           <li key={item.label} className="flex items-center gap-1.5">
             <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
             {item.href && i < items.length - 1 ? (
-              <Link href={item.href} className="hover:text-emerald-600 transition-colors">
+              <Link href={item.href} className="hover:text-[#0c9344] transition-colors">
                 {item.label}
               </Link>
             ) : (
@@ -274,14 +277,14 @@ export function PageHero({
   children?: React.ReactNode;
 }) {
   return (
-    <section className="relative pt-12 pb-16 md:pt-16 md:pb-20 overflow-hidden bg-[#F2FBF6]">
-      <div className="absolute top-0 right-0 w-[420px] h-[420px] rounded-full bg-emerald-400/15 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[320px] h-[320px] rounded-full bg-teal-400/10 blur-3xl pointer-events-none" />
+    <section className="relative pt-12 pb-16 md:pt-16 md:pb-20 overflow-hidden bg-[#0c9344]/5">
+      <div className="absolute top-0 right-0 w-[420px] h-[420px] rounded-full bg-[#0c9344]/15 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[320px] h-[320px] rounded-full bg-[#0c9344]/10 blur-3xl pointer-events-none" />
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <Breadcrumbs items={crumbs} />
         <FadeIn>
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] mb-5 bg-emerald-50 text-emerald-700 border border-emerald-200">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] mb-5 bg-[#0c9344]/10 text-[#0c9344] border border-[#0c9344]/25">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#0c9344] animate-pulse" />
             {eyebrow}
           </div>
           <h1 className="font-heading text-4xl md:text-5xl lg:text-[3.4rem] font-semibold leading-[1.1] tracking-tight text-slate-900 max-w-4xl mb-5">
@@ -289,7 +292,7 @@ export function PageHero({
             {highlight ? (
               <>
                 <br />
-                <span className="text-emerald-600">{highlight}</span>
+                <span className="text-[#0c9344]">{highlight}</span>
               </>
             ) : null}
           </h1>
@@ -314,7 +317,7 @@ export function PageCTA({
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn>
           <div className="relative rounded-3xl overflow-hidden px-8 py-14 md:px-16 text-center">
-            <div className="absolute inset-0 bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-900" />
+            <div className="absolute inset-0 bg-gradient-to-br from-[#0c9344] via-[#0c9344] to-[#0c9344]" />
             <div
               className="absolute inset-0 opacity-30"
               style={{
@@ -330,7 +333,7 @@ export function PageCTA({
                 <button
                   type="button"
                   onClick={() => router.push('/signup')}
-                  className="inline-flex items-center gap-2 px-7 py-3.5 bg-white text-emerald-700 font-extrabold rounded-xl shadow-xl hover:scale-[1.02] transition-transform"
+                  className="inline-flex items-center gap-2 px-7 py-3.5 bg-white text-[#0c9344] font-extrabold rounded-xl shadow-xl hover:scale-[1.02] transition-transform"
                 >
                   Get Started Free <ArrowRight className="w-4 h-4" />
                 </button>

@@ -73,7 +73,7 @@ const FloatingParticles = () => {
       {particles.map((p, i) => (
         <motion.div
           key={i}
-          className="absolute w-1 h-1 rounded-full bg-emerald-500/35"
+          className="absolute w-1 h-1 rounded-full bg-[#0c9344]/35"
           style={{ left: p.left, top: p.top }}
           animate={{ y: [0, -40, 0], opacity: [0.08, 0.4, 0.08], scale: [1, 2, 1] }}
           transition={{ duration: p.duration, repeat: Infinity, delay: p.delay, ease: 'easeInOut' }}
@@ -307,10 +307,10 @@ const SectionHeading = ({
     className={`mb-16 ${center ? 'text-center' : ''}`}
   >
     <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] mb-5 ${light
-      ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/25'
-      : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+      ? 'bg-[#0c9344]/15 text-[#0c9344] border border-[#0c9344]/25'
+      : 'bg-[#0c9344]/10 text-[#0c9344] border border-[#0c9344]/25'
       }`}>
-      <span className={`w-1.5 h-1.5 rounded-full ${light ? 'bg-emerald-400' : 'bg-emerald-500'} animate-pulse`} />
+      <span className={`w-1.5 h-1.5 rounded-full ${light ? 'bg-[#0c9344]' : 'bg-[#0c9344]'} animate-pulse`} />
       {label}
     </div>
     <h2 className={`font-heading text-4xl md:text-5xl lg:text-[3.15rem] font-semibold leading-[1.15] tracking-tight mb-5 ${light ? 'text-white' : 'text-slate-900'
@@ -331,6 +331,14 @@ const SectionHeading = ({
 const Header = () => {
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 0);
+    handleScroll(); // set on mount in case page loads mid-scroll
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const navItems = [
     { name: 'Features', href: '#features' },
@@ -342,7 +350,15 @@ const Header = () => {
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-transparent">
+    <header
+      className="fixed top-0 left-0 right-0 z-[9999]"
+      style={{
+        backgroundColor: isScrolled ? '#ffffff' : 'transparent',
+        boxShadow: isScrolled ? '0 1px 6px rgba(0,0,0,0.08)' : 'none',
+        borderBottom: isScrolled ? '1px solid rgba(226,232,240,0.7)' : '1px solid transparent',
+        transition: 'background-color 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease',
+      }}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-[4.5rem]">
           {/* Logo */}
@@ -351,11 +367,11 @@ const Header = () => {
             whileHover={{ scale: 1.02 }}
             onClick={() => router.push('/')}
           >
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-700 flex items-center justify-center shadow-lg shadow-emerald-600/30">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#0c9344] to-[#0c9344] flex items-center justify-center shadow-lg shadow-[#0c9344]/30">
               <Scale className="w-[18px] h-[18px] text-white" />
             </div>
             <span className="text-xl font-extrabold tracking-tight text-slate-900 transition-colors duration-300">
-              Judicial<span className="text-emerald-500">GPT</span>
+              Judicial<span className="text-[#0c9344]">GPT</span>
             </span>
           </motion.div>
 
@@ -365,7 +381,7 @@ const Header = () => {
               <a
                 key={item.name}
                 href={item.href}
-                className="px-3.5 py-2 text-sm font-semibold rounded-lg transition-all duration-200 text-slate-800 hover:text-emerald-700 hover:bg-white/60"
+                className="px-3.5 py-2 text-sm font-semibold rounded-lg transition-all duration-200 text-slate-800 hover:text-[#0c9344] hover:bg-white/60"
               >
                 {item.name}
               </a>
@@ -378,7 +394,7 @@ const Header = () => {
               onClick={() => router.push('/login')}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="px-4 py-2.5 text-sm font-semibold rounded-lg transition-all text-slate-700 hover:bg-emerald-50"
+              className="px-4 py-2.5 text-sm font-semibold rounded-lg transition-all text-slate-700 hover:bg-[#0c9344]/10"
             >
               Sign In
             </motion.button>
@@ -386,7 +402,7 @@ const Header = () => {
               onClick={() => router.push('/signup')}
               whileHover={{ scale: 1.03, boxShadow: '0 8px 28px rgba(16,185,129,0.4)' }}
               whileTap={{ scale: 0.97 }}
-              className="px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-lg shadow-md shadow-emerald-500/25 transition-all"
+              className="px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-[#0c9344] to-[#0c9344] rounded-lg shadow-md shadow-[#0c9344]/25 transition-all"
             >
               Get Started Free
             </motion.button>
@@ -395,7 +411,7 @@ const Header = () => {
           {/* Mobile toggle */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-2 rounded-lg transition-colors text-slate-900 hover:bg-emerald-50"
+            className="lg:hidden p-2 rounded-lg transition-colors text-slate-900 hover:bg-[#0c9344]/10"
           >
             {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -416,7 +432,7 @@ const Header = () => {
                 <a
                   key={item.name}
                   href={item.href}
-                  className="block px-4 py-3 text-slate-700 font-medium rounded-xl hover:bg-emerald-50 hover:text-emerald-700 transition-colors"
+                  className="block px-4 py-3 text-slate-700 font-medium rounded-xl hover:bg-[#0c9344]/10 hover:text-[#0c9344] transition-colors"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {item.name}
@@ -431,7 +447,7 @@ const Header = () => {
                 </button>
                 <button
                   onClick={() => { router.push('/signup'); setIsMobileMenuOpen(false); }}
-                  className="w-full py-3 text-sm font-bold text-center text-white bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-xl"
+                  className="w-full py-3 text-sm font-bold text-center text-white bg-gradient-to-r from-[#0c9344] to-[#0c9344] rounded-xl"
                 >
                   Get Started Free
                 </button>
@@ -574,11 +590,11 @@ const AnimatedChatWidget = () => {
   }, [langIndex]);
 
   return (
-    <div className="relative w-full max-w-xl xl:max-w-2xl mx-auto bg-white/80 backdrop-blur-xl border border-emerald-100 rounded-3xl shadow-xl shadow-emerald-900/5 text-left overflow-hidden">
+    <div className="relative w-full max-w-xl xl:max-w-2xl mx-auto bg-white/80 backdrop-blur-xl border border-[#0c9344]/15 rounded-3xl shadow-xl shadow-[#0c9344]/5 text-left overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(#05966914_1px,transparent_1px)] [background-size:20px_20px] rounded-3xl opacity-60 pointer-events-none" />
 
       {/* Language indicator pills */}
-      <div className="relative z-10 flex items-center gap-1.5 px-5 pt-4 pb-3 border-b border-emerald-100/60">
+      <div className="relative z-10 flex items-center gap-1.5 px-5 pt-4 pb-3 border-b border-[#0c9344]/15/60">
         {LEGAL_QA_LANGUAGES.map((l, i) => (
           <motion.div
             key={l.code}
@@ -595,8 +611,8 @@ const AnimatedChatWidget = () => {
           </motion.div>
         ))}
         <div className="ml-auto flex items-center gap-1 shrink-0">
-          <Scale className="w-3 h-3 text-emerald-500" />
-          <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-600">JudicialGPT</span>
+          <Scale className="w-3 h-3 text-[#0c9344]" />
+          <span className="text-[10px] font-bold uppercase tracking-widest text-[#0c9344]">JudicialGPT</span>
         </div>
       </div>
 
@@ -610,24 +626,24 @@ const AnimatedChatWidget = () => {
           <div
             className={`flex-1 text-slate-800 font-medium flex items-start pt-0.5 ${isNastaliq
               ? 'nastaliq-question'
-              : 'text-sm md:text-base leading-snug'
+              : 'text-[13px] md:text-sm leading-snug'
               }`}
             style={{
-              minHeight: isNastaliq ? '5.5rem' : '4.5rem',
+              minHeight: '5.5rem',
               ...(!isNastaliq && isRtl ? { direction: 'rtl', textAlign: 'right' } : {}),
             }}
           >
             <span className="whitespace-pre-wrap w-full">
               {typedText}
               {!showResponse && (
-                <span className={`w-0.5 h-4 bg-emerald-500 animate-pulse inline-block align-middle ${isRtl ? 'mr-0.5' : 'ml-0.5'}`} />
+                <span className={`w-0.5 h-4 bg-[#0c9344] animate-pulse inline-block align-middle ${isRtl ? 'mr-0.5' : 'ml-0.5'}`} />
               )}
             </span>
           </div>
 
           {/* Send button */}
           <div
-            className={`shrink-0 ${isRtl ? 'mr-3' : 'ml-3'} mt-0.5 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${buttonClicked ? 'bg-emerald-100' : 'bg-slate-50'
+            className={`shrink-0 ${isRtl ? 'mr-3' : 'ml-3'} mt-0.5 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${buttonClicked ? 'bg-[#0c9344]/15' : 'bg-slate-50'
               }`}
           >
             <ArrowRight className="w-4 h-4 text-slate-400" />
@@ -653,7 +669,7 @@ const AnimatedChatWidget = () => {
         </div>
 
         {/* Answer area — fixed height so card never resizes between languages */}
-        <div className={`overflow-hidden ${isNastaliq ? 'h-[19rem]' : 'h-[14rem]'}`}>
+        <div className="overflow-hidden h-[15rem]">
           <AnimatePresence mode="wait">
             {showResponse && (
               <motion.div
@@ -665,19 +681,19 @@ const AnimatedChatWidget = () => {
                 className="flex items-start gap-3"
                 dir={isRtl ? 'rtl' : 'ltr'}
               >
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-700 flex items-center justify-center shadow-md shadow-emerald-500/30 shrink-0 mt-0.5">
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#0c9344] to-[#0c9344] flex items-center justify-center shadow-md shadow-[#0c9344]/30 shrink-0 mt-0.5">
                   <Scale className="w-[16px] h-[16px] text-white" />
                 </div>
                 <div
-                  className={`flex-1 bg-emerald-50/90 border border-emerald-100 text-slate-700 px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm ${isNastaliq
+                  className={`flex-1 bg-[#0c9344]/10/90 border border-[#0c9344]/15 text-slate-700 px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm ${isNastaliq
                     ? 'nastaliq-text'
-                    : 'text-sm leading-relaxed'
+                    : 'text-[13px] leading-relaxed'
                     }`}
                   style={!isNastaliq && isRtl ? { direction: 'rtl', textAlign: 'right', lineHeight: '1.85' } : {}}
                 >
                   {responseStream}
                   {responseStream.length < current.answer.length && (
-                    <span className={`w-1 h-3.5 bg-emerald-500 animate-pulse inline-block align-middle ${isRtl ? 'mr-0.5' : 'ml-0.5'}`} />
+                    <span className={`w-1 h-3.5 bg-[#0c9344] animate-pulse inline-block align-middle ${isRtl ? 'mr-0.5' : 'ml-0.5'}`} />
                   )}
                 </div>
               </motion.div>
@@ -765,11 +781,11 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.6 }}
-            className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-emerald-200 bg-white/70 backdrop-blur-sm mb-3 lg:mb-4 shadow-sm shadow-emerald-900/5"
+            className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-[#0c9344]/25 bg-white/70 backdrop-blur-sm mb-3 lg:mb-4 shadow-sm shadow-[#0c9344]/5"
           >
-            <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-            <span className="text-emerald-700 text-sm font-medium">AI-Powered Judicial Intelligence Platform</span>
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <Sparkles className="w-3.5 h-3.5 text-[#0c9344]" />
+            <span className="text-[#0c9344] text-sm font-medium">AI-Powered Judicial Intelligence Platform</span>
+            <span className="w-2 h-2 rounded-full bg-[#0c9344] animate-pulse" />
           </motion.div>
 
           {/* Headline */}
@@ -789,7 +805,7 @@ const HeroSection = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -28 }}
                   transition={{ duration: 0.45 }}
-                  className="absolute bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-600 bg-clip-text text-transparent whitespace-nowrap"
+                  className="absolute bg-gradient-to-r from-[#0c9344] via-[#0c9344] to-[#0c9344] bg-clip-text text-transparent whitespace-nowrap"
                 >
                   {heroTopics[currentTopic].title}
                 </motion.span>
@@ -829,7 +845,7 @@ const HeroSection = () => {
               onClick={() => router.push('/chat')}
               whileHover={{ scale: 1.04, boxShadow: '0 20px 48px rgba(16,185,129,0.35)' }}
               whileTap={{ scale: 0.96 }}
-              className="px-8 py-4 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold rounded-xl text-base flex items-center gap-3 shadow-xl shadow-emerald-500/25"
+              className="px-8 py-4 bg-gradient-to-r from-[#0c9344] to-[#0c9344] text-white font-bold rounded-xl text-base flex items-center gap-3 shadow-xl shadow-[#0c9344]/25"
             >
               <Bot className="w-5 h-5" />
               Try AI Assistant Free
@@ -843,7 +859,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.6 }}
-            className="grid grid-cols-2 md:grid-cols-4 w-full max-w-3xl mx-auto lg:mx-0 rounded-2xl overflow-hidden border border-emerald-100 divide-x divide-y md:divide-y-0 divide-emerald-100 bg-white/70 shadow-sm shadow-emerald-900/5"
+            className="grid grid-cols-2 md:grid-cols-4 w-full max-w-3xl mx-auto lg:mx-0 rounded-2xl overflow-hidden border border-[#0c9344]/15 divide-x divide-y md:divide-y-0 divide-emerald-100 bg-white/70 shadow-sm shadow-[#0c9344]/5"
           >
             {heroStats.map((stat, i) => (
               <div key={i} className="backdrop-blur-sm px-3 py-4 md:py-3.5 text-center flex flex-col items-center justify-center relative">
@@ -852,7 +868,7 @@ const HeroSection = () => {
                 </div>
                 <div className="text-[10px] md:text-[11px] text-slate-500 font-medium uppercase tracking-wider">{stat.label}</div>
                 {(stat as any).badge && (
-                  <div className="mt-1.5 px-2 py-0.5 rounded-full bg-emerald-100 border border-emerald-200 text-emerald-700 text-[9px] font-bold uppercase tracking-wider shadow-sm">
+                  <div className="mt-1.5 px-2 py-0.5 rounded-full bg-[#0c9344]/15 border border-[#0c9344]/25 text-[#0c9344] text-[9px] font-bold uppercase tracking-wider shadow-sm">
                     {(stat as any).badge}
                   </div>
                 )}
@@ -898,29 +914,29 @@ const HeroSection = () => {
 // ============================================================================
 const TrustBarSection = () => {
   const trustItems = [
-    { icon: Shield, title: 'Open to All', subtitle: 'Ask Legal Questions', color: 'bg-teal-600' },
-    { icon: Scale, title: 'All-in-One', subtitle: 'Judicial AI Platform', color: 'bg-teal-600' },
-    { icon: Globe, title: 'Multi-language', subtitle: 'Coverage', color: 'bg-teal-600' },
-    { icon: ShieldCheck, title: 'Safe & Secure', subtitle: 'Ad-Free', color: 'bg-teal-600' },
-    { icon: Zap, title: 'Learn Smarter,', subtitle: 'Not Harder', color: 'bg-teal-600' },
-    { icon: DollarSign, title: 'Affordable', subtitle: 'Premium Access', color: 'bg-teal-600' },
+    { icon: Shield, title: 'Open to All', subtitle: 'Ask Legal Questions', color: 'bg-[#0c9344]' },
+    { icon: Scale, title: 'All-in-One', subtitle: 'Judicial AI Platform', color: 'bg-[#0c9344]' },
+    { icon: Globe, title: 'Multi-language', subtitle: 'Coverage', color: 'bg-[#0c9344]' },
+    { icon: ShieldCheck, title: 'Safe & Secure', subtitle: 'Ad-Free', color: 'bg-[#0c9344]' },
+    { icon: Zap, title: 'Learn Smarter,', subtitle: 'Not Harder', color: 'bg-[#0c9344]' },
+    { icon: DollarSign, title: 'Affordable', subtitle: 'Premium Access', color: 'bg-[#0c9344]' },
   ];
 
   const audiences = [
     { label: 'General Public / Citizens', star: 'text-orange-500' },
-    { label: 'Judges', star: 'text-emerald-500' },
+    { label: 'Judges', star: 'text-[#0c9344]' },
     { label: 'Justice Sector Institutions', star: 'text-violet-500' },
     { label: 'Police Investigation Officers (IO)', star: 'text-sky-500' },
     { label: 'Prosecution', star: 'text-rose-500' },
     { label: 'Prisons & Correctional Facilities', star: 'text-amber-500' },
     { label: 'Lawyers', star: 'text-orange-500' },
-    { label: 'Revenue & Land Records', star: 'text-emerald-500' },
+    { label: 'Revenue & Land Records', star: 'text-[#0c9344]' },
     { label: 'Tax & Revenue Authorities', star: 'text-violet-500' },
     { label: 'Banking & Financial Institutions', star: 'text-sky-500' },
     { label: 'District Judiciary', star: 'text-rose-500' },
     { label: "Prosecutor General's Office", star: 'text-amber-500' },
     { label: 'Corporate & Commercial Sector', star: 'text-orange-500' },
-    { label: 'E-Governance & Public Administration', star: 'text-emerald-500' },
+    { label: 'E-Governance & Public Administration', star: 'text-[#0c9344]' },
   ];
 
   const marqueeItems = [...audiences, ...audiences];
@@ -981,38 +997,48 @@ const FeatureCard = ({ icon: Icon, title, description, delay, gradient, glow }: 
   gradient: string;
   glow: string;
 }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 32 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    whileHover={{ boxShadow: '0 20px 48px rgba(16, 185, 129, 0.15)' }}
-    viewport={SCROLL_VIEWPORT}
-    transition={{ duration: 0.55, delay, ease: 'easeOut' }}
+  <div
     className="feature-card group relative bg-white rounded-2xl p-7 border border-slate-200 shadow-sm flex-shrink-0"
     style={{
       width: 'clamp(260px, 28vw, 320px)',
       scrollSnapAlign: 'start',
       boxShadow: '0 4px 18px rgba(16, 185, 129, 0.07)',
+      transition: 'transform 0.25s ease, box-shadow 0.25s ease',
+      willChange: 'transform',
+      isolation: 'isolate',
+      transformOrigin: 'center center',
+      animation: `fadeInUp 0.55s ease-out ${delay}s both`,
+    }}
+    onMouseEnter={e => {
+      const el = e.currentTarget as HTMLElement;
+      el.style.transform = 'scale(1.03)';
+      el.style.boxShadow = '0 20px 48px rgba(12, 147, 68, 0.18)';
+    }}
+    onMouseLeave={e => {
+      const el = e.currentTarget as HTMLElement;
+      el.style.transform = 'scale(1)';
+      el.style.boxShadow = '0 4px 18px rgba(16, 185, 129, 0.07)';
     }}
   >
     {/* Bottom accent line */}
     <div className={`absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r ${gradient}`} />
 
-    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center mb-5 shadow-md transition-transform duration-400`}>
+    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center mb-5 shadow-md`}>
       <Icon className="w-6 h-6 text-white" />
     </div>
     <h3 className="text-base font-bold text-slate-900 mb-2.5">{title}</h3>
     <p className="text-slate-500 text-sm leading-relaxed">{description}</p>
-  </motion.div>
+  </div>
 );
 
 const FeaturesSection = () => {
   const features = [
-    { icon: Brain, title: 'AI Legal Assistant', description: 'Get instant answers to complex legal questions. Our AI breaks down legal jargon into simple, actionable advice.', gradient: 'from-teal-600 to-teal-600', glow: 'rgba(16, 185, 129, 0.18)' },
-    { icon: FileSearch, title: 'Case Research Tool', description: 'Access millions of case precedents and legal documents instantly. Find relevant cases in seconds, not hours.', gradient: 'from-teal-600 to-teal-600', glow: 'rgba(15, 23, 42, 0.18)' },
-    { icon: MessageCircle, title: 'Virtual Consultation', description: '24/7 AI-powered consultation to understand your case, predict outcomes, and provide strategic guidance.', gradient: 'from-teal-600 to-teal-600', glow: 'rgba(148, 163, 184, 0.18)' },
-    { icon: FileText, title: 'Document Analysis', description: 'Upload contracts and legal documents for instant AI analysis. Identify risks, obligations, and key clauses.', gradient: 'from-teal-600 to-teal-600', glow: 'rgba(16, 185, 129, 0.18)' },
-    { icon: Shield, title: 'Privacy Protected', description: 'All conversations are encrypted and private. Option for temporary chats that are never stored.', gradient: 'from-teal-600 to-teal-600', glow: 'rgba(15, 23, 42, 0.18)' },
-    { icon: Globe, title: 'Multi-Platform Access', description: 'Access from any device — web, mobile, or desktop. Seamless experience across all platforms.', gradient: 'from-teal-600 to-teal-600', glow: 'rgba(148, 163, 184, 0.18)' },
+    { icon: Brain, title: 'AI Legal Assistant', description: 'Get instant answers to complex legal questions. Our AI breaks down legal jargon into simple, actionable advice.', gradient: 'from-[#0c9344] to-[#0c9344]', glow: 'rgba(16, 185, 129, 0.18)' },
+    { icon: FileSearch, title: 'Case Research Tool', description: 'Access millions of case precedents and legal documents instantly. Find relevant cases in seconds, not hours.', gradient: 'from-[#0c9344] to-[#0c9344]', glow: 'rgba(15, 23, 42, 0.18)' },
+    { icon: MessageCircle, title: 'Virtual Consultation', description: '24/7 AI-powered consultation to understand your case, predict outcomes, and provide strategic guidance.', gradient: 'from-[#0c9344] to-[#0c9344]', glow: 'rgba(148, 163, 184, 0.18)' },
+    { icon: FileText, title: 'Document Analysis', description: 'Upload contracts and legal documents for instant AI analysis. Identify risks, obligations, and key clauses.', gradient: 'from-[#0c9344] to-[#0c9344]', glow: 'rgba(16, 185, 129, 0.18)' },
+    { icon: Shield, title: 'Privacy Protected', description: 'All conversations are encrypted and private. Option for temporary chats that are never stored.', gradient: 'from-[#0c9344] to-[#0c9344]', glow: 'rgba(15, 23, 42, 0.18)' },
+    { icon: Globe, title: 'Multi-Platform Access', description: 'Access from any device — web, mobile, or desktop. Seamless experience across all platforms.', gradient: 'from-[#0c9344] to-[#0c9344]', glow: 'rgba(148, 163, 184, 0.18)' },
   ];
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -1068,14 +1094,14 @@ const FeaturesSection = () => {
   };
 
   const arrowBtnClass =
-    'absolute top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white border border-slate-200 text-slate-600 shadow-md shadow-slate-900/8 flex items-center justify-center transition-all duration-300 hover:border-emerald-200 hover:text-emerald-600 hover:shadow-lg hover:shadow-emerald-500/15 disabled:opacity-35 disabled:pointer-events-none disabled:shadow-none';
+    'absolute top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white border border-slate-200 text-slate-600 shadow-md shadow-slate-900/8 flex items-center justify-center transition-all duration-300 hover:border-[#0c9344]/25 hover:text-[#0c9344] hover:shadow-lg hover:shadow-[#0c9344]/15 disabled:opacity-35 disabled:pointer-events-none disabled:shadow-none';
 
   return (
-    <section id="features" className="pt-24 pb-12 lg:pt-32 lg:pb-16 bg-slate-50/60">
+    <section id="features" className="py-6 lg:py-8 bg-slate-50/60">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           label="Features"
-          title={<>Innovative Features That<br /><span className="text-emerald-600">Redefine Legal Assistance</span></>}
+          title={<>Innovative Features That<br /><span className="text-[#0c9344]">Redefine Legal Assistance</span></>}
           subtitle="Powered by advanced AI technology trained on millions of legal documents, delivering accurate and reliable legal intelligence."
         />
       </div>
@@ -1114,15 +1140,22 @@ const FeaturesSection = () => {
             WebkitOverflowScrolling: 'touch',
             scrollbarWidth: 'none',
             msOverflowStyle: 'none',
-            paddingBottom: '20px',
-            paddingTop: '8px',
+            paddingBottom: '24px',
+            paddingTop: '12px',
+            touchAction: 'pan-x',
           }}
         >
           {features.map((f, i) => <FeatureCard key={i} {...f} delay={i * 0.08} />)}
         </div>
       </div>
       {/* Hide WebKit scrollbar for this row */}
-      <style>{`.features-scroll::-webkit-scrollbar { display: none; }`}</style>
+      <style>{`
+        .features-scroll::-webkit-scrollbar { display: none; }
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(32px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </section>
   );
 };
@@ -1151,11 +1184,11 @@ const AIToolsSection = () => {
         'NLP',
         'Contextual Understanding',
       ],
-      gradient: 'from-teal-600 to-teal-600',
-      accent: 'bg-emerald-500',
-      accentSoft: 'bg-emerald-50',
-      accentText: 'text-emerald-600',
-      accentBorder: 'border-emerald-200',
+      gradient: 'from-[#0c9344] to-[#0c9344]',
+      accent: 'bg-[#0c9344]',
+      accentSoft: 'bg-[#0c9344]/10',
+      accentText: 'text-[#0c9344]',
+      accentBorder: 'border-[#0c9344]/25',
       glow: 'rgba(16, 185, 129, 0.45)',
       glowSoft: 'rgba(16, 185, 129, 0.12)',
       ring: '#10b981',
@@ -1166,7 +1199,7 @@ const AIToolsSection = () => {
       title: 'Case Prism — Research Tool',
       description: 'Access our proprietary legal research tool for comprehensive case analysis. Search through millions of cases, statutes, and legal documents with advanced filtering and relevance ranking.',
       features: ['Advanced search filters', 'Citation analysis', 'Precedent mapping', 'Export capabilities'],
-      gradient: 'from-teal-600 to-teal-600',
+      gradient: 'from-[#0c9344] to-[#0c9344]',
       accent: 'bg-slate-800',
       accentSoft: 'bg-slate-100',
       accentText: 'text-slate-800',
@@ -1185,7 +1218,7 @@ const AIToolsSection = () => {
       title: 'Virtual Legal Consultant',
       description: '24/7 AI-powered virtual consultation service. Understand your case better, explore potential outcomes, and get strategic recommendations without the wait.',
       features: ['Outcome prediction', 'Strategy suggestions', 'Risk assessment', 'Available 24/7'],
-      gradient: 'from-teal-600 to-teal-600',
+      gradient: 'from-[#0c9344] to-[#0c9344]',
       accent: 'bg-slate-500',
       accentSoft: 'bg-slate-50',
       accentText: 'text-slate-600',
@@ -1211,22 +1244,22 @@ const AIToolsSection = () => {
   const barValues = [bar1, bar2, bar3, bar4];
 
   const marqueeChips = [
-    { label: 'JudicialGPT AI Chatbot', star: 'text-emerald-500' },
+    { label: 'JudicialGPT AI Chatbot', star: 'text-[#0c9344]' },
     { label: 'Case Prism — Research Tool', star: 'text-blue-500' },
     { label: 'Virtual Legal Consultant', star: 'text-violet-500' },
-    { label: 'Real-time Legal Updates', star: 'text-teal-500' },
+    { label: 'Real-time Legal Updates', star: 'text-[#0c9344]' },
     { label: 'Case Law Database', star: 'text-sky-500' },
     { label: 'NLP', star: 'text-amber-500' },
     { label: 'Contextual Understanding', star: 'text-rose-500' },
     { label: 'Advanced Search Filters', star: 'text-indigo-500' },
     { label: 'Citation Analysis', star: 'text-cyan-500' },
-    { label: 'Precedent Mapping', star: 'text-emerald-600' },
+    { label: 'Precedent Mapping', star: 'text-[#0c9344]' },
     { label: 'Export Capabilities', star: 'text-orange-500' },
     { label: 'Outcome Prediction', star: 'text-violet-500' },
     { label: 'Strategy Suggestions', star: 'text-blue-600' },
     { label: 'Risk Assessment', star: 'text-rose-500' },
-    { label: 'Available 24/7', star: 'text-teal-600' },
-    { label: 'PLG', star: 'text-emerald-500' },
+    { label: 'Available 24/7', star: 'text-[#0c9344]' },
+    { label: 'PLG', star: 'text-[#0c9344]' },
   ];
   const marqueeItems = [...marqueeChips, ...marqueeChips];
 
@@ -1238,7 +1271,7 @@ const AIToolsSection = () => {
   });
 
   return (
-    <section ref={sectionRef} id="ai-tools" className="pt-12 pb-12 lg:pt-16 lg:pb-16 bg-[#F7FAF8]">
+    <section ref={sectionRef} id="ai-tools" className="py-6 lg:py-8 bg-[#F7FAF8]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -1248,13 +1281,13 @@ const AIToolsSection = () => {
           transition={{ duration: 0.6, ease: 'easeOut' }}
           className="max-w-3xl mb-10 lg:mb-12"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] mb-5 bg-emerald-50 text-emerald-700 border border-emerald-200">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] mb-5 bg-[#0c9344]/10 text-[#0c9344] border border-[#0c9344]/25">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#0c9344] animate-pulse" />
             AI Tools
           </div>
           <h2 className="font-heading text-4xl md:text-5xl lg:text-[3.15rem] font-semibold leading-[1.12] tracking-tight text-slate-900 mb-4">
             Integrated AI-Powered<br />
-            <span className="text-emerald-600">Legal Solutions</span>
+            <span className="text-[#0c9344]">Legal Solutions</span>
           </h2>
           <p className="text-lg md:text-xl leading-[1.8] text-slate-500">
             Experience the power of AI tools designed specifically for legal professionals and individuals seeking legal guidance.
@@ -1270,18 +1303,18 @@ const AIToolsSection = () => {
             viewport={SCROLL_VIEWPORT}
             transition={{ duration: 0.5 }}
             whileHover={hasMounted ? cardHover(core.glow) : undefined}
-            className="lg:col-span-2 relative rounded-[1.75rem] border border-emerald-100 bg-white p-6 md:p-8 h-full"
+            className="lg:col-span-2 relative rounded-[1.75rem] border border-[#0c9344]/15 bg-white p-6 md:p-8 h-full"
             style={{ boxShadow: `0 10px 40px ${core.glowSoft}` }}
           >
             <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[1.75rem]" aria-hidden>
-              <div className="absolute top-0 right-0 w-72 h-72 rounded-full bg-emerald-400/10 blur-3xl" />
+              <div className="absolute top-0 right-0 w-72 h-72 rounded-full bg-[#0c9344]/10 blur-3xl" />
             </div>
             <div className="relative flex flex-col h-full min-h-[320px]">
               {/* Top: copy aligned to top */}
               <div className="flex flex-col gap-6 md:gap-8 items-start">
                 <div>
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-700 text-[11px] font-bold uppercase tracking-wider mb-4 w-fit">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0c9344]/10 border border-[#0c9344]/15 text-[#0c9344] text-[11px] font-bold uppercase tracking-wider mb-4 w-fit">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#0c9344]" />
                     {core.badge}
                   </div>
                   <h3 className="font-heading text-2xl md:text-3xl font-semibold text-slate-900 tracking-tight mb-3">
@@ -1374,11 +1407,11 @@ const AIToolsSection = () => {
               viewport={SCROLL_VIEWPORT}
               transition={{ duration: 0.5, delay: i * 0.1 }}
               whileHover={hasMounted ? cardHover(tool.glow) : undefined}
-              className="group relative grid grid-rows-[auto_1fr_auto] h-full rounded-[1.5rem] border border-slate-200 hover:border-emerald-300 bg-white px-5 py-6 overflow-hidden transition-colors duration-300"
+              className="group relative grid grid-rows-[auto_1fr_auto] h-full rounded-[1.5rem] border border-slate-200 hover:border-[#0c9344] bg-white px-5 py-6 overflow-hidden transition-colors duration-300"
               style={{ boxShadow: `0 6px 22px rgba(16, 185, 129, 0.10)` }}
             >
               {/* Animated green bottom line */}
-              <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-emerald-400 to-teal-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left rounded-b-[1.5rem]" />
+              <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#0c9344] to-[#0c9344] scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left rounded-b-[1.5rem]" />
 
               <div className={`absolute left-0 top-4 bottom-4 w-1 rounded-full ${tool.accent}`} />
 
@@ -1449,7 +1482,7 @@ const HowItWorksSection = () => {
   ];
 
   return (
-    <section id="how-it-works" className="pt-12 pb-12 lg:pt-16 lg:pb-16 bg-white overflow-hidden">
+    <section id="how-it-works" className="py-6 lg:py-8 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           label="How It Works"
@@ -1459,7 +1492,7 @@ const HowItWorksSection = () => {
 
         <div className="relative max-w-3xl mx-auto mt-20">
           {/* Vertical Line */}
-          <div className="absolute left-6 md:left-1/2 top-4 bottom-4 w-0.5 bg-emerald-200 -translate-x-1/2" />
+          <div className="absolute left-6 md:left-1/2 top-4 bottom-4 w-0.5 bg-[#0c9344]/25 -translate-x-1/2" />
 
           <div className="space-y-16">
             {steps.map((step, i) => {
@@ -1482,7 +1515,7 @@ const HowItWorksSection = () => {
                   {/* Center Marker */}
                   <div className="absolute left-6 md:left-1/2 -translate-x-1/2 flex items-center justify-center">
                     <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-sm font-bold shadow-md transition-colors duration-300 ${isEven
-                      ? 'bg-emerald-500 text-white shadow-emerald-500/25'
+                      ? 'bg-[#0c9344] text-white shadow-[#0c9344]/25'
                       : 'bg-slate-900 text-white shadow-slate-900/25'
                       }`}>
                       {step.number}
@@ -1524,7 +1557,7 @@ const PricingSection = () => {
       features: ['Unlimited AI queries', 'Advanced case research', 'Priority response time', 'Document analysis (50/mo)', 'Priority support', 'Multi-platform access', 'Export capabilities'],
       cta: 'Start Free Trial',
       popular: true,
-      accentGradient: 'from-emerald-500 to-emerald-700',
+      accentGradient: 'from-[#0c9344] to-[#0c9344]',
     },
     {
       name: 'Enterprise',
@@ -1539,11 +1572,11 @@ const PricingSection = () => {
   ];
 
   return (
-    <section id="pricing" className="py-24 lg:py-32 bg-white">
+    <section id="pricing" className="py-6 lg:py-8 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           label="Pricing"
-          title={<>Simple, Transparent<br /><span className="text-emerald-600">Pricing Plans</span></>}
+          title={<>Simple, Transparent<br /><span className="text-[#0c9344]">Pricing Plans</span></>}
           subtitle="Choose the plan that fits your needs. All plans include access to our core AI features with no hidden fees."
         />
 
@@ -1559,13 +1592,13 @@ const PricingSection = () => {
             >
               {plan.popular && (
                 <div className="absolute -top-4 inset-x-0 flex justify-center z-10">
-                  <span className="px-4 py-1.5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-xs font-bold rounded-full shadow-lg shadow-emerald-500/30 uppercase tracking-wide">
+                  <span className="px-4 py-1.5 bg-gradient-to-r from-[#0c9344] to-[#0c9344] text-white text-xs font-bold rounded-full shadow-lg shadow-[#0c9344]/30 uppercase tracking-wide">
                     Most Popular
                   </span>
                 </div>
               )}
               <div className={`h-full rounded-3xl border overflow-hidden shadow-sm transition-all duration-300 ${plan.popular
-                ? 'border-emerald-300 shadow-xl shadow-emerald-500/12 hover:shadow-emerald-500/20'
+                ? 'border-[#0c9344] shadow-xl shadow-[#0c9344]/12 hover:shadow-[#0c9344]/20'
                 : 'border-slate-200 hover:border-slate-300 hover:shadow-md'
                 }`}>
                 <div className={`h-1.5 bg-gradient-to-r ${plan.accentGradient}`} />
@@ -1581,15 +1614,15 @@ const PricingSection = () => {
                   <ul className="space-y-3 mb-8 flex-1">
                     {plan.features.map((feat, fi) => (
                       <li key={fi} className="flex items-center gap-3 text-sm text-slate-600">
-                        <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                          <Check className="w-3 h-3 text-emerald-600" />
+                        <div className="w-5 h-5 rounded-full bg-[#0c9344]/15 flex items-center justify-center flex-shrink-0">
+                          <Check className="w-3 h-3 text-[#0c9344]" />
                         </div>
                         {feat}
                       </li>
                     ))}
                   </ul>
                   <button className={`w-full py-3.5 rounded-xl text-sm font-bold transition-all duration-300 ${plan.popular
-                    ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-md shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:from-emerald-400 hover:to-emerald-500'
+                    ? 'bg-gradient-to-r from-[#0c9344] to-[#0c9344] text-white shadow-md shadow-[#0c9344]/20 hover:shadow-[#0c9344]/40 hover:from-[#0c9344] hover:to-[#0c9344]'
                     : 'bg-slate-100 text-slate-900 hover:bg-slate-200'
                     }`}>
                     {plan.cta}
@@ -1615,7 +1648,7 @@ const StarRating = ({ rating, size = 'w-4 h-4' }: { rating: number; size?: strin
         <span key={i} className={`relative inline-block ${size}`}>
           <Star className={`${size} text-slate-200 fill-slate-200`} />
           <span className="absolute inset-y-0 left-0 overflow-hidden" style={{ width: `${fill * 100}%` }}>
-            <Star className={`${size} text-emerald-500 fill-emerald-500`} />
+            <Star className={`${size} text-[#0c9344] fill-emerald-500`} />
           </span>
         </span>
       );
@@ -1643,9 +1676,9 @@ const TestimonialsSection = () => {
   ];
 
   return (
-    <section id="testimonials" className="relative pt-12 pb-12 lg:pt-16 lg:pb-16 bg-[#F7FAF8] overflow-hidden">
-      <div className="absolute top-0 left-1/3 w-[420px] h-[420px] rounded-full bg-emerald-400/10 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 w-[360px] h-[360px] rounded-full bg-teal-400/10 blur-3xl pointer-events-none" />
+    <section id="testimonials" className="relative py-6 lg:py-8 bg-[#F7FAF8] overflow-hidden">
+      <div className="absolute top-0 left-1/3 w-[420px] h-[420px] rounded-full bg-[#0c9344]/10 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-[360px] h-[360px] rounded-full bg-[#0c9344]/10 blur-3xl pointer-events-none" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
@@ -1656,13 +1689,13 @@ const TestimonialsSection = () => {
           transition={{ duration: 0.6, ease: 'easeOut' }}
           className="text-center max-w-3xl mx-auto mb-12 lg:mb-16"
         >
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.16em] mb-6 bg-white text-emerald-700 border border-emerald-200 shadow-sm">
-            <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.16em] mb-6 bg-white text-[#0c9344] border border-[#0c9344]/25 shadow-sm">
+            <Sparkles className="w-3.5 h-3.5 text-[#0c9344]" />
             Peer-Validated Intelligence
           </div>
           <h2 className="font-heading text-4xl sm:text-5xl md:text-[3.35rem] font-semibold text-slate-900 leading-[1.15] tracking-tight mb-5">
             Trusted by the{' '}
-            <span className="italic font-medium bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-500 bg-clip-text text-transparent">
+            <span className="italic font-medium bg-gradient-to-r from-[#0c9344] via-[#0c9344] to-[#0c9344] bg-clip-text text-transparent">
               Highest Offices
             </span>
           </h2>
@@ -1685,14 +1718,14 @@ const TestimonialsSection = () => {
                 boxShadow: '0 16px 36px rgba(16, 185, 129, 0.20), 0 6px 16px rgba(16, 185, 129, 0.10)',
                 transition: { duration: 0.38, ease: [0.22, 1, 0.36, 1] },
               }}
-              className="group relative flex flex-col rounded-[1.25rem] border border-slate-100 hover:border-emerald-200 bg-white p-8 md:p-10 gap-6 h-full overflow-hidden"
+              className="group relative flex flex-col rounded-[1.25rem] border border-slate-100 hover:border-[#0c9344]/25 bg-white p-8 md:p-10 gap-6 h-full overflow-hidden"
               style={{
                 boxShadow: '0 4px 18px rgba(16, 185, 129, 0.07)',
                 transition: 'box-shadow 0.38s ease, transform 0.38s ease',
               }}
             >
               {/* Animated green bottom line */}
-              <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-emerald-400 to-teal-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+              <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#0c9344] to-[#0c9344] scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
 
               <div className="flex items-center gap-1 shrink-0">
                 <StarRating rating={5} size="w-5 h-5" />
@@ -1786,7 +1819,7 @@ const AnimatedMissionChatWidget = () => {
   }, [convoIndex]);
 
   return (
-    <div className="relative w-full max-w-2xl xl:max-w-3xl mx-auto bg-slate-900 backdrop-blur-xl border border-slate-800 rounded-[2rem] p-8 md:p-10 shadow-2xl shadow-emerald-900/15 text-left">
+    <div className="relative w-full max-w-2xl xl:max-w-3xl mx-auto bg-slate-900 backdrop-blur-xl border border-slate-800 rounded-[2rem] p-8 md:p-10 shadow-2xl shadow-[#0c9344]/15 text-left">
       <div className="absolute inset-0 bg-[radial-gradient(#ffffff1a_1px,transparent_1px)] [background-size:24px_24px] rounded-[2rem] opacity-20" />
 
       <div className="relative z-10 flex flex-col gap-8 min-h-[440px] overflow-hidden">
@@ -1797,7 +1830,7 @@ const AnimatedMissionChatWidget = () => {
           <div className="flex-1 text-slate-800 font-medium text-lg md:text-xl min-h-[2rem] flex items-center">
             <span className="whitespace-pre-wrap leading-snug">
               {typedText}
-              {!showResponse && <span className="w-0.5 h-6 bg-emerald-500 animate-pulse ml-0.5 inline-block align-middle" />}
+              {!showResponse && <span className="w-0.5 h-6 bg-[#0c9344] animate-pulse ml-0.5 inline-block align-middle" />}
             </span>
           </div>
 
@@ -1834,13 +1867,13 @@ const AnimatedMissionChatWidget = () => {
                 className="flex flex-col gap-5"
               >
                 <div className="flex items-start gap-5">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-700 flex items-center justify-center shrink-0 shadow-lg shadow-emerald-600/30">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0c9344] to-[#0c9344] flex items-center justify-center shrink-0 shadow-lg shadow-[#0c9344]/30">
                     <Scale className="w-6 h-6 text-white" />
                   </div>
                   <div className="bg-white/10 backdrop-blur-md border border-white/10 text-white text-lg md:text-xl leading-relaxed p-6 md:p-8 rounded-2xl rounded-tl-sm shadow-inner min-h-[6rem]">
                     {responseStream}
                     {responseStream.length < conversations[convoIndex].response.length && (
-                      <span className="w-2 h-5 bg-emerald-400 animate-pulse ml-1 inline-block align-middle" />
+                      <span className="w-2 h-5 bg-[#0c9344] animate-pulse ml-1 inline-block align-middle" />
                     )}
                   </div>
                 </div>
@@ -1857,7 +1890,7 @@ const AnimatedMissionChatWidget = () => {
 // ABOUT / MISSION SECTION
 // ============================================================================
 const AboutSection = () => (
-  <section id="about" className="pt-12 pb-12 lg:pt-16 lg:pb-16 bg-white">
+  <section id="about" className="py-6 lg:py-8 bg-white">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="grid lg:grid-cols-2 gap-16 items-center">
         {/* Left */}
@@ -1867,13 +1900,13 @@ const AboutSection = () => (
           viewport={SCROLL_VIEWPORT}
           transition={{ duration: 0.6, ease: 'easeOut' }}
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] bg-emerald-50 text-emerald-700 border border-emerald-200 mb-5">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] bg-[#0c9344]/10 text-[#0c9344] border border-[#0c9344]/25 mb-5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#0c9344]" />
             Our Mission
           </div>
           <h2 className="font-heading text-4xl md:text-5xl lg:text-[3.15rem] font-semibold text-slate-900 leading-[1.12] mb-6">
             Making Legal Help<br />
-            <span className="text-emerald-600">Accessible to All</span>
+            <span className="text-[#0c9344]">Accessible to All</span>
           </h2>
           <p className="text-slate-500 text-lg leading-relaxed mb-4">
             We believe that everyone deserves access to quality legal assistance. Our mission is to democratize legal knowledge by leveraging cutting-edge AI technology to make legal research, consultation, and document analysis accessible and affordable for everyone.
@@ -1888,9 +1921,9 @@ const AboutSection = () => (
               { icon: Target, label: 'Highest Benchmark' },
               { icon: Users, label: 'Expert Support' },
             ].map((item, i) => (
-              <div key={i} className="flex items-center gap-3 p-3.5 bg-slate-50 rounded-xl border border-slate-100 hover:border-emerald-200 hover:bg-emerald-50/40 transition-all duration-200">
-                <div className="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                  <item.icon className="w-4 h-4 text-emerald-600" />
+              <div key={i} className="flex items-center gap-3 p-3.5 bg-slate-50 rounded-xl border border-slate-100 hover:border-[#0c9344]/25 hover:bg-[#0c9344]/10/40 transition-all duration-200">
+                <div className="w-9 h-9 rounded-lg bg-[#0c9344]/15 flex items-center justify-center flex-shrink-0">
+                  <item.icon className="w-4 h-4 text-[#0c9344]" />
                 </div>
                 <span className="text-slate-800 font-semibold text-sm">{item.label}</span>
               </div>
@@ -1906,7 +1939,7 @@ const AboutSection = () => (
           transition={{ duration: 0.6, delay: 0.1, ease: 'easeOut' }}
           className="relative lg:pl-10"
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-teal-500/10 rounded-3xl blur-3xl" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#0c9344]/20 to-[#0c9344]/10 rounded-3xl blur-3xl" />
           <div className="relative">
             <AnimatedMissionChatWidget />
           </div>
@@ -1926,8 +1959,8 @@ const IntelligenceDashboardSection = () => {
   const isInView = hasMounted && inView;
 
   const integrity = [
-    { label: 'Highest Benchmark', value: 96, color: 'from-emerald-500 to-teal-500' },
-    { label: 'Privacy First', value: 98, color: 'from-teal-500 to-cyan-500' },
+    { label: 'Highest Benchmark', value: 96, color: 'from-[#0c9344] to-[#0c9344]' },
+    { label: 'Privacy First', value: 98, color: 'from-[#0c9344] to-cyan-500' },
     { label: 'Expert Support', value: 92, color: 'from-blue-500 to-indigo-500' },
     { label: '24/7 Available', value: 99, color: 'from-violet-500 to-purple-500' },
   ];
@@ -1950,8 +1983,8 @@ const IntelligenceDashboardSection = () => {
       title: 'JudicialGPT AI Chatbot',
       badge: 'Core Tool',
       status: 'Active',
-      statusColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-      accent: 'bg-emerald-500',
+      statusColor: 'bg-[#0c9344]/10 text-[#0c9344] border-[#0c9344]/25',
+      accent: 'bg-[#0c9344]',
       text: 'Our AI chatbot is trained on an extensive database of legal cases and can fetch real-time updates including new judgments and amendments.',
     },
     {
@@ -2024,10 +2057,10 @@ const IntelligenceDashboardSection = () => {
     <section
       ref={sectionRef}
       id="intelligence"
-      className="py-24 lg:py-32 bg-[#F7FAF8] relative overflow-hidden"
+      className="py-6 lg:py-8 bg-[#F7FAF8] relative overflow-hidden"
     >
-      <div className="absolute top-0 right-0 w-[420px] h-[420px] rounded-full bg-emerald-400/10 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[360px] h-[360px] rounded-full bg-teal-400/10 blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-0 w-[420px] h-[420px] rounded-full bg-[#0c9344]/10 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[360px] h-[360px] rounded-full bg-[#0c9344]/10 blur-3xl pointer-events-none" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
@@ -2038,13 +2071,13 @@ const IntelligenceDashboardSection = () => {
           transition={{ duration: 0.6, ease: 'easeOut' }}
           className="max-w-2xl mb-10 lg:mb-12"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] mb-5 bg-emerald-50 text-emerald-700 border border-emerald-200">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] mb-5 bg-[#0c9344]/10 text-[#0c9344] border border-[#0c9344]/25">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#0c9344] animate-pulse" />
             AI-Powered Legal Intelligence Platform
           </div>
           <h2 className="font-heading text-4xl md:text-5xl lg:text-[3.15rem] font-semibold leading-[1.12] tracking-tight text-slate-900 mb-4">
             Legal Intelligence<br />
-            <span className="text-emerald-600">Dashboard</span>
+            <span className="text-[#0c9344]">Dashboard</span>
           </h2>
           <p className="text-lg leading-relaxed text-slate-500">
             Experience the power of AI tools designed specifically for legal professionals and individuals seeking legal guidance.
@@ -2060,7 +2093,7 @@ const IntelligenceDashboardSection = () => {
             viewport={SCROLL_VIEWPORT}
             transition={{ duration: 0.5 }}
             whileHover={cardHover('rgba(16, 185, 129, 0.28)')}
-            className="lg:col-span-2 relative rounded-[1.75rem] border border-emerald-100 bg-white p-6 md:p-8 overflow-hidden"
+            className="lg:col-span-2 relative rounded-[1.75rem] border border-[#0c9344]/15 bg-white p-6 md:p-8 overflow-hidden"
             style={{ boxShadow: '0 10px 36px rgba(16, 185, 129, 0.08)' }}
           >
             <div className="flex flex-wrap items-start justify-between gap-4 mb-5">
@@ -2068,15 +2101,15 @@ const IntelligenceDashboardSection = () => {
                 <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400 mb-2">Documents Analyzed</p>
                 <div className="flex items-end gap-3">
                   <span className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">2.4M</span>
-                  <span className="text-sm font-semibold text-emerald-600 mb-1.5">Legal Documents</span>
+                  <span className="text-sm font-semibold text-[#0c9344] mb-1.5">Legal Documents</span>
                 </div>
               </div>
               <div className="flex items-center gap-4 text-xs font-medium text-slate-500">
                 <span className="inline-flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500" /> Legal Research
+                  <span className="w-2 h-2 rounded-full bg-[#0c9344]" /> Legal Research
                 </span>
                 <span className="inline-flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-teal-400" /> Case Analysis
+                  <span className="w-2 h-2 rounded-full bg-[#0c9344]" /> Case Analysis
                 </span>
               </div>
             </div>
@@ -2236,7 +2269,7 @@ const IntelligenceDashboardSection = () => {
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-extrabold text-slate-900">System Integrity</h3>
-                <Target className="w-4 h-4 text-emerald-500" />
+                <Target className="w-4 h-4 text-[#0c9344]" />
               </div>
               <div className="space-y-3.5">
                 {integrity.map((item, i) => (
@@ -2267,7 +2300,7 @@ const IntelligenceDashboardSection = () => {
               viewport={SCROLL_VIEWPORT}
               transition={{ duration: 0.5, delay: 0.14 }}
               whileHover={cardHover('rgba(16, 185, 129, 0.28)')}
-              className="rounded-[1.5rem] border border-emerald-100 bg-white p-5 md:p-6"
+              className="rounded-[1.5rem] border border-[#0c9344]/15 bg-white p-5 md:p-6"
               style={{ boxShadow: '0 8px 24px rgba(16, 185, 129, 0.10)' }}
             >
               <div className="flex items-start justify-between mb-3">
@@ -2275,15 +2308,15 @@ const IntelligenceDashboardSection = () => {
                   <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Platform Status</p>
                   <h3 className="text-2xl font-black text-slate-900">Operational</h3>
                 </div>
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0c9344] to-[#0c9344] flex items-center justify-center shadow-md">
                   <ShieldCheck className="w-5 h-5 text-white" />
                 </div>
               </div>
               <p className="text-sm text-slate-500 leading-relaxed mb-4">
                 24/7 AI Availability — secure and confidential assistance for every legal query.
               </p>
-              <div className="flex items-center gap-2 text-xs font-semibold text-emerald-700">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <div className="flex items-center gap-2 text-xs font-semibold text-[#0c9344]">
+                <span className="w-2 h-2 rounded-full bg-[#0c9344] animate-pulse" />
                 Highest Accuracy Rate
               </div>
             </motion.div>
@@ -2361,7 +2394,7 @@ const IntelligenceDashboardSection = () => {
           >
             <div className="flex items-center justify-between mb-5">
               <h3 className="text-base font-extrabold text-slate-900">Critical AI Insights</h3>
-              <Sparkles className="w-4 h-4 text-emerald-500" />
+              <Sparkles className="w-4 h-4 text-[#0c9344]" />
             </div>
             <div className="space-y-4">
               {insights.map((item) => (
@@ -2395,8 +2428,8 @@ const IntelligenceDashboardSection = () => {
 // ============================================================================
 const TeamSection = () => {
   const teamMembers = [
-    { name: 'Prof. Dr. M. Usman Ghani Khan', role: 'Founder', badge: 'Founder', bio: 'Founded JudicialGPT to make quality legal assistance accessible through AI. Sets company strategy, product vision, and partnerships while guiding the team to build trustworthy legal technology.', photoUrl: '/DR_Usman.jpeg', gradient: 'from-emerald-500 to-teal-600', initials: 'UG' },
-    { name: 'Ayesha Azam', role: 'Team Lead', badge: 'Leadership', bio: 'Coordinates engineering delivery, sprint planning, and cross-functional collaboration to ship reliable AI-powered legal features on time and at scale.', photoUrl: '/Ayesha.png', gradient: 'from-emerald-500 to-teal-600', initials: 'AA' },
+    { name: 'Prof. Dr. M. Usman Ghani Khan', role: 'Founder', badge: 'Founder', bio: 'Founded JudicialGPT to make quality legal assistance accessible through AI. Sets company strategy, product vision, and partnerships while guiding the team to build trustworthy legal technology.', photoUrl: '/DR_Usman.jpeg', gradient: 'from-[#0c9344] to-[#0c9344]', initials: 'UG' },
+    { name: 'Ayesha Azam', role: 'Team Lead', badge: 'Leadership', bio: 'Coordinates engineering delivery, sprint planning, and cross-functional collaboration to ship reliable AI-powered legal features on time and at scale.', photoUrl: '/Ayesha.png', gradient: 'from-[#0c9344] to-[#0c9344]', initials: 'AA' },
     { name: 'Syed Ali Hassan', role: 'Lead Developer / AI Engineer', badge: 'Engineering & AI', bio: 'Architects the full-stack platform and fine-tunes AI models for legal document analysis, case summarization, and intelligent query responses.', photoUrl: '/ali.jpg', gradient: 'from-blue-500 to-indigo-600', initials: 'AH' },
     { name: 'Laiba Saleem', role: 'Data Analyst', badge: 'Data & Analytics', bio: 'Analyzes user engagement metrics, legal dataset patterns, and AI model performance to drive data-informed product decisions and improvements.', photoUrl: '/laiba.png', gradient: 'from-rose-500 to-pink-600', initials: 'LS' },
     { name: 'Zubaid Rasool', role: 'Full-Stack & DevOps Engineer', badge: 'Dev & DevOps', bio: 'Builds and maintains frontend and backend features while managing CI/CD pipelines, server infrastructure, and deployment workflows on the cloud.', photoUrl: '/Zubaid.png', gradient: 'from-purple-500 to-violet-600', initials: 'ZR' },
@@ -2404,10 +2437,10 @@ const TeamSection = () => {
   ];
 
   return (
-    <section id="team" className="relative py-24 bg-slate-50 border-t border-slate-200">
+    <section id="team" className="relative py-6 lg:py-8 bg-slate-50 border-t border-slate-200">
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-16 flex flex-col items-center">
+        <div className="text-center mb-6 lg:mb-8 flex flex-col items-center">
           <motion.div
             initial={{ opacity: 0, y: 32 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -2455,14 +2488,27 @@ const TeamSection = () => {
               </div>
 
               {/* Hover Overlay (Slides from left) */}
-              <div className="absolute inset-0 bg-emerald-900/90 backdrop-blur-sm transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out z-20 pointer-events-none rounded-[4rem]" />
+              <div className="absolute inset-0 bg-[#0c9344]/90 backdrop-blur-sm transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out z-20 pointer-events-none rounded-[4rem]" />
 
-              {/* Hover Content (Fades in) */}
-              <div className="absolute inset-0 z-30 flex items-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-[50ms] pl-[140px] pr-6 py-4 pointer-events-auto">
-                <div className="flex flex-col h-full justify-center min-w-0 w-full">
-                  <p className="text-emerald-300 text-xs font-semibold mb-2 leading-snug shrink-0">{member.role}</p>
+              {/* Hover Content (Fades in) — starts from left with the avatar visible */}
+              <div className="absolute inset-0 z-30 flex items-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-[50ms] pl-4 pr-5 py-4 pointer-events-auto gap-4">
+                {/* Avatar stays visible on hover */}
+                <div className="w-[108px] h-[108px] shrink-0 rounded-full overflow-hidden border-2 border-white/40 shadow-md bg-slate-100">
+                  {member.photoUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={member.photoUrl} alt={member.name} className="w-full h-full object-cover object-top" />
+                  ) : (
+                    <div className={`w-full h-full flex items-center justify-center bg-gradient-to-br ${member.gradient}`}>
+                      <span className="text-2xl font-black text-white">{member.initials}</span>
+                    </div>
+                  )}
+                </div>
+                {/* Text content */}
+                <div className="flex flex-col h-full justify-center min-w-0 flex-1">
+                  <p className="text-white font-bold text-[14px] leading-tight mb-0.5">{member.name}</p>
+                  <p className="text-white/80 text-[12px] font-semibold mb-2 leading-snug">{member.role}</p>
                   <div className="overflow-y-auto flex-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                    <p className="text-emerald-50/95 text-[12px] leading-relaxed text-pretty pb-1">
+                    <p className="text-white/90 text-[12px] leading-relaxed text-pretty pb-1">
                       {member.bio}
                     </p>
                   </div>
@@ -2492,7 +2538,7 @@ const CTASection = () => {
           className="relative rounded-3xl overflow-hidden"
         >
           {/* Background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-900" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#0c9344] via-[#0c9344] to-[#0c9344]" />
           <div className="absolute inset-0"
             style={{
               backgroundImage: `radial-gradient(circle at 2px 2px, rgba(255,255,255,0.07) 1px, transparent 0)`,
@@ -2529,7 +2575,7 @@ const CTASection = () => {
                 onClick={() => router.push('/signup')}
                 whileHover={{ scale: 1.04, boxShadow: '0 20px 48px rgba(16, 185, 129, 0.35)' }}
                 whileTap={{ scale: 0.96 }}
-                className="px-8 py-4 bg-white text-emerald-700 font-extrabold rounded-xl text-base flex items-center gap-3 shadow-xl"
+                className="px-8 py-4 bg-white text-[#0c9344] font-extrabold rounded-xl text-base flex items-center gap-3 shadow-xl"
               >
                 Get Started Free
                 <ArrowRight className="w-4 h-4" />
@@ -2574,7 +2620,7 @@ const VideoSection = () => {
             className="relative"
           >
             {/* Decorative background glows behind video */}
-            <div className="absolute -inset-4 bg-gradient-to-tr from-emerald-500/20 to-teal-500/20 blur-2xl rounded-[2.5rem]" />
+            <div className="absolute -inset-4 bg-gradient-to-tr from-[#0c9344]/20 to-[#0c9344]/20 blur-2xl rounded-[2.5rem]" />
 
             <div className="relative rounded-3xl overflow-hidden border border-white/60 shadow-2xl shadow-slate-900/10 bg-white/50 backdrop-blur-md">
               <div className="relative w-full pb-[56.25%]"> {/* 16:9 Aspect Ratio */}
@@ -2587,7 +2633,7 @@ const VideoSection = () => {
                   src="https://assets.mixkit.co/videos/preview/mixkit-abstract-technology-network-connection-background-24624-large.mp4"
                 />
                 {/* Glassmorphism overlay gradient on video to make it premium */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-emerald-900/20 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-tr from-[#0c9344]/20 to-transparent pointer-events-none" />
               </div>
             </div>
           </motion.div>
@@ -2599,13 +2645,13 @@ const VideoSection = () => {
             viewport={SCROLL_VIEWPORT}
             transition={{ duration: 0.6, delay: 0.15, ease: 'easeOut' }}
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-700 text-[11px] font-bold uppercase tracking-[0.15em] mb-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0c9344]/10 border border-[#0c9344]/15 text-[#0c9344] text-[11px] font-bold uppercase tracking-[0.15em] mb-6">
               <Sparkles className="w-3.5 h-3.5" />
               See JudicialGPT in Action
             </div>
 
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-slate-900 mb-6 leading-tight tracking-tight">
-              Experience the Future of <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">AI-Powered Legal Assistance</span>
+              Experience the Future of <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0c9344] to-[#0c9344]">AI-Powered Legal Assistance</span>
             </h2>
 
             <p className="text-slate-600 text-lg leading-relaxed mb-8">
@@ -2615,8 +2661,8 @@ const VideoSection = () => {
             <ul className="space-y-4">
               {features.map((feature, idx) => (
                 <li key={idx} className="flex items-center gap-4">
-                  <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
-                    <Check className="w-4 h-4 text-emerald-600" />
+                  <div className="w-8 h-8 rounded-full bg-[#0c9344]/15 flex items-center justify-center shrink-0">
+                    <Check className="w-4 h-4 text-[#0c9344]" />
                   </div>
                   <span className="text-slate-700 font-medium text-base">{feature}</span>
                 </li>
@@ -2645,8 +2691,8 @@ export default function HomePage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#080E1C]">
         <div className="relative">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500" />
-          <Scale className="absolute inset-0 m-auto w-5 h-5 text-emerald-500" />
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0c9344]" />
+          <Scale className="absolute inset-0 m-auto w-5 h-5 text-[#0c9344]" />
         </div>
       </div>
     );

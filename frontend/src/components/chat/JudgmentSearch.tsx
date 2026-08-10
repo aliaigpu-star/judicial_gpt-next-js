@@ -297,7 +297,7 @@ export default function JudgmentSearch() {
     const getStatusIcon = (status: string) => {
         switch (status) {
             case 'success':
-                return <CheckCircle2 className="w-3.5 h-3.5 text-[#10a37f]" />;
+                return <CheckCircle2 className="w-3.5 h-3.5 text-[#0c9344]" />;
             case 'blocked':
                 return <ShieldAlert className="w-3.5 h-3.5 text-[#f59e0b]" />;
             case 'error':
@@ -310,7 +310,7 @@ export default function JudgmentSearch() {
     const getStatusBadgeClass = (status: string) => {
         switch (status) {
             case 'success':
-                return 'bg-[#10a37f]/10 text-[#10a37f] border-[#10a37f]/20';
+                return 'bg-[#0c9344]/10 text-[#0c9344] border-[#0c9344]/20';
             case 'blocked':
                 return 'bg-[#f59e0b]/10 text-[#f59e0b] border-[#f59e0b]/20';
             case 'error':
@@ -330,10 +330,10 @@ export default function JudgmentSearch() {
     // Input form — must be declared before emptyState
     const inputForm = (
         <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }} className="max-w-3xl mx-auto">
-            <div className="relative flex items-center gap-2 rounded-3xl px-3 py-2 transition-colors shadow-sm bg-[#f4f4f4] dark:bg-[#2f2f2f] border border-[#e5e5e5] dark:border-[#424242] focus-within:border-[#10a37f]/50 dark:focus-within:border-[#10a37f]/40">
+            <div className="relative flex items-center gap-2 rounded-3xl px-3 py-2 transition-colors shadow-sm bg-[#f4f4f4] dark:bg-[#2f2f2f] border border-[#e5e5e5] dark:border-[#424242] focus-within:border-[#0c9344]/50 dark:focus-within:border-[#0c9344]/40">
                 {/* Scale icon */}
                 <div className="p-1.5">
-                    <Scale className="w-5 h-5 text-[#10a37f]" />
+                    <Scale className="w-5 h-5 text-[#0c9344]" />
                 </div>
 
                 {/* Text input */}
@@ -376,11 +376,11 @@ export default function JudgmentSearch() {
                         className="flex items-center gap-2 mt-3 px-2"
                     >
                         <div className="flex gap-1">
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#10a37f] animate-bounce" style={{ animationDelay: '0ms' }} />
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#10a37f] animate-bounce" style={{ animationDelay: '150ms' }} />
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#10a37f] animate-bounce" style={{ animationDelay: '300ms' }} />
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#0c9344] animate-bounce" style={{ animationDelay: '0ms' }} />
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#0c9344] animate-bounce" style={{ animationDelay: '150ms' }} />
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#0c9344] animate-bounce" style={{ animationDelay: '300ms' }} />
                         </div>
-                        <span className="text-sm text-[#10a37f]">{searchProgress}</span>
+                        <span className="text-sm text-[#0c9344]">{searchProgress}</span>
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -419,8 +419,8 @@ export default function JudgmentSearch() {
             >
                 {/* Icon */}
                 <div className="flex justify-center mb-4">
-                    <div className="w-10 h-10 rounded-full bg-[#10a37f]/10 flex items-center justify-center">
-                        <Scale className="w-5 h-5 text-[#10a37f]" />
+                    <div className="w-10 h-10 rounded-full bg-[#0c9344]/10 flex items-center justify-center">
+                        <Scale className="w-5 h-5 text-[#0c9344]" />
                     </div>
                 </div>
 
@@ -445,7 +445,7 @@ export default function JudgmentSearch() {
                             }}
                             className="px-3.5 py-2 rounded-xl text-left text-xs border border-[#e5e5e5] dark:border-[#424242] text-[#666666] dark:text-[#b4b4b4] hover:bg-[#f4f4f4] dark:hover:bg-[#2f2f2f] hover:text-[#0d0d0d] dark:hover:text-[#ececec] transition-all duration-200 shadow-sm flex items-center gap-2"
                         >
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#10a37f]/50 flex-shrink-0" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#0c9344]/50 flex-shrink-0" />
                             <span className="line-clamp-2">{suggestion}</span>
                         </motion.button>
                     ))}
@@ -482,7 +482,7 @@ export default function JudgmentSearch() {
                                         {/* User query */}
                                         <div className="flex items-start gap-4 flex-row-reverse py-2">
                                             <div className="flex-shrink-0 mt-0.5">
-                                                <div className="w-7 h-7 rounded-full bg-[#10a37f] flex items-center justify-center text-xs font-medium text-white">
+                                                <div className="w-7 h-7 rounded-full bg-[#0c9344] flex items-center justify-center text-xs font-medium text-white">
                                                     <Search className="w-3.5 h-3.5" />
                                                 </div>
                                             </div>
@@ -556,14 +556,14 @@ export default function JudgmentSearch() {
                                         {/* AI response */}
                                         <div className="flex items-start gap-4 py-2">
                                             <div className="flex-shrink-0 mt-0.5">
-                                                <div className="w-7 h-7 rounded-sm bg-[#10a37f] flex items-center justify-center">
+                                                <div className="w-7 h-7 rounded-sm bg-[#0c9344] flex items-center justify-center">
                                                     <Scale className="w-4 h-4 text-white" />
                                                 </div>
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 {/* Sources summary badge */}
                                                 <div className="flex flex-wrap items-center gap-2 mb-3">
-                                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#10a37f]/10 text-[#10a37f] border border-[#10a37f]/20">
+                                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#0c9344]/10 text-[#0c9344] border border-[#0c9344]/20">
                                                         <CheckCircle2 className="w-3 h-3" />
                                                         {item.result.successful_sources} sources found
                                                     </span>
@@ -594,7 +594,7 @@ export default function JudgmentSearch() {
                                                         title="Copy response"
                                                     >
                                                         {copiedId === item.id ? (
-                                                            <Check className="w-4 h-4 text-[#10a37f]" />
+                                                            <Check className="w-4 h-4 text-[#0c9344]" />
                                                         ) : (
                                                             <Copy className="w-4 h-4 text-[#666666] dark:text-[#b4b4b4]" />
                                                         )}
@@ -710,13 +710,13 @@ export default function JudgmentSearch() {
                                     className="flex items-start gap-4 py-2 mb-4"
                                 >
                                     <div className="flex-shrink-0 mt-0.5">
-                                        <div className="w-7 h-7 rounded-sm bg-[#10a37f] flex items-center justify-center">
+                                        <div className="w-7 h-7 rounded-sm bg-[#0c9344] flex items-center justify-center">
                                             <Scale className="w-4 h-4 text-white animate-pulse" />
                                         </div>
                                     </div>
                                     <div className="flex-1">
                                         <div className="flex items-center gap-3">
-                                            <Loader2 className="w-4 h-4 text-[#10a37f] animate-spin" />
+                                            <Loader2 className="w-4 h-4 text-[#0c9344] animate-spin" />
                                             <span className="text-sm text-[#666666] dark:text-[#b4b4b4]">
                                                 {searchProgress || 'Searching...'}
                                             </span>

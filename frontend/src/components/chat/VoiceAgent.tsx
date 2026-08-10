@@ -300,9 +300,9 @@ export default function VoiceAgent({ onClose, onGetAIResponse, isOpen }: VoiceAg
         switch (voiceState.status) {
             case 'listening': return 'bg-gradient-to-br from-red-500 to-red-600 animate-pulse shadow-red-500/50';
             case 'processing': return 'bg-gradient-to-br from-amber-400 to-amber-500 shadow-amber-400/50';
-            case 'speaking': return 'bg-gradient-to-br from-emerald-400 to-emerald-500 shadow-emerald-400/50';
+            case 'speaking': return 'bg-gradient-to-br from-[#0c9344] to-[#0c9344] shadow-[#0c9344]/50';
             case 'error': return 'bg-gradient-to-br from-red-600 to-red-700';
-            default: return 'bg-gradient-to-br from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500';
+            default: return 'bg-gradient-to-br from-[#0c9344] to-[#0c9344] hover:from-[#0c9344] hover:to-[#0c9344]';
         }
     };
 
@@ -346,15 +346,15 @@ export default function VoiceAgent({ onClose, onGetAIResponse, isOpen }: VoiceAg
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Background gradient effects */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-blue-500/5 pointer-events-none" />
-                        <div className="absolute -top-32 -right-32 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+                        <div className="absolute inset-0 bg-gradient-to-br from-[#0c9344]/5 via-transparent to-blue-500/5 pointer-events-none" />
+                        <div className="absolute -top-32 -right-32 w-64 h-64 bg-[#0c9344]/10 rounded-full blur-3xl pointer-events-none" />
                         <div className="absolute -bottom-32 -left-32 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
 
                         {/* Header */}
                         <div className="relative flex items-center justify-between mb-8">
                             <div className="flex items-center gap-4">
                                 <motion.div 
-                                    className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center relative shadow-lg shadow-emerald-500/30"
+                                    className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#0c9344] to-[#0c9344] flex items-center justify-center relative shadow-lg shadow-[#0c9344]/30"
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                 >
@@ -415,7 +415,7 @@ export default function VoiceAgent({ onClose, onGetAIResponse, isOpen }: VoiceAg
                                                         }}
                                                         className={`w-full px-4 py-2.5 text-left text-sm flex items-center gap-3 transition-colors ${
                                                             selectedVoice === voice.id
-                                                                ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400'
+                                                                ? 'bg-[#0c9344]/10 dark:bg-[#0c9344]/30 text-[#0c9344] dark:text-[#0c9344]'
                                                                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
                                                         }`}
                                                     >
@@ -506,7 +506,7 @@ export default function VoiceAgent({ onClose, onGetAIResponse, isOpen }: VoiceAg
                                             animate={{ opacity: [0, 0.3, 0], scale: [1, 1.3, 1.6] }}
                                             exit={{ opacity: 0 }}
                                             transition={{ duration: 1.5, repeat: Infinity, ease: "easeOut" }}
-                                            className="absolute w-32 h-32 rounded-full bg-emerald-500/30"
+                                            className="absolute w-32 h-32 rounded-full bg-[#0c9344]/30"
                                         />
                                     </>
                                 )}
@@ -576,7 +576,7 @@ export default function VoiceAgent({ onClose, onGetAIResponse, isOpen }: VoiceAg
                                             initial={{ opacity: 0 }}
                                             animate={{ opacity: 1 }}
                                             exit={{ opacity: 0 }}
-                                            className="flex items-center justify-center gap-2 text-sm text-emerald-600 dark:text-emerald-400"
+                                            className="flex items-center justify-center gap-2 text-sm text-[#0c9344] dark:text-[#0c9344]"
                                         >
                                             <Volume2 className="w-4 h-4 animate-pulse" />
                                             <span>Speaking response...</span>

@@ -68,7 +68,7 @@ export default function SharedChatPage() {
         return (
             <div className="min-h-screen bg-white dark:bg-black flex items-center justify-center">
                 <div className="flex flex-col items-center gap-4">
-                    <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
+                    <Loader2 className="w-8 h-8 animate-spin text-[#0c9344]" />
                     <p className="text-gray-600 dark:text-gray-400">Loading shared chat...</p>
                 </div>
             </div>
@@ -86,7 +86,7 @@ export default function SharedChatPage() {
                     <p className="text-gray-600 dark:text-gray-400 mb-6">{error}</p>
                     <Link
                         href="/"
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-[#0c9344] text-white rounded-lg hover:bg-[#0c9344] transition-colors"
                     >
                         <ExternalLink className="w-4 h-4" />
                         Try JudicialGPT
@@ -111,7 +111,7 @@ export default function SharedChatPage() {
                                     const target = e.currentTarget;
                                     const parent = target.parentElement;
                                     if (parent) {
-                                        parent.className = 'w-8 h-8 rounded-full bg-emerald-700 flex items-center justify-center';
+                                        parent.className = 'w-8 h-8 rounded-full bg-[#0c9344] flex items-center justify-center';
                                         parent.innerHTML = '<div class="text-white text-xs font-bold" style="font-family: \'Century\', \'Century Gothic\', \'Times New Roman\', serif">JG</div>';
                                     }
                                 }}
@@ -132,8 +132,8 @@ export default function SharedChatPage() {
                             <span>{data?.viewCount} views</span>
                         </div>
                         <Link
-                            href="/signup"
-                            className="px-3 py-1.5 bg-emerald-600 text-white text-sm rounded-lg hover:bg-emerald-700 transition-colors"
+                            href="/register"
+                            className="px-3 py-1.5 bg-[#0c9344] text-white text-sm rounded-lg hover:bg-[#0c9344] transition-colors"
                         >
                             Try JudicialGPT
                         </Link>
@@ -156,7 +156,7 @@ export default function SharedChatPage() {
                                 {/* Avatar */}
                                 <div className="flex-shrink-0">
                                     {message.role === 'user' ? (
-                                        <div className="w-7 h-7 rounded-full bg-emerald-500 flex items-center justify-center text-xs font-medium text-white">
+                                        <div className="w-7 h-7 rounded-full bg-[#0c9344] flex items-center justify-center text-xs font-medium text-white">
                                             U
                                         </div>
                                     ) : (
@@ -169,7 +169,7 @@ export default function SharedChatPage() {
                                                     const target = e.currentTarget;
                                                     const parent = target.parentElement;
                                                     if (parent) {
-                                                        parent.className = 'w-7 h-7 rounded-full bg-emerald-700 flex items-center justify-center';
+                                                        parent.className = 'w-7 h-7 rounded-full bg-[#0c9344] flex items-center justify-center';
                                                         parent.innerHTML = '<div class="text-white text-xs font-bold" style="font-family: \'Century\', \'Century Gothic\', \'Times New Roman\', serif">JG</div>';
                                                     }
                                                 }}
@@ -205,7 +205,7 @@ export default function SharedChatPage() {
                 </div>
 
                 {/* CTA */}
-                <div className="mt-8 p-6 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-xl text-center">
+                <div className="mt-8 p-6 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-[#0c9344]/20 dark:to-[#0c9344]/20 rounded-xl text-center">
                     <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                         Want to create your own legal research?
                     </h2>
@@ -213,8 +213,8 @@ export default function SharedChatPage() {
                         JudicialGPT helps you research legal cases, analyze documents, and get answers to your legal questions.
                     </p>
                     <Link
-                        href="/signup"
-                        className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors font-medium"
+                        href="/register"
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-[#0c9344] text-white rounded-lg hover:bg-[#0c9344] transition-colors font-medium"
                     >
                         Get Started for Free
                         <ExternalLink className="w-4 h-4" />
@@ -225,7 +225,7 @@ export default function SharedChatPage() {
             {/* Footer */}
             <footer className="border-t border-gray-200 dark:border-gray-800 py-4 mt-8">
                 <p className="text-center text-sm text-gray-500 dark:text-gray-400">
-                    Powered by <span className="text-emerald-600 font-medium">JudicialGPT</span>
+                    Powered by <span className="text-[#0c9344] font-medium">JudicialGPT</span>
                 </p>
             </footer>
         </div>

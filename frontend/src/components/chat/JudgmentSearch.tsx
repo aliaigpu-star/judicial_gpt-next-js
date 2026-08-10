@@ -96,11 +96,18 @@ export default function JudgmentSearch() {
             }
         }, 3000);
 
+        // Without a timeout, a slow/unresponsive agent leaves this fetch
+        // pending forever, which keeps regeneratingId/isSearching stuck true
+        // and the regenerate/search spinner spinning indefinitely.
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 90000); // 90 second timeout
+
         try {
             const response = await fetch(`${JUDGMENT_API_URL}/search`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ query: searchQuery, max_results: 8 }),
+                signal: controller.signal,
             });
 
             if (!response.ok) {
@@ -109,7 +116,13 @@ export default function JudgmentSearch() {
             }
 
             return await response.json();
+        } catch (err: any) {
+            if (err.name === 'AbortError') {
+                throw new Error('Search timed out. Please try again.');
+            }
+            throw err;
         } finally {
+            clearTimeout(timeoutId);
             clearInterval(progressInterval);
         }
     };

@@ -312,9 +312,6 @@ export default function ConversationPage() {
                         : m
                 )
             } : null);
-            
-            // Still reload to ensure everything is in sync, but the UI is already updated
-            loadConversation(conversationId);
         } catch (error) {
             console.error('Failed to regenerate:', error);
         } finally {

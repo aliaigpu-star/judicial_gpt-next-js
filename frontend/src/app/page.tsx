@@ -2452,8 +2452,8 @@ const TeamSection = () => {
   const teamMembers = [
     { name: 'Prof. Dr. M. Usman Ghani Khan', role: 'Founder', badge: 'Founder', bio: 'Founded JudicialGPT to make quality legal assistance accessible through AI. Sets company strategy, product vision, and partnerships while guiding the team to build trustworthy legal technology.', photoUrl: '/DR_Usman.jpeg', gradient: 'from-emerald-500 to-teal-600', initials: 'UG' },
     { name: 'Syed Ali Hassan', role: 'Lead Developer / AI Engineer', badge: 'Engineering & AI', bio: 'Architects the full-stack platform and fine-tunes AI models for legal document analysis, case summarization, and intelligent query responses.', photoUrl: '/ali.jpg', gradient: 'from-blue-500 to-indigo-600', initials: 'AH' },
-    { name: 'Zubaid Rasool', role: 'Full-Stack & DevOps Engineer', badge: 'Dev & DevOps', bio: 'Builds and maintains frontend and backend features while managing CI/CD pipelines, server infrastructure, and deployment workflows on the cloud.', photoUrl: '/Zubaid.png', gradient: 'from-purple-500 to-violet-600', initials: 'ZR' },
     { name: 'Dr. Abdul Nasir', role: 'Legal Domain Expert', badge: 'Domain Expert', bio: "A legal practitioner for providing judicial domain expertise to validate legal accuracy, guide court-relevant content, and ensure JudicialGPT meets professional standards.", photoUrl: '/dr_abdul_nasir.jpg', icon: Scale, gradient: 'from-amber-500 to-orange-600', initials: 'AN' },
+    { name: 'Zubaid Rasool', role: 'Full-Stack & DevOps Engineer', badge: 'Dev & DevOps', bio: 'Builds and maintains frontend and backend features while managing CI/CD pipelines, server infrastructure, and deployment workflows on the cloud.', photoUrl: '/Zubaid.png', gradient: 'from-purple-500 to-violet-600', initials: 'ZR' },
     { name: 'Laiba Saleem', role: 'Data Analyst', badge: 'Data & Analytics', bio: 'Analyzes user engagement metrics, legal dataset patterns, and AI model performance to drive data-informed product decisions and improvements.', photoUrl: '/laiba.png', gradient: 'from-rose-500 to-pink-600', initials: 'LS' },
     { name: 'Ayesha Azam', role: 'Team Lead', badge: 'Leadership', bio: 'Coordinates engineering delivery, sprint planning, and cross-functional collaboration to ship reliable AI-powered legal features on time and at scale.', photoUrl: '/Ayesha.png', gradient: 'from-emerald-500 to-teal-600', initials: 'AA' },
   ];
@@ -2661,7 +2661,7 @@ const TeamSection = () => {
                     {!isHidden && (
                       <div
                         className="relative z-10 h-full flex flex-col items-center text-center min-h-0"
-                        style={{ padding: isActive ? '36px 28px 24px' : isAdj ? '24px 18px 16px' : '16px 12px 12px' }}
+                        style={{ padding: isActive ? '48px 28px 24px' : isAdj ? '36px 18px 16px' : '28px 12px 12px' }}
                       >
                         {/* Avatar */}
                         <div
@@ -2709,22 +2709,26 @@ const TeamSection = () => {
                           {member.role}
                         </p>
 
-                        {/* Bio — only for active & adjacent; never clips the badge */}
-                        {isActive && (
-                          <p className="text-slate-500 text-sm leading-relaxed flex-1 min-h-0 overflow-hidden">{member.bio}</p>
-                        )}
-                        {isAdj && (
-                          <p className="text-slate-400 text-xs leading-relaxed line-clamp-3 flex-1 min-h-0 overflow-hidden">{member.bio}</p>
-                        )}
+                        {/* Bio — show complete info for all cards */}
+                        <p
+                          className={`text-slate-500 leading-relaxed flex-1 min-h-0 overflow-hidden ${isActive ? 'text-sm' : 'text-xs line-clamp-3'
+                            }`}
+                        >
+                          {member.bio}
+                        </p>
 
-                        {/* Badge — only active; pinned so it stays visible */}
-                        {isActive && (
-                          <div className="mt-auto pt-4 shrink-0">
-                            <span className="inline-block px-4 py-1.5 text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 rounded uppercase tracking-wider">
-                              {member.badge}
-                            </span>
-                          </div>
-                        )}
+                        {/* Badge — show complete info for all cards */}
+                        <div className="mt-auto pt-4 shrink-0">
+                          <span
+                            className="inline-block font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 rounded uppercase tracking-wider"
+                            style={{
+                              padding: isActive ? '6px 16px' : '4px 10px',
+                              fontSize: isActive ? '11px' : '9px',
+                            }}
+                          >
+                            {member.badge}
+                          </span>
+                        </div>
                       </div>
                     )}
                   </div>

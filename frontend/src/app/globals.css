@@ -188,8 +188,8 @@ body {
 }
 
 /* Wrap tables in a scrollable container to prevent width-based shaking */
-.message-content > div:has(> table),
-.message-content > table {
+.message-content>div:has(> table),
+.message-content>table {
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
@@ -365,7 +365,12 @@ textarea:focus {
    LANDING PAGE — Typography
    ============================================================================ */
 .font-heading,
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-heading, 'Georgia', 'Times New Roman', serif);
   letter-spacing: -0.02em;
   line-height: 1.2;
@@ -379,8 +384,13 @@ h1, h2, h3, h4, h5, h6 {
    LANDING PAGE — Trust bar marquee (continuous left-to-right scroll)
    ============================================================================ */
 @keyframes trust-marquee-ltr {
-  from { transform: translateX(-50%); }
-  to   { transform: translateX(0%); }
+  from {
+    transform: translateX(-50%);
+  }
+
+  to {
+    transform: translateX(0%);
+  }
 }
 
 .animate-trust-marquee {
@@ -391,13 +401,25 @@ h1, h2, h3, h4, h5, h6 {
    LANDING PAGE — Hero hexagonal ring: rotate + float
    ============================================================================ */
 @keyframes rotateRing {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes floatRing {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-14px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-14px);
+  }
 }
 
 .hero-ring-stage {
@@ -452,7 +474,13 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   .hero-ring-stage,
-  .hero-ring {
-    animation: none;
+  .hero-ring,
+  .ai-data-pulse,
+  .ai-node-float-1,
+  .ai-node-float-2,
+  .ai-node-float-3,
+  .ai-ring-spin,
+  .ai-ring-spin-reverse {
+    animation: none !important;
   }
 }

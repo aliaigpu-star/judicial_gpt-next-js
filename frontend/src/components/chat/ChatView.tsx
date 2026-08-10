@@ -6,7 +6,7 @@ import {
     Mic, Globe, Plus, ArrowUp, ArrowDown,
     FileText, Image as ImageIcon, X, StopCircle, Loader2,
     Copy, Edit3, ThumbsUp, ThumbsDown, RefreshCw, ChevronLeft, ChevronRight, Check, Upload, Clock, Share2,
-    Phone
+    Phone, ShieldAlert, CheckCircle2, ChevronDown, ChevronUp, ExternalLink, AlertTriangle
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -16,6 +16,14 @@ import { copyCleanText } from '@/lib/textUtils';
 import ShareModal from '@/components/modals/ShareModal';
 import TypingAnimation from '@/components/ui/TypingAnimation';
 import VoiceAgent from '@/components/chat/VoiceAgent';
+
+interface SourceResult {
+    source_name: string;
+    domain: string;
+    url: string;
+    status: string;
+    content_preview?: string;
+}
 
 interface Message {
     id: string;
@@ -28,6 +36,11 @@ interface Message {
     isStreaming?: boolean;
     metadata?: {
         feedback?: 'like' | 'dislike';
+        judgmentSearch?: {
+            successfulSources: number;
+            blockedSources: string[];
+            sourcesSearched: SourceResult[];
+        };
     };
 }
 
@@ -78,6 +91,33 @@ const renderJudgmentText = (text: string) =>
             : <div key={i} className="whitespace-pre-wrap">{line}</div>
     );
 
+// Status styling for the Judgment Search sources list (mirrors JudgmentSearch.tsx)
+const getSourceStatusIcon = (status: string) => {
+    switch (status) {
+        case 'success':
+            return <CheckCircle2 className="w-3.5 h-3.5 text-[#10a37f]" />;
+        case 'blocked':
+            return <ShieldAlert className="w-3.5 h-3.5 text-[#f59e0b]" />;
+        case 'error':
+            return <X className="w-3.5 h-3.5 text-red-400" />;
+        default:
+            return <AlertTriangle className="w-3.5 h-3.5 text-gray-400" />;
+    }
+};
+
+const getSourceStatusBadgeClass = (status: string) => {
+    switch (status) {
+        case 'success':
+            return 'bg-[#10a37f]/10 text-[#10a37f] border-[#10a37f]/20';
+        case 'blocked':
+            return 'bg-[#f59e0b]/10 text-[#f59e0b] border-[#f59e0b]/20';
+        case 'error':
+            return 'bg-red-500/10 text-red-500 border-red-500/20';
+        default:
+            return 'bg-gray-500/10 text-gray-500 border-gray-500/20';
+    }
+};
+
 export default function ChatView({
     conversation,
     onSend,
@@ -106,6 +146,7 @@ export default function ChatView({
     const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
     const [feedbackState, setFeedbackState] = useState<Record<string, 'like' | 'dislike' | null>>({});
     const [showShareModal, setShowShareModal] = useState(false);
+    const [expandedSourcesId, setExpandedSourcesId] = useState<string | null>(null);
     const [showScrollButton, setShowScrollButton] = useState(false);
     const [showVoiceAgent, setShowVoiceAgent] = useState(false);
 
@@ -888,6 +929,22 @@ export default function ChatView({
                                             ) : (
                                                 // Display mode
                                                 <>
+                                                    {/* Judgment Search sources summary (persisted via message.metadata) */}
+                                                    {message.role === 'assistant' && message.metadata?.judgmentSearch && (
+                                                        <div className="flex flex-wrap items-center gap-2 mb-3">
+                                                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#10a37f]/10 text-[#10a37f] border border-[#10a37f]/20">
+                                                                <CheckCircle2 className="w-3 h-3" />
+                                                                {message.metadata.judgmentSearch.successfulSources} sources found
+                                                            </span>
+                                                            {message.metadata.judgmentSearch.blockedSources.length > 0 && (
+                                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#f59e0b]/10 text-[#f59e0b] border border-[#f59e0b]/20">
+                                                                    <ShieldAlert className="w-3 h-3" />
+                                                                    {message.metadata.judgmentSearch.blockedSources.length} blocked
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    )}
+
                                                     {message.role === 'assistant' ? (
                                                         isJudgmentDocument(message.content) ? (
                                                             <div className="message-content font-serif text-[#0d0d0d] dark:text-[#ececec]">
@@ -1035,6 +1092,75 @@ export default function ChatView({
                                                             </button>
                                                         </div>
                                                     )}
+                                                </div>
+                                            )}
+
+                                            {/* Judgment Search sources collapsible (persisted via message.metadata) */}
+                                            {message.role === 'assistant' && message.metadata?.judgmentSearch && (
+                                                <div className="mt-4">
+                                                    <button
+                                                        onClick={() => setExpandedSourcesId(expandedSourcesId === message.id ? null : message.id)}
+                                                        className="flex items-center gap-2 text-sm font-medium text-[#666666] dark:text-[#b4b4b4] hover:text-[#0d0d0d] dark:hover:text-[#ececec] transition-colors"
+                                                    >
+                                                        {expandedSourcesId === message.id ? (
+                                                            <ChevronUp className="w-4 h-4" />
+                                                        ) : (
+                                                            <ChevronDown className="w-4 h-4" />
+                                                        )}
+                                                        View {message.metadata.judgmentSearch.sourcesSearched.length} sources searched
+                                                    </button>
+
+                                                    <AnimatePresence>
+                                                        {expandedSourcesId === message.id && (
+                                                            <motion.div
+                                                                initial={{ height: 0, opacity: 0 }}
+                                                                animate={{ height: 'auto', opacity: 1 }}
+                                                                exit={{ height: 0, opacity: 0 }}
+                                                                transition={{ duration: 0.2 }}
+                                                                className="overflow-hidden"
+                                                            >
+                                                                <div className="mt-3 space-y-2">
+                                                                    {message.metadata.judgmentSearch.sourcesSearched.map((source, si) => (
+                                                                        <div
+                                                                            key={si}
+                                                                            className="flex items-start gap-3 p-3 rounded-xl bg-[#f9f9f9] dark:bg-[#171717] border border-[#e5e5e5] dark:border-[#2f2f2f]"
+                                                                        >
+                                                                            <div className="mt-0.5">
+                                                                                {getSourceStatusIcon(source.status)}
+                                                                            </div>
+                                                                            <div className="flex-1 min-w-0">
+                                                                                <div className="flex items-center gap-2 flex-wrap">
+                                                                                    <span className="text-sm font-medium text-[#0d0d0d] dark:text-[#ececec] truncate">
+                                                                                        {source.source_name}
+                                                                                    </span>
+                                                                                    <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium border ${getSourceStatusBadgeClass(source.status)}`}>
+                                                                                        {source.status}
+                                                                                    </span>
+                                                                                </div>
+                                                                                <p className="text-xs text-[#999999] dark:text-[#666666] mt-0.5 truncate">
+                                                                                    {source.domain}
+                                                                                </p>
+                                                                                {source.content_preview && source.status === 'success' && (
+                                                                                    <p className="text-xs text-[#666666] dark:text-[#b4b4b4] mt-1 line-clamp-2">
+                                                                                        {source.content_preview.slice(0, 150)}...
+                                                                                    </p>
+                                                                                )}
+                                                                            </div>
+                                                                            <a
+                                                                                href={source.url}
+                                                                                target="_blank"
+                                                                                rel="noopener noreferrer"
+                                                                                className="p-1 rounded hover:bg-[#ececec] dark:hover:bg-[#2f2f2f] transition-colors flex-shrink-0"
+                                                                                title="Open source"
+                                                                            >
+                                                                                <ExternalLink className="w-3.5 h-3.5 text-[#666666] dark:text-[#b4b4b4]" />
+                                                                            </a>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            </motion.div>
+                                                        )}
+                                                    </AnimatePresence>
                                                 </div>
                                             )}
                                         </div>

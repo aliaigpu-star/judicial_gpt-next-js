@@ -321,10 +321,10 @@ class ApiClient {
         return this.request<{ messages: any[] }>(`/api/conversations/${conversationId}/messages`);
     }
 
-    async createMessage(conversationId: string, role: string, content: string, responseTime?: number) {
+    async createMessage(conversationId: string, role: string, content: string, responseTime?: number, metadata?: Record<string, any>) {
         return this.request<{ message: any }>('/api/messages', {
             method: 'POST',
-            body: JSON.stringify({ conversationId, role, content, responseTime })
+            body: JSON.stringify({ conversationId, role, content, responseTime, metadata })
         });
     }
 

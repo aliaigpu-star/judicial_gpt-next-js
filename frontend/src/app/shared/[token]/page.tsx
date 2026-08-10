@@ -132,7 +132,7 @@ export default function SharedChatPage() {
                             <span>{data?.viewCount} views</span>
                         </div>
                         <Link
-                            href="/register"
+                            href="/signup"
                             className="px-3 py-1.5 bg-emerald-600 text-white text-sm rounded-lg hover:bg-emerald-700 transition-colors"
                         >
                             Try JudicialGPT
@@ -213,7 +213,7 @@ export default function SharedChatPage() {
                         JudicialGPT helps you research legal cases, analyze documents, and get answers to your legal questions.
                     </p>
                     <Link
-                        href="/register"
+                        href="/signup"
                         className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors font-medium"
                     >
                         Get Started for Free

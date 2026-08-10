@@ -97,7 +97,7 @@ export default function SharedChatPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-black">
+        <div className="min-h-screen bg-gray-50 dark:bg-black flex flex-col">
             {/* Header */}
             <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-4 py-2">
                 <div className="max-w-3xl mx-auto flex items-center justify-between">
@@ -142,7 +142,7 @@ export default function SharedChatPage() {
             </header>
 
             {/* Messages */}
-            <main className="max-w-3xl mx-auto py-6 px-4">
+            <main className="flex-1 w-full max-w-3xl mx-auto py-6 px-4">
                 <div className="space-y-4">
                     <AnimatePresence>
                         {data?.messages.map((message, index) => (

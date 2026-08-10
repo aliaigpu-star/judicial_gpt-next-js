@@ -862,6 +862,10 @@ export default function ChatView({
                                                             }
                                                         }}
                                                         autoFocus
+                                                        onFocus={(e) => {
+                                                            const len = e.target.value.length;
+                                                            e.target.setSelectionRange(len, len);
+                                                        }}
                                                         className="w-full bg-[#f4f4f4] dark:bg-[#2f2f2f] border border-[#e5e5e5] dark:border-[#424242] rounded-xl p-4 text-base resize-none outline-none focus:border-[#10a37f] dark:focus:border-[#10a37f] transition-colors text-[#0d0d0d] dark:text-[#ececec] min-h-[100px]"
                                                         rows={Math.min(Math.max(editContent.split('\n').length, 3), 10)}
                                                     />

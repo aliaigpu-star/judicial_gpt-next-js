@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap');
 
 /* Tell Tailwind v4 to use class-based dark mode */
 @custom-variant dark (&:where(.dark, .dark *));
@@ -57,33 +57,15 @@ html,
 body {
   overflow-x: hidden;
   min-height: 100vh;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
 }
 
-/* Scrollbar styles - ChatGPT style thin scrollbar */
+/* Scrollbar styles - Hidden entirely as requested */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.3);
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 /* ChatGPT-style message content */
@@ -484,3 +466,44 @@ h6 {
     animation: none !important;
   }
 }
+
+/* ============================================================
+   Hero Q&A Widget — Nastaliq font (Urdu / Sindhi / Punjabi / Balochi)
+   Scoped to .nastaliq-text — does NOT affect any other part of the site
+   ============================================================ */
+.nastaliq-text {
+  font-family: 'Noto Nastaliq Urdu', serif;
+  direction: rtl;
+  text-align: right;
+  /* Nastaliq glyphs hang below the baseline and need generous vertical room */
+  line-height: 2.4;
+  font-size: 0.93rem;       /* slightly smaller keeps the script elegant */
+  letter-spacing: 0;        /* Nastaliq is a connected script — never track it */
+  word-spacing: 0.06em;
+}
+
+/* Fluid sizing on smaller screens */
+@media (max-width: 768px) {
+  .nastaliq-text {
+    font-size: 0.85rem;
+    line-height: 2.2;
+  }
+}
+
+/* Question input box Nastaliq variant */
+.nastaliq-question {
+  font-family: 'Noto Nastaliq Urdu', serif;
+  direction: rtl;
+  text-align: right;
+  line-height: 2.2;
+  font-size: 0.9rem;
+  letter-spacing: 0;
+  word-spacing: 0.06em;
+}
+
+@media (max-width: 768px) {
+  .nastaliq-question {
+    font-size: 0.82rem;
+    line-height: 2.0;
+  }
+}

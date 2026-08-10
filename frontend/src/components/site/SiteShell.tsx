@@ -163,7 +163,7 @@ export function SiteFooter() {
     <footer className="bg-[#F9FAFB] text-slate-500 border-t border-slate-200/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn>
-          <div className="py-14 lg:py-16 grid grid-cols-2 md:grid-cols-6 gap-10 lg:gap-12">
+          <div className="py-12 lg:py-16 grid grid-cols-2 md:grid-cols-6 gap-12 lg:gap-16">
             <div className="col-span-2">
               <Link href="/" className="flex items-center gap-2.5 mb-4 w-fit">
                 <div className="w-9 h-9 rounded-xl bg-emerald-500 flex items-center justify-center shadow-sm shadow-emerald-500/25">
@@ -173,16 +173,16 @@ export function SiteFooter() {
                   Judicial<span className="text-emerald-500">GPT</span>
                 </span>
               </Link>
-              <p className="text-slate-500 text-sm mb-6 leading-relaxed max-w-xs">{SITE.description}</p>
+              <p className="text-slate-500 text-xl mb-8 leading-relaxed max-w-sm">{SITE.description}</p>
               <div className="flex gap-2.5">
                 {[Twitter, Linkedin, Github, Mail].map((Icon, i) => (
                   <a
                     key={i}
                     href="#"
                     aria-label={['Twitter', 'LinkedIn', 'GitHub', 'Email'][i]}
-                    className="w-9 h-9 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-emerald-600 hover:border-emerald-200 hover:bg-emerald-50/50 transition-all duration-200"
+                    className="w-12 h-12 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-emerald-600 hover:border-emerald-200 hover:bg-emerald-50/50 transition-all duration-200"
                   >
-                    <Icon className="w-4 h-4" />
+                    <Icon className="w-6 h-6" />
                   </a>
                 ))}
               </div>
@@ -190,13 +190,13 @@ export function SiteFooter() {
 
             {Object.entries(FOOTER_LINKS).map(([title, links]) => (
               <div key={title}>
-                <h4 className="text-slate-900 font-bold text-sm mb-4">{title}</h4>
-                <ul className="space-y-3">
+                <h4 className="text-slate-900 font-bold text-xl mb-6">{title}</h4>
+                <ul className="space-y-5">
                   {links.map((link) => (
                     <li key={link.name}>
                       <Link
                         href={link.href}
-                        className="text-slate-500 text-sm hover:text-emerald-600 transition-colors duration-200"
+                        className="text-slate-500 text-xl hover:text-emerald-600 transition-colors duration-200"
                       >
                         {link.name}
                       </Link>
@@ -209,15 +209,15 @@ export function SiteFooter() {
         </FadeIn>
 
         <FadeIn delay={0.1} y={20}>
-          <div className="py-6 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-transparent">
-            <p className="text-slate-400 text-sm">© 2026 JudicialGPT. All rights reserved.</p>
-            <div className="flex items-center gap-6 text-sm text-slate-400">
-              <span className="inline-flex items-center gap-1.5">
-                <Lock className="w-3.5 h-3.5" />
+          <div className="py-8 flex flex-col sm:flex-row items-center justify-between gap-6 border-t border-transparent mt-6">
+            <p className="text-slate-400 text-xl">© 2026 JudicialGPT. All rights reserved.</p>
+            <div className="flex items-center gap-8 text-xl text-slate-400">
+              <span className="inline-flex items-center gap-2">
+                <Lock className="w-5 h-5" />
                 SSL Secured
               </span>
-              <span className="inline-flex items-center gap-1.5">
-                <Shield className="w-3.5 h-3.5" />
+              <span className="inline-flex items-center gap-2">
+                <Shield className="w-5 h-5" />
                 SOC 2 Compliant
               </span>
             </div>

@@ -33,13 +33,13 @@ export default function AIToolsPage() {
         <div className="flex flex-wrap gap-3">
           <Link
             href="/signup"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-500 text-white font-bold shadow-md shadow-emerald-500/25 hover:bg-emerald-600 transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#0c9344] text-white font-bold shadow-md shadow-[#0c9344]/25 hover:bg-[#0c9344] transition-colors"
           >
             Start Free <ArrowRight className="w-4 h-4" />
           </Link>
           <Link
             href="/features"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-slate-200 bg-white text-slate-700 font-semibold hover:border-emerald-200 hover:bg-emerald-50/50 transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-slate-200 bg-white text-slate-700 font-semibold hover:border-[#0c9344]/25 hover:bg-[#0c9344]/10/50 transition-colors"
           >
             View All Features
           </Link>
@@ -50,11 +50,11 @@ export default function AIToolsPage() {
       <section className="py-16 lg:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn>
-            <div className="relative overflow-hidden rounded-3xl border border-emerald-100 bg-gradient-to-br from-[#F2FBF6] via-white to-emerald-50/40 shadow-xl shadow-emerald-500/5">
-              <div className="absolute top-0 right-0 w-72 h-72 bg-emerald-400/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="relative overflow-hidden rounded-3xl border border-[#0c9344]/15 bg-gradient-to-br from-[#0c9344]/5 via-white to-emerald-50/40 shadow-xl shadow-[#0c9344]/5">
+              <div className="absolute top-0 right-0 w-72 h-72 bg-[#0c9344]/10 rounded-full blur-3xl pointer-events-none" />
               <div className="relative grid lg:grid-cols-5 gap-0">
                 <div className="lg:col-span-3 p-8 md:p-10 lg:p-12">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-[0.12em] mb-5 bg-emerald-500 text-white">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-[0.12em] mb-5 bg-[#0c9344] text-white">
                     <Sparkles className="w-3 h-3" />
                     {chatbot.badge}
                   </div>
@@ -68,17 +68,17 @@ export default function AIToolsPage() {
                     {chatbot.features.map((feat) => (
                       <div
                         key={feat}
-                        className="flex items-center gap-2.5 text-sm text-slate-600 bg-white/80 rounded-xl px-4 py-3 border border-emerald-100/80"
+                        className="flex items-center gap-2.5 text-sm text-slate-600 bg-white/80 rounded-xl px-4 py-3 border border-[#0c9344]/15/80"
                       >
-                        <span className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
-                          <Check className="w-3 h-3 text-emerald-600" strokeWidth={3} />
+                        <span className="w-5 h-5 rounded-full bg-[#0c9344]/15 flex items-center justify-center shrink-0">
+                          <Check className="w-3 h-3 text-[#0c9344]" strokeWidth={3} />
                         </span>
                         {feat}
                       </div>
                     ))}
                   </div>
                 </div>
-                <div className="lg:col-span-2 flex items-center justify-center p-8 md:p-10 bg-gradient-to-br from-emerald-500 to-teal-700">
+                <div className="lg:col-span-2 flex items-center justify-center p-8 md:p-10 bg-gradient-to-br from-[#0c9344] to-[#0c9344]">
                   <div className="text-center text-white">
                     <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center border border-white/20">
                       <Bot className="w-10 h-10" />
@@ -109,12 +109,12 @@ export default function AIToolsPage() {
           <div className="grid lg:grid-cols-2 gap-6">
             {/* Case Prism */}
             <FadeIn delay={0.05}>
-              <div className="h-full rounded-3xl border border-slate-200 bg-white overflow-hidden hover:border-emerald-200 hover:shadow-lg hover:shadow-emerald-500/5 transition-all duration-300">
-                <div className="h-2 bg-gradient-to-r from-emerald-400 to-teal-500" />
+              <div className="h-full rounded-3xl border border-slate-200 bg-white overflow-hidden hover:border-[#0c9344]/25 hover:shadow-lg hover:shadow-[#0c9344]/5 transition-all duration-300">
+                <div className="h-2 bg-gradient-to-r from-[#0c9344] to-[#0c9344]" />
                 <div className="p-8 md:p-10">
                   <div className="flex items-start justify-between gap-4 mb-6">
-                    <div className="w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center">
-                      <Layers className="w-7 h-7 text-emerald-600" />
+                    <div className="w-14 h-14 rounded-2xl bg-[#0c9344]/10 border border-[#0c9344]/15 flex items-center justify-center">
+                      <Layers className="w-7 h-7 text-[#0c9344]" />
                     </div>
                     <span className="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600">
                       {casePrism.badge}
@@ -127,17 +127,17 @@ export default function AIToolsPage() {
                   <ul className="space-y-3 mb-8">
                     {casePrism.features.map((feat) => (
                       <li key={feat} className="flex items-center gap-3 text-sm text-slate-600">
-                        <FileSearch className="w-4 h-4 text-emerald-500 shrink-0" />
+                        <FileSearch className="w-4 h-4 text-[#0c9344] shrink-0" />
                         {feat}
                       </li>
                     ))}
                   </ul>
                   <div className="pt-6 border-t border-slate-100 flex items-center gap-4 text-xs text-slate-400">
                     <span className="inline-flex items-center gap-1.5">
-                      <Zap className="w-3.5 h-3.5 text-emerald-500" /> Relevance-ranked results
+                      <Zap className="w-3.5 h-3.5 text-[#0c9344]" /> Relevance-ranked results
                     </span>
                     <span className="inline-flex items-center gap-1.5">
-                      <Layers className="w-3.5 h-3.5 text-emerald-500" /> Millions of cases
+                      <Layers className="w-3.5 h-3.5 text-[#0c9344]" /> Millions of cases
                     </span>
                   </div>
                 </div>
@@ -146,14 +146,14 @@ export default function AIToolsPage() {
 
             {/* Virtual Consultant */}
             <FadeIn delay={0.1}>
-              <div className="h-full rounded-3xl border border-slate-200 bg-white overflow-hidden hover:border-emerald-200 hover:shadow-lg hover:shadow-emerald-500/5 transition-all duration-300">
-                <div className="h-2 bg-gradient-to-r from-teal-400 to-emerald-600" />
+              <div className="h-full rounded-3xl border border-slate-200 bg-white overflow-hidden hover:border-[#0c9344]/25 hover:shadow-lg hover:shadow-[#0c9344]/5 transition-all duration-300">
+                <div className="h-2 bg-gradient-to-r from-[#0c9344] to-[#0c9344]" />
                 <div className="p-8 md:p-10">
                   <div className="flex items-start justify-between gap-4 mb-6">
-                    <div className="w-14 h-14 rounded-2xl bg-teal-50 border border-teal-100 flex items-center justify-center">
-                      <UserCheck className="w-7 h-7 text-teal-600" />
+                    <div className="w-14 h-14 rounded-2xl bg-[#0c9344]/10 border border-[#0c9344]/15 flex items-center justify-center">
+                      <UserCheck className="w-7 h-7 text-[#0c9344]" />
                     </div>
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-[#0c9344]/10 text-[#0c9344] border border-[#0c9344]/25">
                       <Clock className="w-3 h-3" /> 24/7
                     </span>
                   </div>
@@ -164,14 +164,14 @@ export default function AIToolsPage() {
                   <ul className="space-y-3 mb-8">
                     {consultant.features.map((feat) => (
                       <li key={feat} className="flex items-center gap-3 text-sm text-slate-600">
-                        <Check className="w-4 h-4 text-teal-500 shrink-0" strokeWidth={2.5} />
+                        <Check className="w-4 h-4 text-[#0c9344] shrink-0" strokeWidth={2.5} />
                         {feat}
                       </li>
                     ))}
                   </ul>
-                  <div className="rounded-2xl bg-[#F2FBF6] border border-emerald-100 p-4">
+                  <div className="rounded-2xl bg-[#0c9344]/5 border border-[#0c9344]/15 p-4">
                     <p className="text-sm text-slate-600 leading-relaxed">
-                      <span className="font-semibold text-emerald-700">Strategic guidance</span> without the wait — explore outcomes, risks, and next steps before your next hearing.
+                      <span className="font-semibold text-[#0c9344]">Strategic guidance</span> without the wait — explore outcomes, risks, and next steps before your next hearing.
                     </p>
                   </div>
                 </div>
@@ -186,7 +186,7 @@ export default function AIToolsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <FadeIn>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] mb-4 bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] mb-4 bg-[#0c9344]/10 text-[#0c9344] border border-[#0c9344]/25">
                 Impact · Court Staff
               </div>
               <h2 className="font-heading text-3xl md:text-4xl font-semibold text-slate-900 mb-4">
@@ -198,8 +198,8 @@ export default function AIToolsPage() {
               <ul className="space-y-4">
                 {IMPACT.staff.map((item) => (
                   <li key={item} className="flex items-start gap-3 text-slate-600">
-                    <span className="mt-1 w-6 h-6 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0">
-                      <Mic className="w-3.5 h-3.5 text-emerald-600" />
+                    <span className="mt-1 w-6 h-6 rounded-lg bg-[#0c9344]/15 flex items-center justify-center shrink-0">
+                      <Mic className="w-3.5 h-3.5 text-[#0c9344]" />
                     </span>
                     <span className="leading-relaxed">{item}</span>
                   </li>
@@ -217,7 +217,7 @@ export default function AIToolsPage() {
                   }}
                 />
                 <div className="relative z-10">
-                  <p className="text-emerald-300 text-sm font-semibold uppercase tracking-wider mb-3">
+                  <p className="text-[#0c9344] text-sm font-semibold uppercase tracking-wider mb-3">
                     Voice & documents
                   </p>
                   <p className="font-heading text-2xl md:text-3xl font-semibold mb-4 leading-snug">
@@ -249,19 +249,19 @@ export default function AIToolsPage() {
               <div className="flex flex-wrap gap-3">
                 <Link
                   href="/features"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold text-sm hover:border-emerald-200 hover:text-emerald-700 transition-colors"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold text-sm hover:border-[#0c9344]/25 hover:text-[#0c9344] transition-colors"
                 >
                   Features <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
                 <Link
                   href="/docs"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold text-sm hover:border-emerald-200 hover:text-emerald-700 transition-colors"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold text-sm hover:border-[#0c9344]/25 hover:text-[#0c9344] transition-colors"
                 >
                   Documentation <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
                 <Link
                   href="/signup"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 text-white font-bold text-sm shadow-md shadow-emerald-500/20 hover:bg-emerald-600 transition-colors"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0c9344] text-white font-bold text-sm shadow-md shadow-[#0c9344]/20 hover:bg-[#0c9344] transition-colors"
                 >
                   Sign Up Free <ArrowRight className="w-3.5 h-3.5" />
                 </Link>

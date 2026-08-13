@@ -53,7 +53,7 @@ function VerifyEmailContent() {
                 <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-8 text-center">
                     {loading ? (
                         <div className="py-12">
-                            <Loader2 className="w-16 h-16 text-emerald-700 dark:text-emerald-700 animate-spin mx-auto mb-4" />
+                            <Loader2 className="w-16 h-16 text-[#0c9344] dark:text-[#0c9344] animate-spin mx-auto mb-4" />
                             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                                 Verifying Email...
                             </h2>
@@ -66,8 +66,8 @@ function VerifyEmailContent() {
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                         >
-                            <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <CheckCircle className="w-8 h-8 text-emerald-700 dark:text-emerald-700" />
+                            <div className="w-16 h-16 bg-[#0c9344]/15 dark:bg-[#0c9344]/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <CheckCircle className="w-8 h-8 text-[#0c9344] dark:text-[#0c9344]" />
                             </div>
                             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                                 Email Verified!
@@ -77,7 +77,7 @@ function VerifyEmailContent() {
                             </p>
                             <Link
                                 href="/login"
-                                className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg transition-colors"
+                                className="inline-flex items-center gap-2 px-6 py-3 bg-[#0c9344] hover:bg-[#0c9344] text-white rounded-lg transition-colors"
                             >
                                 Go to Login
                             </Link>
@@ -99,7 +99,7 @@ function VerifyEmailContent() {
                             <div className="flex flex-col gap-3">
                                 <button
                                     onClick={verifyEmail}
-                                    className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors"
+                                    className="px-6 py-3 bg-[#0c9344] hover:bg-[#0c9344] text-white rounded-lg transition-colors"
                                 >
                                     Try Again
                                 </button>
@@ -122,7 +122,7 @@ export default function VerifyEmailPage() {
     return (
         <Suspense fallback={
             <div className="min-h-screen flex items-center justify-center bg-black">
-                <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-emerald-700" />
+                <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#0c9344]" />
             </div>
         }>
             <VerifyEmailContent />

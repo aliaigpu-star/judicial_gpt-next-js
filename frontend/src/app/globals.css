@@ -16,7 +16,7 @@
   --text-secondary: #666666;
   --text-muted: #999999;
   --border-color: #e5e5e5;
-  --accent-color: #10a37f;
+  --accent-color: #0c9344;
 }
 
 .dark {
@@ -31,11 +31,15 @@
   --text-secondary: #b4b4b4;
   --text-muted: #8e8e8e;
   --border-color: #424242;
-  --accent-color: #10a37f;
+  --accent-color: #0c9344;
 }
 
 html {
   color-scheme: light;
+  /* Scale the entire site to appear as 110% browser zoom at 100% zoom.
+     All rem-based Tailwind utilities (spacing, font sizes, widths) scale
+     proportionally. Pixel-based values and viewport units are unaffected. */
+  font-size: 100%;
 }
 
 html.dark {
@@ -46,7 +50,8 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  font-size: 16px;
+  font-size: 1rem;
+  /* inherits the 110% root, scales with html font-size */
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -57,8 +62,10 @@ html,
 body {
   overflow-x: hidden;
   min-height: 100vh;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE/Edge */
 }
 
 /* Scrollbar styles - Hidden entirely as requested */
@@ -476,9 +483,11 @@ h6 {
   direction: rtl;
   text-align: right;
   /* Nastaliq glyphs hang below the baseline and need generous vertical room */
-  line-height: 2.4;
-  font-size: 0.93rem;       /* slightly smaller keeps the script elegant */
-  letter-spacing: 0;        /* Nastaliq is a connected script — never track it */
+  line-height: 2.2;
+  font-size: 0.82rem;
+  /* slightly smaller keeps the script elegant */
+  letter-spacing: 0;
+  /* Nastaliq is a connected script — never track it */
   word-spacing: 0.06em;
 }
 
@@ -495,8 +504,8 @@ h6 {
   font-family: 'Noto Nastaliq Urdu', serif;
   direction: rtl;
   text-align: right;
-  line-height: 2.2;
-  font-size: 0.9rem;
+  line-height: 2.0;
+  font-size: 0.8rem;
   letter-spacing: 0;
   word-spacing: 0.06em;
 }
@@ -506,4 +515,4 @@ h6 {
     font-size: 0.82rem;
     line-height: 2.0;
   }
-}
+}

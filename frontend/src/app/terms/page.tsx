@@ -141,7 +141,7 @@ export default function TermsPage() {
                     id={clause.id}
                     className={`scroll-mt-28 rounded-2xl border p-6 md:p-8 ${
                       isHighlight
-                        ? 'border-emerald-300 bg-white shadow-lg shadow-emerald-500/5 ring-1 ring-emerald-100'
+                        ? 'border-[#0c9344] bg-white shadow-lg shadow-[#0c9344]/5 ring-1 ring-emerald-100'
                         : 'border-slate-200 bg-white'
                     }`}
                   >
@@ -149,7 +149,7 @@ export default function TermsPage() {
                       <div
                         className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${
                           isHighlight
-                            ? 'bg-emerald-100 text-emerald-700'
+                            ? 'bg-[#0c9344]/15 text-[#0c9344]'
                             : 'bg-slate-100 text-slate-600'
                         }`}
                       >
@@ -165,18 +165,18 @@ export default function TermsPage() {
                           {para.includes(SITE.email) ? (
                             <>
                               Questions about these terms:{' '}
-                              <a href={`mailto:${SITE.email}`} className="text-emerald-600 hover:underline">
+                              <a href={`mailto:${SITE.email}`} className="text-[#0c9344] hover:underline">
                                 {SITE.email}
                               </a>
                             </>
                           ) : para.startsWith('For privacy') ? (
                             <>
                               For privacy matters, see our{' '}
-                              <Link href="/privacy" className="text-emerald-600 hover:underline">
+                              <Link href="/privacy" className="text-[#0c9344] hover:underline">
                                 Privacy Policy
                               </Link>
                               . For cookie practices, see our{' '}
-                              <Link href="/cookies" className="text-emerald-600 hover:underline">
+                              <Link href="/cookies" className="text-[#0c9344] hover:underline">
                                 Cookie Policy
                               </Link>
                               .
@@ -196,11 +196,11 @@ export default function TermsPage() {
           <FadeIn>
             <p className="mt-12 text-center text-sm text-slate-500">
               Related:{' '}
-              <Link href="/privacy" className="text-emerald-600 hover:underline">
+              <Link href="/privacy" className="text-[#0c9344] hover:underline">
                 Privacy Policy
               </Link>{' '}
               ·{' '}
-              <Link href="/cookies" className="text-emerald-600 hover:underline">
+              <Link href="/cookies" className="text-[#0c9344] hover:underline">
                 Cookie Policy
               </Link>
             </p>

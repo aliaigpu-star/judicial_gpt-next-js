@@ -54,14 +54,14 @@ function ContactForm() {
   if (submitted) {
     return (
       <FadeIn>
-        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-10 text-center">
-          <CheckCircle2 className="w-14 h-14 text-emerald-500 mx-auto mb-4" />
+        <div className="rounded-2xl border border-[#0c9344]/25 bg-[#0c9344]/10 p-10 text-center">
+          <CheckCircle2 className="w-14 h-14 text-[#0c9344] mx-auto mb-4" />
           <h3 className="font-heading text-2xl font-semibold text-slate-900 mb-2">
             Message received
           </h3>
           <p className="text-slate-600 mb-6 max-w-sm mx-auto">
             Thank you, {form.name || 'there'}. We will respond to{' '}
-            <span className="font-semibold text-emerald-700">{form.email}</span> within two business days.
+            <span className="font-semibold text-[#0c9344]">{form.email}</span> within two business days.
           </p>
           <button
             type="button"
@@ -69,7 +69,7 @@ function ContactForm() {
               setSubmitted(false);
               setForm({ name: '', email: '', organization: '', topic: 'General Inquiry', message: '' });
             }}
-            className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 hover:underline"
+            className="text-sm font-semibold text-[#0c9344] hover:text-[#0c9344] hover:underline"
           >
             Send another message
           </button>
@@ -95,7 +95,7 @@ function ContactForm() {
                 value={form.name}
                 onChange={(e) => handleChange('name', e.target.value)}
                 placeholder="Your name"
-                className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400 transition-all"
+                className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0c9344]/30 focus:border-[#0c9344] transition-all"
               />
             </div>
           </div>
@@ -112,7 +112,7 @@ function ContactForm() {
                 value={form.email}
                 onChange={(e) => handleChange('email', e.target.value)}
                 placeholder="you@example.com"
-                className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400 transition-all"
+                className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0c9344]/30 focus:border-[#0c9344] transition-all"
               />
             </div>
           </div>
@@ -130,7 +130,7 @@ function ContactForm() {
               value={form.organization}
               onChange={(e) => handleChange('organization', e.target.value)}
               placeholder="Court, firm, university, or company"
-              className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400 transition-all"
+              className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0c9344]/30 focus:border-[#0c9344] transition-all"
             />
           </div>
         </div>
@@ -144,7 +144,7 @@ function ContactForm() {
             required
             value={form.topic}
             onChange={(e) => handleChange('topic', e.target.value)}
-            className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400 transition-all appearance-none cursor-pointer"
+            className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0c9344]/30 focus:border-[#0c9344] transition-all appearance-none cursor-pointer"
           >
             {TOPICS.map((t) => (
               <option key={t} value={t}>
@@ -167,14 +167,14 @@ function ContactForm() {
               value={form.message}
               onChange={(e) => handleChange('message', e.target.value)}
               placeholder="How can we help?"
-              className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400 transition-all resize-y min-h-[140px]"
+              className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0c9344]/30 focus:border-[#0c9344] transition-all resize-y min-h-[140px]"
             />
           </div>
         </div>
 
         <button
           type="submit"
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-emerald-500 text-white font-bold shadow-md shadow-emerald-500/25 hover:bg-emerald-600 transition-colors"
+          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-[#0c9344] text-white font-bold shadow-md shadow-[#0c9344]/25 hover:bg-[#0c9344] transition-colors"
         >
           Send message <Send className="w-4 h-4" />
         </button>
@@ -201,7 +201,7 @@ export default function ContactPage() {
             <FadeIn className="lg:col-span-2">
               <div className="sticky top-28 space-y-8">
                 <div>
-                  <p className="text-emerald-600 font-bold text-sm uppercase tracking-wider mb-2">
+                  <p className="text-[#0c9344] font-bold text-sm uppercase tracking-wider mb-2">
                     {SITE.tagline}
                   </p>
                   <h2 className="font-heading text-2xl md:text-3xl font-semibold text-slate-900 mb-6">
@@ -212,14 +212,14 @@ export default function ContactPage() {
                 <div className="space-y-5">
                   <a
                     href={`mailto:${SITE.email}`}
-                    className="flex items-start gap-4 p-4 rounded-xl border border-slate-200 hover:border-emerald-200 hover:bg-emerald-50/40 transition-all group"
+                    className="flex items-start gap-4 p-4 rounded-xl border border-slate-200 hover:border-[#0c9344]/25 hover:bg-[#0c9344]/10/40 transition-all group"
                   >
-                    <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0">
-                      <Mail className="w-5 h-5 text-emerald-600" />
+                    <div className="w-10 h-10 rounded-lg bg-[#0c9344]/15 flex items-center justify-center shrink-0">
+                      <Mail className="w-5 h-5 text-[#0c9344]" />
                     </div>
                     <div>
                       <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-0.5">Email</p>
-                      <p className="font-semibold text-slate-900 group-hover:text-emerald-700 transition-colors">
+                      <p className="font-semibold text-slate-900 group-hover:text-[#0c9344] transition-colors">
                         {SITE.email}
                       </p>
                     </div>
@@ -229,14 +229,14 @@ export default function ContactPage() {
                     href={SITE.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-start gap-4 p-4 rounded-xl border border-slate-200 hover:border-emerald-200 hover:bg-emerald-50/40 transition-all group"
+                    className="flex items-start gap-4 p-4 rounded-xl border border-slate-200 hover:border-[#0c9344]/25 hover:bg-[#0c9344]/10/40 transition-all group"
                   >
-                    <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0">
-                      <Globe className="w-5 h-5 text-emerald-600" />
+                    <div className="w-10 h-10 rounded-lg bg-[#0c9344]/15 flex items-center justify-center shrink-0">
+                      <Globe className="w-5 h-5 text-[#0c9344]" />
                     </div>
                     <div>
                       <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-0.5">Website</p>
-                      <p className="font-semibold text-slate-900 group-hover:text-emerald-700 transition-colors inline-flex items-center gap-1">
+                      <p className="font-semibold text-slate-900 group-hover:text-[#0c9344] transition-colors inline-flex items-center gap-1">
                         {SITE.url}
                         <ExternalLink className="w-3.5 h-3.5 opacity-50" />
                       </p>
@@ -262,8 +262,8 @@ export default function ContactPage() {
                       referrerPolicy="no-referrer-when-downgrade"
                     />
                     {/* Hover overlay — "Open in Maps" hint */}
-                    <div className="absolute inset-0 bg-emerald-900/0 group-hover:bg-emerald-900/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none">
-                      <span className="px-3 py-1.5 rounded-full bg-white/90 text-xs font-semibold text-emerald-700 shadow">
+                    <div className="absolute inset-0 bg-[#0c9344]/0 group-hover:bg-[#0c9344]/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none">
+                      <span className="px-3 py-1.5 rounded-full bg-white/90 text-xs font-semibold text-[#0c9344] shadow">
                         Open in Google Maps ↗
                       </span>
                     </div>
@@ -273,9 +273,9 @@ export default function ContactPage() {
                       href="https://www.google.com/maps/search/KICS+UET+Lahore/@31.5878,74.3642,17z"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group inline-flex items-center gap-1.5 font-extrabold text-slate-900 hover:text-emerald-600 transition-colors mb-1"
+                      className="group inline-flex items-center gap-1.5 font-extrabold text-slate-900 hover:text-[#0c9344] transition-colors mb-1"
                     >
-                      <MapPin className="w-4 h-4 shrink-0 text-emerald-500" />
+                      <MapPin className="w-4 h-4 shrink-0 text-[#0c9344]" />
                       Lahore · KICS
                     </a>
                     <p className="text-slate-500 text-sm leading-relaxed">

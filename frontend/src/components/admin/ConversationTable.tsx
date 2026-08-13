@@ -120,8 +120,8 @@ export default function ConversationTable({ conversations, onView, onDelete, loa
                             >
                                 <td className="py-4 px-6">
                                     <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-emerald-700/10 rounded-lg">
-                                            <MessageSquare className="h-4 w-4 text-emerald-700" />
+                                        <div className="p-2 bg-[#0c9344]/10 rounded-lg">
+                                            <MessageSquare className="h-4 w-4 text-[#0c9344]" />
                                         </div>
                                         <div className="max-w-xs">
                                             <p className="text-white font-medium truncate">
@@ -168,7 +168,7 @@ export default function ConversationTable({ conversations, onView, onDelete, loa
                                             </span>
                                         )}
                                         {!conversation.isPinned && !conversation.isArchived && (
-                                            <span className="inline-flex items-center gap-1 px-2 py-1 bg-emerald-700/10 text-emerald-700 rounded text-xs">
+                                            <span className="inline-flex items-center gap-1 px-2 py-1 bg-[#0c9344]/10 text-[#0c9344] rounded text-xs">
                                                 Active
                                             </span>
                                         )}

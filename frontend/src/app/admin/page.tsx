@@ -170,9 +170,9 @@ export default function AdminDashboard() {
                 </Link>
 
                 <Link href="/admin/conversations">
-                    <div className="flex items-center gap-4 p-4 bg-emerald-700/10 border border-emerald-700/20 rounded-xl hover:border-emerald-700/40 transition-all cursor-pointer group">
-                        <div className="p-3 bg-emerald-700/20 rounded-lg group-hover:bg-emerald-700/30 transition-all">
-                            <MessageSquare className="h-5 w-5 text-emerald-400" />
+                    <div className="flex items-center gap-4 p-4 bg-[#0c9344]/10 border border-[#0c9344]/20 rounded-xl hover:border-[#0c9344]/40 transition-all cursor-pointer group">
+                        <div className="p-3 bg-[#0c9344]/20 rounded-lg group-hover:bg-[#0c9344]/30 transition-all">
+                            <MessageSquare className="h-5 w-5 text-[#0c9344]" />
                         </div>
                         <div>
                             <h3 className="text-white font-medium">View Conversations</h3>

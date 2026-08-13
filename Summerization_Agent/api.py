@@ -9,7 +9,7 @@
 #    GET   /health             Health check
 #
 #  Run:
-#    uvicorn api:app --reload --port 7002
+#    uvicorn api:app --reload --port 8000
 # ============================================================
 
 import os
@@ -21,9 +21,6 @@ import logging
 from enum import Enum
 from pathlib import Path
 from typing import Optional
-
-from dotenv import load_dotenv
-load_dotenv(override=True)
 
 from fastapi import FastAPI, File, UploadFile, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
@@ -54,7 +51,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=False,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -311,4 +308,4 @@ def ask_question(body: AskRequest):
 # ══════════════════════════════════════════════════════════
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("api:app", host="0.0.0.0", port=7002, reload=True)
+    uvicorn.run("api:app", host="0.0.0.0", port=8000, reload=True)

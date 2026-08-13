@@ -1,18 +1,14 @@
 """
-
-RUN:
-    uvicorn criminal_api:app --host 0.0.0.0 --port 7004 --reload
-    # or: python criminal_api.py
-
 CriminalJudicialGPT – FastAPI Server
 Pakistan Criminal Courts RAG Application
 ──────────────────────────────────────────
 INSTALLATION:
-    pip install fastapi uvicorn langchain langchain-community langchain-groq \
+    pip install fastapi uvicorn langchain langchain-community langchain-google-genai \
                 langchain-huggingface faiss-cpu sentence-transformers \
                 python-dotenv
 
-
+RUN:
+    uvicorn criminal_api:app --host 0.0.0.0 --port 8001 --reload
 
 ENDPOINTS:
     GET  /              → health check
@@ -25,7 +21,6 @@ ENDPOINTS:
 """
 
 import os
-import json
 import asyncio
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
@@ -34,11 +29,11 @@ from uuid import uuid4
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, FileResponse
 from pydantic import BaseModel, Field
 
 # ── LangChain v0.3+ ──────────────────────────────────────────────────────────
-from langchain_groq import ChatGroq
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_core.documents import Document
@@ -52,6 +47,12 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough, RunnableLambda
 
 load_dotenv()
+
+# ── Document export (Markdown → .docx, served locally) ──────────────────────
+# Fully separate from the RAG/LLM chain — only ever called on the *final*
+# markdown string the chain has already produced.
+import document_export
+from document_export import should_generate_document, export_markdown_as_docx
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -721,13 +722,13 @@ class RAGEngine:
         self.vectorstore: FAISS | None = None
         self.rag_chain = None
         self.history_chain = None
-        self.llm: ChatGroq | None = None
+        self.llm: ChatGoogleGenerativeAI | None = None
         self.retriever = None
 
     def build(self):
-        api_key = os.getenv("GROQ_API_KEY")
+        api_key = os.getenv("GOOGLE_API_KEY")
         if not api_key:
-            raise RuntimeError("GROQ_API_KEY environment variable is not set.")
+            raise RuntimeError("GOOGLE_API_KEY environment variable is not set.")
 
         # Embeddings + Vector Store
         embeddings = HuggingFaceEmbeddings(
@@ -738,11 +739,11 @@ class RAGEngine:
         # k=4 for criminal cases — more context chunks needed for complex law
         self.retriever = self.vectorstore.as_retriever(search_kwargs={"k": 4})
 
-        # LLM — slightly lower temperature for deterministic legal drafting
-        self.llm = ChatGroq(
-            model="llama-3.3-70b-versatile",
+        # LLM (Google Gemini) — slightly lower temperature for deterministic legal drafting
+        self.llm = ChatGoogleGenerativeAI(
+            model="gemini-3.6-flash",
             temperature=0.15,
-            groq_api_key=api_key,
+            api_key=api_key,
         )
 
         # ── Standard RAG chain (stateless) ───────────────────────────────────
@@ -806,11 +807,11 @@ session_store: dict[str, list] = {}
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print("[BUILD]  Building Criminal RAG engine (embeddings + vector store + Groq LLM)...")
+    print("⚙️  Building Criminal RAG engine (embeddings + vector store + Gemini LLM)...")
     await asyncio.get_event_loop().run_in_executor(None, rag_engine.build)
-    print("[OK]  CriminalJudicialGPT RAG engine is ready.")
+    print("✅  CriminalJudicialGPT RAG engine is ready.")
     yield
-    print("[STOP]  Shutting down CriminalJudicialGPT.")
+    print("🛑  Shutting down CriminalJudicialGPT.")
 
 
 app = FastAPI(
@@ -818,7 +819,7 @@ app = FastAPI(
     description=(
         "RAG-powered API for Pakistan Criminal Court judgment drafting. "
         "Covers PPC, Cr.P.C., CNS Act, ATA, Qisas/Diyat. "
-        "Backed by Groq (llama-3.3-70b) and LangChain v0.3+."
+        "Backed by Google Gemini (gemini-3-flash) and LangChain v0.3+."
     ),
     version="1.0.0",
     lifespan=lifespan,
@@ -842,10 +843,17 @@ class ChatRequest(BaseModel):
     query: str = Field(..., min_length=1, description="Judge's query or instruction")
 
 
+class DocumentInfo(BaseModel):
+    title: str
+    doc_type: str
+    download_url: str
+
+
 class ChatResponse(BaseModel):
     query: str
     response: str
     sources: list[str] = Field(default_factory=list)
+    document: DocumentInfo | None = None
 
 
 class HistoryChatRequest(BaseModel):
@@ -862,6 +870,7 @@ class HistoryChatResponse(BaseModel):
     response: str
     sources: list[str] = Field(default_factory=list)
     turn: int = Field(description="Turn number in this session")
+    document: DocumentInfo | None = None
 
 
 class SessionInfo(BaseModel):
@@ -888,6 +897,50 @@ def get_source_names(query: str) -> list[str]:
         return []
     docs = rag_engine.retriever.invoke(query)
     return list({d.metadata.get("source", "unknown") for d in docs})
+
+
+def _make_doc_title(query: str) -> str:
+    """Short, filesystem-safe title derived from the user's query."""
+    words = query.strip().split()
+    return " ".join(words[:8]) if words else "Judgment"
+
+
+def append_download_link(response_text: str, document: DocumentInfo | None) -> str:
+    """
+    Appends a clickable markdown download link to the chat response text
+    itself, so it renders inline in the chat UI (not just in the separate
+    `document` JSON field, which a frontend might not surface).
+    """
+    if document is None:
+        return response_text
+    return (
+        f"{response_text}\n\n---\n"
+        f"📄 **[Download {document.title}.docx]({document.download_url})**"
+    )
+
+
+def run_document_export(query: str, response_markdown: str) -> DocumentInfo | None:
+    """
+    Blocking function — call it via run_in_executor from async routes.
+
+    Runs strictly AFTER the LLM has already produced its full markdown
+    answer. Never touches the RAG chain, prompt, or model call — only
+    converts+saves the string the chain already returned. Wrapped in
+    try/except so an export failure never breaks the chat response.
+    """
+    if not should_generate_document(query):
+        return None
+    try:
+        title = _make_doc_title(query)
+        result = export_markdown_as_docx(response_markdown, title)
+        return DocumentInfo(
+            title=result.title,
+            doc_type=result.doc_type,
+            download_url=result.download_url,
+        )
+    except Exception as exc:
+        print(f"⚠️  Document export failed (chat still succeeded): {exc}")
+        return None
 
 
 async def stream_rag_response(query: str) -> AsyncGenerator[str, None]:
@@ -922,11 +975,7 @@ async def stream_rag_response(query: str) -> AsyncGenerator[str, None]:
     async for chunk in rag_engine.llm.astream(messages):
         token = chunk.content
         if token:
-            # JSON-encode so whitespace-only tokens (spaces, newlines) and
-            # tokens containing embedded newlines survive SSE's line-based
-            # framing intact instead of being trimmed/dropped by the client.
-            payload = json.dumps({"text": token})
-            yield f"data: {payload}\n\n"
+            yield f"data: {token}\n\n"
 
     yield "data: [DONE]\n\n"
 
@@ -951,10 +1000,31 @@ async def health():
         raise HTTPException(status_code=503, detail="RAG engine not ready.")
     return HealthResponse(
         status="healthy",
-        model="llama-3.3-70b-versatile (Groq)",
+        model="gemini-3-flash (Google)",
         embeddings="sentence-transformers/all-MiniLM-L6-v2",
         vector_store_docs=rag_engine.vectorstore.index.ntotal,
         sessions_active=len(session_store),
+    )
+
+
+# ── Document download ────────────────────────────────────────────────────────
+@app.get("/documents/{filename}", tags=["Documents"])
+async def download_document(filename: str):
+    """
+    Serves a previously generated .docx file (see document_export.py).
+    This is the URL that DocumentInfo.download_url points at.
+    """
+    if "/" in filename or "\\" in filename or ".." in filename:
+        raise HTTPException(status_code=400, detail="Invalid filename.")
+
+    filepath = os.path.join(document_export.EXPORT_DIR, filename)
+    if not os.path.isfile(filepath):
+        raise HTTPException(status_code=404, detail="Document not found.")
+
+    return FileResponse(
+        path=filepath,
+        filename=filename,
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     )
 
 
@@ -972,7 +1042,15 @@ async def chat(request: ChatRequest):
             None, rag_engine.rag_chain.invoke, request.query
         )
         sources = get_source_names(request.query)
-        return ChatResponse(query=request.query, response=response, sources=sources)
+
+        document = await asyncio.get_event_loop().run_in_executor(
+            None, run_document_export, request.query, response
+        )
+        response_with_link = append_download_link(response, document)
+
+        return ChatResponse(
+            query=request.query, response=response_with_link, sources=sources, document=document
+        )
 
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
@@ -1029,12 +1107,20 @@ async def chat_with_history(request: HistoryChatRequest):
         sources = get_source_names(request.query)
         turn = len(history) // 2
 
+        document = await asyncio.get_event_loop().run_in_executor(
+            None, run_document_export, request.query, response
+        )
+        # NOTE: `history` (stored above) keeps the raw response without the
+        # link — only what's returned to the client gets the link appended.
+        response_with_link = append_download_link(response, document)
+
         return HistoryChatResponse(
             session_id=request.session_id,
             query=request.query,
-            response=response,
+            response=response_with_link,
             sources=sources,
             turn=turn,
+            document=document,
         )
 
     except Exception as exc:
@@ -1065,19 +1151,3 @@ async def list_sessions():
             )
         )
     return sessions
-
-
-# ══════════════════════════════════════════════════════════════════
-# ENTRY POINT  —  run with:  python criminal_api.py
-# or:  uvicorn criminal_api:app --host 0.0.0.0 --port 7004 --reload
-# ══════════════════════════════════════════════════════════════════
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(
-        "criminal_api:app",
-        host="0.0.0.0",
-        port=7004,
-        reload=True,
-        log_level="info",
-    )

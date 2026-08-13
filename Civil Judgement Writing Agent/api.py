@@ -29,7 +29,7 @@
 # from dotenv import load_dotenv
 # from fastapi import FastAPI, HTTPException, Request
 # from fastapi.middleware.cors import CORSMiddleware
-# from fastapi.responses import StreamingResponse
+# from fastapi.responses import StreamingResponse, FileResponse
 # from pydantic import BaseModel, Field
 
 # # ── LangChain v0.3+ ──────────────────────────────────────────────────────────
@@ -51,6 +51,7 @@
 # # ── Document export (Markdown → .docx → Google Drive) ───────────────────────
 # # Fully separate from the RAG/LLM chain — only ever called on the *final*
 # # markdown string the chain has already produced.
+# import document_export
 # from document_export import should_generate_document, export_markdown_as_docx
 
 
@@ -461,7 +462,7 @@
 #         self.llm = ChatGroq(
 #             model="llama-3.3-70b-versatile",
 #             temperature=0.2,
-#             groq_api_key=os.getenv("GROQ_API_KEY"),
+#             groq_api_key=api_key,
 #         )
 
 #         # ── Standard RAG chain (stateless) ───────────────────────────────────
@@ -564,7 +565,6 @@
 #     title: str
 #     doc_type: str
 #     download_url: str
-#     view_url: str
 
 
 # class ChatResponse(BaseModel):
@@ -623,6 +623,20 @@
 #     return " ".join(words[:8]) if words else "Judgment"
 
 
+# def append_download_link(response_text: str, document: DocumentInfo | None) -> str:
+#     """
+#     Appends a clickable markdown download link to the chat response text
+#     itself, so it renders inline in the chat UI (not just in the separate
+#     `document` JSON field, which a frontend might not surface).
+#     """
+#     if document is None:
+#         return response_text
+#     return (
+#         f"{response_text}\n\n---\n"
+#         f"📄 **[Download {document.title}.docx]({document.download_url})**"
+#     )
+
+
 # def run_document_export(query: str, response_markdown: str) -> DocumentInfo | None:
 #     """
 #     Blocking function — call it via run_in_executor from async routes.
@@ -641,7 +655,6 @@
 #             title=result.title,
 #             doc_type=result.doc_type,
 #             download_url=result.download_url,
-#             view_url=result.view_url,
 #         )
 #     except Exception as exc:
 #         print(f"⚠️  Document export failed (chat still succeeded): {exc}")
@@ -714,6 +727,28 @@
 #     )
 
 
+# # ── Document download ────────────────────────────────────────────────────────
+# @app.get("/documents/{filename}", tags=["Documents"])
+# async def download_document(filename: str):
+#     """
+#     Serves a previously generated .docx file (see document_export.py).
+#     This is the URL that DocumentInfo.download_url points at.
+#     """
+#     # Path-traversal guard: reject anything that isn't a bare filename.
+#     if "/" in filename or "\\" in filename or ".." in filename:
+#         raise HTTPException(status_code=400, detail="Invalid filename.")
+
+#     filepath = os.path.join(document_export.EXPORT_DIR, filename)
+#     if not os.path.isfile(filepath):
+#         raise HTTPException(status_code=404, detail="Document not found.")
+
+#     return FileResponse(
+#         path=filepath,
+#         filename=filename,
+#         media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+#     )
+
+
 # # ── Standard Chat (full response) ────────────────────────────────────────────
 # @app.post("/chat", response_model=ChatResponse, tags=["Chat"])
 # async def chat(request: ChatRequest):
@@ -735,9 +770,10 @@
 #         document = await asyncio.get_event_loop().run_in_executor(
 #             None, run_document_export, request.query, response
 #         )
+#         response_with_link = append_download_link(response, document)
 
 #         return ChatResponse(
-#             query=request.query, response=response, sources=sources, document=document
+#             query=request.query, response=response_with_link, sources=sources, document=document
 #         )
 
 #     except Exception as exc:
@@ -802,11 +838,15 @@
 #         document = await asyncio.get_event_loop().run_in_executor(
 #             None, run_document_export, request.query, response
 #         )
+#         # NOTE: `history` (stored above) keeps the raw response without the
+#         # link — only what's returned to the client gets the link appended,
+#         # so future turns don't feed the markdown link back into the LLM.
+#         response_with_link = append_download_link(response, document)
 
 #         return HistoryChatResponse(
 #             session_id=request.session_id,
 #             query=request.query,
-#             response=response,
+#             response=response_with_link,
 #             sources=sources,
 #             turn=turn,
 #             document=document,
@@ -851,16 +891,12 @@
 
 
 
-
-
-
-
 """
 JudicialGPT – FastAPI Server
 Pakistan Civil Courts RAG Application
 ─────────────────────────────────────
 INSTALLATION:
-    pip install fastapi uvicorn langchain langchain-community langchain-groq \
+    pip install fastapi uvicorn langchain langchain-community langchain-google-genai \
                 langchain-huggingface faiss-cpu sentence-transformers \
                 python-dotenv
 
@@ -891,7 +927,7 @@ from fastapi.responses import StreamingResponse, FileResponse
 from pydantic import BaseModel, Field
 
 # ── LangChain v0.3+ ──────────────────────────────────────────────────────────
-from langchain_groq import ChatGroq
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_core.documents import Document
@@ -1300,13 +1336,13 @@ class RAGEngine:
         self.vectorstore: FAISS | None = None
         self.rag_chain = None
         self.history_chain = None
-        self.llm: ChatGroq | None = None
+        self.llm: ChatGoogleGenerativeAI | None = None
         self.retriever = None
 
     def build(self):
-        api_key = os.getenv("GROQ_API_KEY")
+        api_key = os.getenv("GOOGLE_API_KEY")
         if not api_key:
-            raise RuntimeError("GROQ_API_KEY environment variable is not set.")
+            raise RuntimeError("GOOGLE_API_KEY environment variable is not set.")
 
         # Embeddings + Vector Store
         embeddings = HuggingFaceEmbeddings(
@@ -1316,11 +1352,11 @@ class RAGEngine:
         self.vectorstore = FAISS.from_documents(KNOWLEDGE_DOCS, embeddings)
         self.retriever = self.vectorstore.as_retriever(search_kwargs={"k": 3})
 
-        # LLM
-        self.llm = ChatGroq(
-            model="llama-3.3-70b-versatile",
+        # LLM (Google Gemini via the Gemini Developer API)
+        self.llm = ChatGoogleGenerativeAI(
+            model="gemini-3.6-flash",
             temperature=0.2,
-            groq_api_key=api_key,
+            api_key=api_key,
         )
 
         # ── Standard RAG chain (stateless) ───────────────────────────────────
@@ -1384,7 +1420,7 @@ session_store: dict[str, list] = {}
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print("⚙️  Building RAG engine (embeddings + vector store + Groq LLM)...")
+    print("⚙️  Building RAG engine (embeddings + vector store + Gemini LLM)...")
     await asyncio.get_event_loop().run_in_executor(None, rag_engine.build)
     print("✅  JudicialGPT RAG engine is ready.")
     yield
@@ -1395,7 +1431,7 @@ app = FastAPI(
     title="JudicialGPT API",
     description=(
         "RAG-powered API for Pakistan Civil Court judgment drafting. "
-        "Backed by Groq (llama-3.3-70b) and LangChain v0.3+."
+        "Backed by Google Gemini (gemini-3-flash) and LangChain v0.3+."
     ),
     version="1.0.0",
     lifespan=lifespan,
@@ -1481,6 +1517,20 @@ def _make_doc_title(query: str) -> str:
     return " ".join(words[:8]) if words else "Judgment"
 
 
+def append_download_link(response_text: str, document: DocumentInfo | None) -> str:
+    """
+    Appends a clickable markdown download link to the chat response text
+    itself, so it renders inline in the chat UI (not just in the separate
+    `document` JSON field, which a frontend might not surface).
+    """
+    if document is None:
+        return response_text
+    return (
+        f"{response_text}\n\n---\n"
+        f"📄 **[Download {document.title}.docx]({document.download_url})**"
+    )
+
+
 def run_document_export(query: str, response_markdown: str) -> DocumentInfo | None:
     """
     Blocking function — call it via run_in_executor from async routes.
@@ -1503,6 +1553,27 @@ def run_document_export(query: str, response_markdown: str) -> DocumentInfo | No
     except Exception as exc:
         print(f"⚠️  Document export failed (chat still succeeded): {exc}")
         return None
+
+
+def _extract_token_text(content) -> str:
+    """
+    Normalize an astream() chunk's `.content` to plain text.
+
+    Depending on the langchain-google-genai SDK version, streaming chunks
+    can come back either as a plain string or as a list of content blocks
+    like [{"type": "text", "text": "...", "index": 0}]. Without this, the
+    list form gets stringified as-is downstream, leaking raw Python repr
+    text (e.g. "[{'type': 'text', ...}]") into the chat response.
+    """
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        return "".join(
+            block.get("text", "")
+            for block in content
+            if isinstance(block, dict) and block.get("type") == "text"
+        )
+    return str(content) if content else ""
 
 
 async def stream_rag_response(query: str) -> AsyncGenerator[str, None]:
@@ -1535,7 +1606,7 @@ async def stream_rag_response(query: str) -> AsyncGenerator[str, None]:
     messages = await prompt.ainvoke({"context": context, "question": query})
 
     async for chunk in rag_engine.llm.astream(messages):
-        token = chunk.content
+        token = _extract_token_text(chunk.content)
         if token:
             # JSON-encode so whitespace-only tokens (spaces, newlines) and
             # tokens containing embedded newlines survive SSE's line-based
@@ -1567,7 +1638,7 @@ async def health():
         raise HTTPException(status_code=503, detail="RAG engine not ready.")
     return HealthResponse(
         status="healthy",
-        model="llama-3.3-70b-versatile (Groq)",
+        model="gemini-3-flash (Google)",
         embeddings="sentence-transformers/all-MiniLM-L6-v2",
         vector_store_docs=rag_engine.vectorstore.index.ntotal,
         sessions_active=len(session_store),
@@ -1617,9 +1688,10 @@ async def chat(request: ChatRequest):
         document = await asyncio.get_event_loop().run_in_executor(
             None, run_document_export, request.query, response
         )
+        response_with_link = append_download_link(response, document)
 
         return ChatResponse(
-            query=request.query, response=response, sources=sources, document=document
+            query=request.query, response=response_with_link, sources=sources, document=document
         )
 
     except Exception as exc:
@@ -1684,11 +1756,15 @@ async def chat_with_history(request: HistoryChatRequest):
         document = await asyncio.get_event_loop().run_in_executor(
             None, run_document_export, request.query, response
         )
+        # NOTE: `history` (stored above) keeps the raw response without the
+        # link — only what's returned to the client gets the link appended,
+        # so future turns don't feed the markdown link back into the LLM.
+        response_with_link = append_download_link(response, document)
 
         return HistoryChatResponse(
             session_id=request.session_id,
             query=request.query,
-            response=response,
+            response=response_with_link,
             sources=sources,
             turn=turn,
             document=document,
@@ -1724,8 +1800,3 @@ async def list_sessions():
             )
         )
     return sessions
-
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("api:app", host="0.0.0.0", port=7003, reload=True)

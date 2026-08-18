@@ -1200,14 +1200,14 @@ const AIToolsSection = () => {
       title: 'Handwritten Text Extraction',
       description: 'Convert handwritten notes and legal documents into editable digital text with high accuracy. It supports Urdu, English, and mixed-language content while preserving the original document structure for easy reading and processing.',
       features: ['Handwriting Recognition', 'Urdu & English', 'Structure Preservation', 'Faster Transcription'],
-      gradient: 'from-blue-500 to-indigo-600',
-      accent: 'bg-blue-500',
-      accentSoft: 'bg-blue-50',
-      accentText: 'text-blue-600',
-      accentBorder: 'border-blue-200',
-      glow: 'rgba(59, 130, 246, 0.45)',
-      glowSoft: 'rgba(59, 130, 246, 0.12)',
-      ring: '#3b82f6',
+      gradient: 'from-[#0c9344] to-[#0c9344]',
+      accent: 'bg-[#0c9344]',
+      accentSoft: 'bg-[#0c9344]/10',
+      accentText: 'text-[#0c9344]',
+      accentBorder: 'border-[#0c9344]/25',
+      glow: 'rgba(16, 185, 129, 0.45)',
+      glowSoft: 'rgba(16, 185, 129, 0.12)',
+      ring: '#10b981',
       badge: 'Extraction',
     },
     {
@@ -1215,14 +1215,14 @@ const AIToolsSection = () => {
       title: 'Voice Command Processing',
       description: 'Transform spoken instructions into accurate text and interact with JudicialGPT hands-free. The system understands legal terminology and local accents to provide a smooth and efficient user experience.',
       features: ['Speech-to-Text', 'Hands-Free Control', 'Legal Terminology', 'Accent Recognition'],
-      gradient: 'from-violet-500 to-purple-600',
-      accent: 'bg-violet-500',
-      accentSoft: 'bg-violet-50',
-      accentText: 'text-violet-600',
-      accentBorder: 'border-violet-200',
-      glow: 'rgba(139, 92, 246, 0.45)',
-      glowSoft: 'rgba(139, 92, 246, 0.12)',
-      ring: '#8b5cf6',
+      gradient: 'from-[#0c9344] to-[#0c9344]',
+      accent: 'bg-[#0c9344]',
+      accentSoft: 'bg-[#0c9344]/10',
+      accentText: 'text-[#0c9344]',
+      accentBorder: 'border-[#0c9344]/25',
+      glow: 'rgba(16, 185, 129, 0.45)',
+      glowSoft: 'rgba(16, 185, 129, 0.12)',
+      ring: '#10b981',
       badge: 'Transcription',
     },
   ];
@@ -1233,31 +1233,31 @@ const AIToolsSection = () => {
     {
       icon: BookOpen,
       title: 'Smart Citation Search',
-      description: 'Quickly find relevant case laws, legal precedents, and statutory references. The intelligent search system suggests accurate citations and connects judgments with applicable legal provisions to save valuable research time.',
+      description: 'Quickly find relevant case laws, legal precedents, and statutory references. Get accurate citations and applicable legal provisions while saving valuable research time.',
       features: ['Case Law Search', 'Citation Matching', 'Legal References', 'Faster Research'],
-      gradient: 'from-amber-500 to-orange-600',
-      accent: 'bg-amber-500',
-      accentSoft: 'bg-amber-50',
-      accentText: 'text-amber-600',
-      accentBorder: 'border-amber-200',
-      glow: 'rgba(245, 158, 11, 0.45)',
-      glowSoft: 'rgba(245, 158, 11, 0.12)',
-      ring: '#f59e0b',
+      gradient: 'from-[#0c9344] to-[#0c9344]',
+      accent: 'bg-[#0c9344]',
+      accentSoft: 'bg-[#0c9344]/10',
+      accentText: 'text-[#0c9344]',
+      accentBorder: 'border-[#0c9344]/25',
+      glow: 'rgba(16, 185, 129, 0.45)',
+      glowSoft: 'rgba(16, 185, 129, 0.12)',
+      ring: '#10b981',
       badge: 'References',
     },
     {
       icon: Brain,
       title: 'Pakistan Law Intelligence',
-      description: 'Gain AI-driven insights from Pakistan’s legal framework through advanced analysis of laws, precedents, and judicial trends. It provides contextual answers and supports logical legal research and informed decision-making.',
+      description: 'Access AI-driven insights from Pakistan’s laws, precedents, and judicial trends. Get contextual analysis for faster, evidence-based legal research and decision-making.',
       features: ['Legal Insights', 'Law Analysis', 'Judicial Trends', 'Reasoning Support'],
-      gradient: 'from-rose-500 to-pink-600',
-      accent: 'bg-rose-500',
-      accentSoft: 'bg-rose-50',
-      accentText: 'text-rose-600',
-      accentBorder: 'border-rose-200',
-      glow: 'rgba(244, 63, 94, 0.45)',
-      glowSoft: 'rgba(244, 63, 94, 0.12)',
-      ring: '#f43f5e',
+      gradient: 'from-[#0c9344] to-[#0c9344]',
+      accent: 'bg-[#0c9344]',
+      accentSoft: 'bg-[#0c9344]/10',
+      accentText: 'text-[#0c9344]',
+      accentBorder: 'border-[#0c9344]/25',
+      glow: 'rgba(16, 185, 129, 0.45)',
+      glowSoft: 'rgba(16, 185, 129, 0.12)',
+      ring: '#10b981',
       badge: 'Intelligence',
     },
   ];
@@ -1373,7 +1373,7 @@ const AIToolsSection = () => {
                 style={{ boxShadow: `0 4px 20px ${tool.glowSoft}` }}
               >
                 <div className="flex items-start justify-between mb-3">
-                  <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${tool.gradient} flex items-center justify-center shadow-md`}>
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0c9344] to-[#0c9344] flex items-center justify-center shadow-md">
                     <tool.icon className="w-5 h-5 text-white" />
                   </div>
                   <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${tool.accentSoft} ${tool.accentText}`}>
@@ -1407,7 +1407,7 @@ const AIToolsSection = () => {
 
               {/* Row 1: header */}
               <div className="flex items-center gap-3 pb-4 min-h-[3rem]">
-                <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${tool.gradient} flex items-center justify-center shadow-md shrink-0`}>
+                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#0c9344] to-[#0c9344] flex items-center justify-center shadow-md shrink-0">
                   <tool.icon className="w-5 h-5 text-white" />
                 </div>
                 <div className="min-w-0">

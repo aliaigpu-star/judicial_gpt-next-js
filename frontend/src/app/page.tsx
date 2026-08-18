@@ -6,8 +6,9 @@ import { motion, AnimatePresence, useInView } from 'framer-motion';
 import {
   Scale, ArrowRight, FileText, Users, MessageSquare, Star, Twitter, Linkedin,
   Github, Mail, Brain, Clock, Target, Award, Sparkles, Lock, Globe, MessageCircle,
-  FileSearch, Bot, Headphones, ChevronDown, ChevronLeft, ChevronRight, Menu, X, Check, Lightbulb, Shield,
-  Search, BookOpen, ShieldCheck, Zap, DollarSign, MapPin, Landmark, Briefcase
+  FileSearch, Bot, ChevronDown, ChevronLeft, ChevronRight, Menu, X, Check, Lightbulb, Shield,
+  Search, BookOpen, ShieldCheck, Zap, DollarSign, MapPin, Landmark, Briefcase,
+  ScanText, Mic
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { SiteFooter } from '@/components/site/SiteShell';
@@ -1209,10 +1210,10 @@ const AIToolsSection = () => {
       badge: 'Core Tool',
     },
     {
-      icon: FileSearch,
-      title: 'Case Prism — Research Tool',
-      description: 'Access our proprietary legal research tool for comprehensive case analysis. Search through millions of cases, statutes, and legal documents with advanced filtering and relevance ranking.',
-      features: ['Advanced search filters', 'Citation analysis', 'Precedent mapping', 'Export capabilities'],
+      icon: ScanText,
+      title: 'Handwritten Text Extraction',
+      description: 'Convert handwritten notes and legal documents into editable digital text with high accuracy. It supports Urdu, English, and mixed-language content while preserving the original document structure for easy reading and processing.',
+      features: ['Handwriting Recognition', 'Urdu & English', 'Structure Preservation', 'Faster Transcription'],
       gradient: 'from-blue-500 to-indigo-600',
       accent: 'bg-blue-500',
       accentSoft: 'bg-blue-50',
@@ -1221,17 +1222,14 @@ const AIToolsSection = () => {
       glow: 'rgba(59, 130, 246, 0.45)',
       glowSoft: 'rgba(59, 130, 246, 0.12)',
       ring: '#3b82f6',
-      badge: 'Research',
-      bars: [
-        { label: 'Advanced search filters', target: 94 },
-        { label: 'Citation analysis', target: 87 },
-      ],
+      badge: 'Extraction',
     },
     {
-      icon: Headphones,
-      title: 'Virtual Legal Consultant',
-      description: '24/7 AI-powered virtual consultation service. Understand your case better, explore potential outcomes, and get strategic recommendations without the wait.',
-      features: ['Outcome prediction', 'Strategy suggestions', 'Risk assessment', 'Available 24/7'],
+      icon: Mic,
+      title: 'Voice Command Processing',
+      description: 'Transform spoken instructions into accurate text and interact with JudicialGPT hands-free. The system understands legal terminology and local accents to provide a smooth and efficient user experience.',
+      
+      features: ['Speech-to-Text', 'Hands-Free Control', 'Legal Terminology', 'Accent Recognition'],
       gradient: 'from-violet-500 to-purple-600',
       accent: 'bg-violet-500',
       accentSoft: 'bg-violet-50',
@@ -1240,22 +1238,44 @@ const AIToolsSection = () => {
       glow: 'rgba(139, 92, 246, 0.45)',
       glowSoft: 'rgba(139, 92, 246, 0.12)',
       ring: '#8b5cf6',
-      badge: 'Consultation',
-      bars: [
-        { label: 'Outcome prediction', target: 91 },
-        { label: 'Strategy suggestions', target: 89 },
-      ],
+      badge: 'Transcription',
     },
   ];
 
   const core = tools[0];
-  const sideTools = tools.slice(1);
 
-  const bar1 = useCountUp(isInView, 94, 1300);
-  const bar2 = useCountUp(isInView, 87, 1400);
-  const bar3 = useCountUp(isInView, 91, 1500);
-  const bar4 = useCountUp(isInView, 89, 1600);
-  const barValues = [bar1, bar2, bar3, bar4];
+  const sideTools = [
+    {
+      icon: BookOpen,
+      title: 'Smart Citation Search',
+      description: 'Quickly find relevant case laws, legal precedents, and statutory references. The intelligent search system suggests accurate citations and connects judgments with applicable legal provisions to save valuable research time.',
+      features: ['Case Law Search', 'Citation Matching', 'Legal References', 'Faster Research'],
+      gradient: 'from-amber-500 to-orange-600',
+      accent: 'bg-amber-500',
+      accentSoft: 'bg-amber-50',
+      accentText: 'text-amber-600',
+      accentBorder: 'border-amber-200',
+      glow: 'rgba(245, 158, 11, 0.45)',
+      glowSoft: 'rgba(245, 158, 11, 0.12)',
+      ring: '#f59e0b',
+      badge: 'References',
+    },
+    {
+      icon: Brain,
+      title: 'Pakistan Law Intelligence',
+      description: 'Gain AI-driven insights from Pakistan’s legal framework through advanced analysis of laws, precedents, and judicial trends. It provides contextual answers and supports logical legal research and informed decision-making.',
+      features: ['Legal Insights', 'Law Analysis', 'Judicial Trends', 'Reasoning Support'],
+      gradient: 'from-rose-500 to-pink-600',
+      accent: 'bg-rose-500',
+      accentSoft: 'bg-rose-50',
+      accentText: 'text-rose-600',
+      accentBorder: 'border-rose-200',
+      glow: 'rgba(244, 63, 94, 0.45)',
+      glowSoft: 'rgba(244, 63, 94, 0.12)',
+      ring: '#f43f5e',
+      badge: 'Intelligence',
+    },
+  ];
 
   const marqueeChips = [
     { label: 'JudicialGPT AI Chatbot', star: 'text-emerald-500' },
@@ -1359,59 +1379,33 @@ const AIToolsSection = () => {
 
           {/* Stacked side cards */}
           <div className="flex flex-col gap-4 lg:gap-5">
-            {sideTools.map((tool, i) => {
-              const barOffset = i * 2;
-              return (
-                <motion.div
-                  key={tool.title}
-                  initial={{ opacity: 0, y: 32 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={SCROLL_VIEWPORT}
-                  transition={{ duration: 0.5, delay: 0.1 + i * 0.08 }}
-                  whileHover={hasMounted ? cardHover(tool.glow) : undefined}
-                  className="flex-1 rounded-[1.5rem] border border-slate-200 bg-white p-5 md:p-6"
-                  style={{ boxShadow: `0 4px 20px ${tool.glowSoft}` }}
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${tool.gradient} flex items-center justify-center shadow-md`}>
-                      <tool.icon className="w-5 h-5 text-white" />
-                    </div>
-                    <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${tool.accentSoft} ${tool.accentText}`}>
-                      {tool.badge}
-                    </span>
+            {sideTools.map((tool, i) => (
+              <motion.div
+                key={tool.title}
+                initial={{ opacity: 0, y: 32 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={SCROLL_VIEWPORT}
+                transition={{ duration: 0.5, delay: 0.1 + i * 0.08 }}
+                whileHover={hasMounted ? cardHover(tool.glow) : undefined}
+                className="flex-1 rounded-[1.5rem] border border-slate-200 bg-white p-5 md:p-6"
+                style={{ boxShadow: `0 4px 20px ${tool.glowSoft}` }}
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${tool.gradient} flex items-center justify-center shadow-md`}>
+                    <tool.icon className="w-5 h-5 text-white" />
                   </div>
-                  <h3 className="text-base font-extrabold text-slate-900 mb-1.5 leading-snug">{tool.title}</h3>
-                  <p className="text-slate-500 text-xs leading-relaxed mb-4 line-clamp-3">{tool.description}</p>
-                  <div className="space-y-3">
-                    {tool.bars?.map((bar, fi) => (
-                      <div key={bar.label}>
-                        <div className="flex items-center justify-between gap-2 mb-1.5">
-                          <p className="text-[10px] font-semibold text-slate-500 truncate">{bar.label}</p>
-                          <span className={`text-[11px] font-bold tabular-nums ${tool.accentText}`}>
-                            {barValues[barOffset + fi]}%
-                          </span>
-                        </div>
-                        <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden">
-                          <div
-                            className={`h-full rounded-full bg-gradient-to-r ${tool.gradient}`}
-                            style={{
-                              width: isInView ? `${bar.target}%` : '0%',
-                              transition: hasMounted
-                                ? `width ${1.2 + fi * 0.15}s cubic-bezier(0.22, 1, 0.36, 1) ${0.15 + i * 0.1 + fi * 0.08}s`
-                                : 'none',
-                            }}
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-              );
-            })}
+                  <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${tool.accentSoft} ${tool.accentText}`}>
+                    {tool.badge}
+                  </span>
+                </div>
+                <h3 className="text-base font-extrabold text-slate-900 mb-1.5 leading-snug">{tool.title}</h3>
+                <p className="text-slate-500 text-xs leading-relaxed mb-4 line-clamp-3">{tool.description}</p>
+              </motion.div>
+            ))}
           </div>
         </div>
 
-        {/* Bottom three equal feature cards — CSS grid rows lock feature-list Y position */}
+        {/* Equal feature cards — CSS grid rows lock feature-list Y position */}
         <div id="ai-tools-grid" className="grid md:grid-cols-3 gap-4 lg:gap-5 mb-2 md:items-stretch">
           {tools.map((tool, i) => (
             <motion.div

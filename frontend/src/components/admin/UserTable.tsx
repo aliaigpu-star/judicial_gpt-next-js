@@ -43,7 +43,7 @@ const roleColors: Record<string, string> = {
 };
 
 const statusColors: Record<string, string> = {
-    active: 'bg-emerald-700/10 text-emerald-700',
+    active: 'bg-[#0c9344]/10 text-[#0c9344]',
     inactive: 'bg-gray-500/10 text-gray-400',
     suspended: 'bg-orange-500/10 text-orange-400',
     banned: 'bg-red-500/10 text-red-400'
@@ -128,9 +128,9 @@ export default function UserTable({
                                         title={allSelected ? 'Deselect all' : 'Select all'}
                                     >
                                         {allSelected ? (
-                                            <CheckSquare className="w-4 h-4 text-emerald-700" />
+                                            <CheckSquare className="w-4 h-4 text-[#0c9344]" />
                                         ) : someSelected ? (
-                                            <div className="w-4 h-4 border-2 border-emerald-700 rounded bg-emerald-700/20" />
+                                            <div className="w-4 h-4 border-2 border-[#0c9344] rounded bg-[#0c9344]/20" />
                                         ) : (
                                             <Square className="w-4 h-4 text-gray-500" />
                                         )}
@@ -159,7 +159,7 @@ export default function UserTable({
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: index * 0.03 }}
                                     className={`border-b border-gray-800/50 hover:bg-gray-800/30 transition-colors ${
-                                        selectedUsers.includes(user.id) ? 'bg-emerald-700/5' : ''
+                                        selectedUsers.includes(user.id) ? 'bg-[#0c9344]/5' : ''
                                     }`}
                                 >
                                     {onSelectUser && (
@@ -169,7 +169,7 @@ export default function UserTable({
                                                 className="p-1 hover:bg-gray-700/50 rounded transition-colors"
                                             >
                                                 {selectedUsers.includes(user.id) ? (
-                                                    <CheckSquare className="w-4 h-4 text-emerald-700" />
+                                                    <CheckSquare className="w-4 h-4 text-[#0c9344]" />
                                                 ) : (
                                                     <Square className="w-4 h-4 text-gray-500" />
                                                 )}
@@ -185,7 +185,7 @@ export default function UserTable({
                                                     className="w-10 h-10 rounded-full object-cover"
                                                 />
                                             ) : (
-                                                <div className="w-10 h-10 bg-gradient-to-br from-emerald-700 to-emerald-800 rounded-full flex items-center justify-center text-white font-semibold">
+                                                <div className="w-10 h-10 bg-gradient-to-br from-[#0c9344] to-[#0c9344] rounded-full flex items-center justify-center text-white font-semibold">
                                                     {(user.name || user.email || 'U')[0].toUpperCase()}
                                                 </div>
                                             )}
@@ -195,7 +195,7 @@ export default function UserTable({
                                                     <Mail className="h-3 w-3" />
                                                     {user.email}
                                                     {user.emailVerified && (
-                                                        <CheckCircle className="h-3 w-3 text-emerald-700 ml-1" />
+                                                        <CheckCircle className="h-3 w-3 text-[#0c9344] ml-1" />
                                                     )}
                                                 </div>
                                             </div>

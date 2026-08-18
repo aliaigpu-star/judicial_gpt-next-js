@@ -321,10 +321,10 @@ class ApiClient {
         return this.request<{ messages: any[] }>(`/api/conversations/${conversationId}/messages`);
     }
 
-    async createMessage(conversationId: string, role: string, content: string, responseTime?: number) {
+    async createMessage(conversationId: string, role: string, content: string, responseTime?: number, metadata?: Record<string, any>) {
         return this.request<{ message: any }>('/api/messages', {
             method: 'POST',
-            body: JSON.stringify({ conversationId, role, content, responseTime })
+            body: JSON.stringify({ conversationId, role, content, responseTime, metadata })
         });
     }
 
@@ -441,14 +441,31 @@ class ApiClient {
             headers['Authorization'] = `Bearer ${authToken}`;
         }
 
-        const response = await fetch(`${this.baseUrl}/api/ai/chat`, {
-            method: 'POST',
-            headers,
-            body: JSON.stringify({ messages, stream: true, ...options }),
-            credentials: 'include'
-        });
+        // Without a timeout, an unresponsive backend leaves this fetch
+        // pending forever, which keeps the caller's "processing" state (and
+        // any spinner tied to it) stuck indefinitely.
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 90000); // 90 second timeout
+
+        let response: Response;
+        try {
+            response = await fetch(`${this.baseUrl}/api/ai/chat`, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify({ messages, stream: true, ...options }),
+                credentials: 'include',
+                signal: controller.signal
+            });
+        } catch (err: any) {
+            clearTimeout(timeoutId);
+            if (err.name === 'AbortError') {
+                throw new Error('Request timed out. Please try again.');
+            }
+            throw err;
+        }
 
         if (!response.ok) {
+            clearTimeout(timeoutId);
             const data = await response.json();
             throw new Error(data.error || 'Stream failed');
         }
@@ -456,32 +473,44 @@ class ApiClient {
         const reader = response.body?.getReader();
         const decoder = new TextDecoder();
         let fullContent = '';
+        let streamDone = false;
 
-        if (reader) {
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
+        try {
+            if (reader) {
+                while (!streamDone) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
 
-                const chunk = decoder.decode(value);
-                const lines = chunk.split('\n');
+                    const chunk = decoder.decode(value);
+                    const lines = chunk.split('\n');
 
-                for (const line of lines) {
-                    if (line.startsWith('data: ')) {
-                        try {
-                            const data = JSON.parse(line.slice(6));
-                            if (data.content) {
-                                fullContent += data.content;
-                                onChunk(fullContent);
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            try {
+                                const data = JSON.parse(line.slice(6));
+                                if (data.content) {
+                                    fullContent += data.content;
+                                    onChunk(fullContent);
+                                }
+                                if (data.done) {
+                                    onComplete(data.responseTime || 0);
+                                    // Stop as soon as the payload signals completion —
+                                    // don't wait on the reader to also see the
+                                    // connection close, which some proxies/keep-alive
+                                    // setups never do, hanging this loop forever.
+                                    streamDone = true;
+                                    break;
+                                }
+                            } catch (e) {
+                                // Skip invalid JSON
                             }
-                            if (data.done) {
-                                onComplete(data.responseTime || 0);
-                            }
-                        } catch (e) {
-                            // Skip invalid JSON
                         }
                     }
                 }
             }
+        } finally {
+            clearTimeout(timeoutId);
+            reader?.cancel().catch(() => {});
         }
 
         return fullContent;

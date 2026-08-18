@@ -52,7 +52,7 @@ export default function ActivityFeed({ activities, loading }: ActivityFeedProps)
 
             {loading ? (
                 <div className="flex items-center justify-center py-12">
-                    <Loader2 className="h-8 w-8 text-emerald-700 animate-spin" />
+                    <Loader2 className="h-8 w-8 text-[#0c9344] animate-spin" />
                 </div>
             ) : activities.length === 0 ? (
                 <div className="text-center py-12">
@@ -72,7 +72,7 @@ export default function ActivityFeed({ activities, loading }: ActivityFeedProps)
                             transition={{ delay: index * 0.05 }}
                             className="flex items-start gap-4 p-4 bg-gray-800/50 rounded-xl border border-gray-700/50 hover:border-gray-600 transition-all"
                         >
-                            <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-emerald-700 to-emerald-800 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                            <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-[#0c9344] to-[#0c9344] rounded-full flex items-center justify-center text-white font-semibold text-sm">
                                 {activity.user[0]?.toUpperCase() || 'U'}
                             </div>
                             <div className="flex-1 min-w-0">
@@ -85,7 +85,7 @@ export default function ActivityFeed({ activities, loading }: ActivityFeedProps)
                                 <span className="text-gray-500 text-xs">
                                     {formatTime(activity.timestamp)}
                                 </span>
-                                <CheckCircle className="h-4 w-4 text-emerald-700" />
+                                <CheckCircle className="h-4 w-4 text-[#0c9344]" />
                             </div>
                         </motion.div>
                     ))}

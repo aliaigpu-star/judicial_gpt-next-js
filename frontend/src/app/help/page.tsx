@@ -10,7 +10,7 @@ type Category = 'All' | 'Product' | 'Security' | 'Accuracy' | 'Getting Started';
 
 const CATEGORY_META: Record<Exclude<Category, 'All'>, { icon: typeof HelpCircle; color: string }> = {
   Product: { icon: HelpCircle, color: 'bg-blue-50 text-blue-700 border-blue-200' },
-  Security: { icon: Shield, color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+  Security: { icon: Shield, color: 'bg-[#0c9344]/10 text-[#0c9344] border-[#0c9344]/25' },
   Accuracy: { icon: Target, color: 'bg-violet-50 text-violet-700 border-violet-200' },
   'Getting Started': { icon: Rocket, color: 'bg-amber-50 text-amber-700 border-amber-200' },
 };
@@ -63,7 +63,7 @@ export default function HelpPage() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search FAQs — e.g. data storage, accuracy, languages…"
-            className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-slate-200 bg-white shadow-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400"
+            className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-slate-200 bg-white shadow-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0c9344]/30 focus:border-[#0c9344]"
             aria-label="Search help articles"
           />
         </div>
@@ -86,8 +86,8 @@ export default function HelpPage() {
                   }}
                   className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold border transition-all ${
                     active
-                      ? 'bg-emerald-500 text-white border-emerald-500 shadow-md shadow-emerald-500/20'
-                      : 'bg-white text-slate-600 border-slate-200 hover:border-emerald-200 hover:bg-emerald-50/50'
+                      ? 'bg-[#0c9344] text-white border-[#0c9344] shadow-md shadow-[#0c9344]/20'
+                      : 'bg-white text-slate-600 border-slate-200 hover:border-[#0c9344]/25 hover:bg-[#0c9344]/10/50'
                   }`}
                 >
                   {Icon && <Icon className="w-3.5 h-3.5" />}
@@ -119,7 +119,7 @@ export default function HelpPage() {
                     setQuery('');
                     setActiveCategory('All');
                   }}
-                  className="text-emerald-600 font-semibold text-sm hover:underline"
+                  className="text-[#0c9344] font-semibold text-sm hover:underline"
                 >
                   Clear filters
                 </button>
@@ -133,7 +133,7 @@ export default function HelpPage() {
                 const isOpen = openIndex === i;
                 return (
                   <FadeIn key={item.q} delay={i * 0.03}>
-                    <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden hover:border-emerald-200 transition-colors">
+                    <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden hover:border-[#0c9344]/25 transition-colors">
                       <button
                         type="button"
                         onClick={() => setOpenIndex(isOpen ? null : i)}
@@ -148,7 +148,7 @@ export default function HelpPage() {
                         </span>
                         <span className="flex-1 font-bold text-slate-900 pr-4">{item.q}</span>
                         <span
-                          className={`text-emerald-600 text-xl leading-none transition-transform ${isOpen ? 'rotate-45' : ''}`}
+                          className={`text-[#0c9344] text-xl leading-none transition-transform ${isOpen ? 'rotate-45' : ''}`}
                         >
                           +
                         </span>
@@ -175,28 +175,28 @@ export default function HelpPage() {
             <div className="grid md:grid-cols-2 gap-5">
               <Link
                 href="/docs"
-                className="group p-6 rounded-2xl border border-slate-200 hover:border-emerald-200 hover:shadow-lg hover:shadow-emerald-500/5 transition-all"
+                className="group p-6 rounded-2xl border border-slate-200 hover:border-[#0c9344]/25 hover:shadow-lg hover:shadow-[#0c9344]/5 transition-all"
               >
-                <h3 className="font-bold text-slate-900 mb-2 group-hover:text-emerald-700 transition-colors">
+                <h3 className="font-bold text-slate-900 mb-2 group-hover:text-[#0c9344] transition-colors">
                   Documentation
                 </h3>
                 <p className="text-slate-500 text-sm mb-3">
                   Architecture, features, security controls, and reliability design.
                 </p>
-                <span className="inline-flex items-center gap-1 text-sm font-semibold text-emerald-600">
+                <span className="inline-flex items-center gap-1 text-sm font-semibold text-[#0c9344]">
                   Browse docs <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                 </span>
               </Link>
               <Link
                 href="/contact"
-                className="group p-6 rounded-2xl border border-emerald-200 bg-emerald-50/50 hover:bg-emerald-50 transition-all"
+                className="group p-6 rounded-2xl border border-[#0c9344]/25 bg-[#0c9344]/10/50 hover:bg-[#0c9344]/10 transition-all"
               >
-                <MessageCircle className="w-6 h-6 text-emerald-600 mb-3" />
+                <MessageCircle className="w-6 h-6 text-[#0c9344] mb-3" />
                 <h3 className="font-bold text-slate-900 mb-2">Still need help?</h3>
                 <p className="text-slate-500 text-sm mb-3">
                   Contact our team for institutional deployments, pilot access, or technical support.
                 </p>
-                <span className="inline-flex items-center gap-1 text-sm font-semibold text-emerald-600">
+                <span className="inline-flex items-center gap-1 text-sm font-semibold text-[#0c9344]">
                   Contact us <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                 </span>
               </Link>

@@ -55,8 +55,8 @@ export default function ConversationModal({ conversationId, onClose }: Conversat
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 border-b border-gray-800 flex-shrink-0">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-emerald-700/10 rounded-lg">
-                            <MessageSquare className="h-5 w-5 text-emerald-700" />
+                        <div className="p-2 bg-[#0c9344]/10 rounded-lg">
+                            <MessageSquare className="h-5 w-5 text-[#0c9344]" />
                         </div>
                         <div>
                             <h2 className="text-lg font-bold text-white">
@@ -81,7 +81,7 @@ export default function ConversationModal({ conversationId, onClose }: Conversat
                 <div className="flex-1 overflow-y-auto p-6">
                     {loading ? (
                         <div className="flex items-center justify-center py-12">
-                            <Loader2 className="h-8 w-8 text-emerald-700 animate-spin" />
+                            <Loader2 className="h-8 w-8 text-[#0c9344] animate-spin" />
                         </div>
                     ) : error ? (
                         <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-xl text-center">
@@ -109,7 +109,7 @@ export default function ConversationModal({ conversationId, onClose }: Conversat
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <Calendar className="h-4 w-4 text-emerald-700" />
+                                        <Calendar className="h-4 w-4 text-[#0c9344]" />
                                         <div>
                                             <p className="text-xs text-gray-500">Created</p>
                                             <p className="text-sm text-white">
@@ -139,7 +139,7 @@ export default function ConversationModal({ conversationId, onClose }: Conversat
                                         >
                                             <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
                                                 message.role === 'assistant'
-                                                    ? 'bg-emerald-700/20 text-emerald-700'
+                                                    ? 'bg-[#0c9344]/20 text-[#0c9344]'
                                                     : 'bg-blue-500/20 text-blue-400'
                                             }`}>
                                                 {message.role === 'assistant' ? (
@@ -152,7 +152,7 @@ export default function ConversationModal({ conversationId, onClose }: Conversat
                                                 <div className="flex items-center gap-2 mb-1">
                                                     <span className={`text-sm font-medium ${
                                                         message.role === 'assistant'
-                                                            ? 'text-emerald-700'
+                                                            ? 'text-[#0c9344]'
                                                             : 'text-blue-400'
                                                     }`}>
                                                         {message.role === 'assistant' ? 'JudicialGPT' : 'User'}

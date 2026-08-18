@@ -54,7 +54,7 @@ export default function AdminSidebar({ user, onLogout, onClose }: AdminSidebarPr
             {/* Header */}
             <div className="p-4 border-b border-gray-800">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-emerald-700 to-emerald-800 rounded-xl flex items-center justify-center">
+                    <div className="w-10 h-10 bg-gradient-to-br from-[#0c9344] to-[#0c9344] rounded-xl flex items-center justify-center">
                         <Shield className="w-6 h-6 text-white" />
                     </div>
                     <div>
@@ -74,7 +74,7 @@ export default function AdminSidebar({ user, onLogout, onClose }: AdminSidebarPr
                                 whileHover={{ x: 4 }}
                                 className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all cursor-pointer ${
                                     active
-                                        ? 'bg-emerald-700/10 text-emerald-700 border border-emerald-700/30'
+                                        ? 'bg-[#0c9344]/10 text-[#0c9344] border border-[#0c9344]/30'
                                         : 'text-gray-400 hover:bg-gray-800/50 hover:text-gray-200'
                                 }`}
                             >
@@ -83,7 +83,7 @@ export default function AdminSidebar({ user, onLogout, onClose }: AdminSidebarPr
                                 {active && (
                                     <motion.div
                                         layoutId="activeIndicator"
-                                        className="ml-auto w-1.5 h-1.5 bg-emerald-700 rounded-full"
+                                        className="ml-auto w-1.5 h-1.5 bg-[#0c9344] rounded-full"
                                     />
                                 )}
                             </motion.div>
@@ -132,7 +132,7 @@ export default function AdminSidebar({ user, onLogout, onClose }: AdminSidebarPr
                             className="w-10 h-10 rounded-full object-cover"
                         />
                     ) : (
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-700 to-emerald-800 flex items-center justify-center text-white font-semibold">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#0c9344] to-[#0c9344] flex items-center justify-center text-white font-semibold">
                             {user?.name?.[0] || user?.email?.[0] || 'A'}
                         </div>
                     )}

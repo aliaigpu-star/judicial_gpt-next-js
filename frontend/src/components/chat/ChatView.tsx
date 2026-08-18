@@ -6,7 +6,7 @@ import {
     Mic, Globe, Plus, ArrowUp, ArrowDown,
     FileText, Image as ImageIcon, X, StopCircle, Loader2,
     Copy, Edit3, ThumbsUp, ThumbsDown, RefreshCw, ChevronLeft, ChevronRight, Check, Upload, Clock, Share2,
-    Phone
+    Phone, ShieldAlert, CheckCircle2, ChevronDown, ChevronUp, ExternalLink, AlertTriangle
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -16,6 +16,14 @@ import { copyCleanText } from '@/lib/textUtils';
 import ShareModal from '@/components/modals/ShareModal';
 import TypingAnimation from '@/components/ui/TypingAnimation';
 import VoiceAgent from '@/components/chat/VoiceAgent';
+
+interface SourceResult {
+    source_name: string;
+    domain: string;
+    url: string;
+    status: string;
+    content_preview?: string;
+}
 
 interface Message {
     id: string;
@@ -28,6 +36,11 @@ interface Message {
     isStreaming?: boolean;
     metadata?: {
         feedback?: 'like' | 'dislike';
+        judgmentSearch?: {
+            successfulSources: number;
+            blockedSources: string[];
+            sourcesSearched: SourceResult[];
+        };
     };
 }
 
@@ -67,16 +80,85 @@ const isJudgmentDocument = (text: string) => text.includes('IN THE COURT OF') ||
 const cleanJudgmentText = (text: string) =>
     text.split('\n').filter(line => !/^\s*_+\s*$/.test(line)).join('\n');
 
+// Judgment documents are rendered as plain text (see isJudgmentDocument
+// above) to preserve literal spacing/alignment, but the model still
+// sometimes emits inline markdown (**bold**, *italic*) and "#"-style
+// headings within that plain-text layout. Parse just those inline/heading
+// bits by hand rather than handing the whole thing to ReactMarkdown, which
+// would collapse the alignment spacing again.
+const INLINE_MD_RE = /(\*\*\*.+?\*\*\*|\*\*.+?\*\*|\*.+?\*)/g;
+
+const renderInlineMarkdown = (text: string, keyPrefix: string): React.ReactNode[] => {
+    const parts: React.ReactNode[] = [];
+    let pos = 0;
+    let idx = 0;
+    let match: RegExpExecArray | null;
+    const re = new RegExp(INLINE_MD_RE);
+    while ((match = re.exec(text)) !== null) {
+        if (match.index > pos) parts.push(text.slice(pos, match.index));
+        const token = match[0];
+        if (token.startsWith('***') && token.endsWith('***')) {
+            parts.push(<strong key={`${keyPrefix}-${idx}`}><em>{token.slice(3, -3)}</em></strong>);
+        } else if (token.startsWith('**') && token.endsWith('**')) {
+            parts.push(<strong key={`${keyPrefix}-${idx}`}>{token.slice(2, -2)}</strong>);
+        } else {
+            parts.push(<em key={`${keyPrefix}-${idx}`}>{token.slice(1, -1)}</em>);
+        }
+        idx++;
+        pos = re.lastIndex;
+    }
+    if (pos < text.length) parts.push(text.slice(pos));
+    return parts;
+};
+
 // Render the long "─────" separator lines as a real <hr> instead of raw
 // repeated dash characters — as plain text they have no spaces to wrap at,
 // so `.message-content`'s word-wrap:break-word forces a mid-run break that
 // strands 1-2 dashes on their own line, looking like a stray underscore.
 const renderJudgmentText = (text: string) =>
-    cleanJudgmentText(text).split('\n').map((line, i) =>
-        /^[─\-]{5,}$/.test(line.trim())
-            ? <hr key={i} className="my-2 border-t border-current opacity-20" />
-            : <div key={i} className="whitespace-pre-wrap">{line}</div>
-    );
+    cleanJudgmentText(text).split('\n').map((line, i) => {
+        const trimmed = line.trim();
+        if (/^[─\-]{5,}$/.test(trimmed)) {
+            return <hr key={i} className="my-2 border-t border-current opacity-20" />;
+        }
+        const headingMatch = trimmed.match(/^(#{1,6})\s+(.*)$/);
+        if (headingMatch) {
+            const level = headingMatch[1].length;
+            return (
+                <div key={i} className={`whitespace-pre-wrap font-semibold ${level <= 2 ? 'text-lg mt-3' : 'text-base mt-2'}`}>
+                    {renderInlineMarkdown(headingMatch[2], `h${i}`)}
+                </div>
+            );
+        }
+        return <div key={i} className="whitespace-pre-wrap">{renderInlineMarkdown(line, `l${i}`)}</div>;
+    });
+
+// Status styling for the Judgment Search sources list (mirrors JudgmentSearch.tsx)
+const getSourceStatusIcon = (status: string) => {
+    switch (status) {
+        case 'success':
+            return <CheckCircle2 className="w-3.5 h-3.5 text-[#10a37f]" />;
+        case 'blocked':
+            return <ShieldAlert className="w-3.5 h-3.5 text-[#f59e0b]" />;
+        case 'error':
+            return <X className="w-3.5 h-3.5 text-red-400" />;
+        default:
+            return <AlertTriangle className="w-3.5 h-3.5 text-gray-400" />;
+    }
+};
+
+const getSourceStatusBadgeClass = (status: string) => {
+    switch (status) {
+        case 'success':
+            return 'bg-[#10a37f]/10 text-[#10a37f] border-[#10a37f]/20';
+        case 'blocked':
+            return 'bg-[#f59e0b]/10 text-[#f59e0b] border-[#f59e0b]/20';
+        case 'error':
+            return 'bg-red-500/10 text-red-500 border-red-500/20';
+        default:
+            return 'bg-gray-500/10 text-gray-500 border-gray-500/20';
+    }
+};
 
 export default function ChatView({
     conversation,
@@ -106,6 +188,7 @@ export default function ChatView({
     const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
     const [feedbackState, setFeedbackState] = useState<Record<string, 'like' | 'dislike' | null>>({});
     const [showShareModal, setShowShareModal] = useState(false);
+    const [expandedSourcesId, setExpandedSourcesId] = useState<string | null>(null);
     const [showScrollButton, setShowScrollButton] = useState(false);
     const [showVoiceAgent, setShowVoiceAgent] = useState(false);
 
@@ -543,7 +626,7 @@ export default function ChatView({
                     <div className="mb-3 flex flex-wrap gap-2">
                         {selectedFile && (
                             <div className="flex items-center gap-2 px-3 py-2 bg-[#f4f4f4] dark:bg-[#2f2f2f] rounded-xl border border-[#e5e5e5] dark:border-[#424242]">
-                                <FileText className="w-4 h-4 text-[#10a37f]" />
+                                <FileText className="w-4 h-4 text-[#0c9344]" />
                                 <span className="text-sm text-[#0d0d0d] dark:text-[#ececec] truncate max-w-[200px]">
                                     {selectedFile.name}
                                 </span>
@@ -632,7 +715,7 @@ export default function ChatView({
                                             }}
                                             className="w-full px-3 py-2.5 text-left text-sm hover:bg-[#f4f4f4] dark:hover:bg-[#424242] flex items-center gap-3 text-[#0d0d0d] dark:text-[#ececec]"
                                         >
-                                            <Globe className={`w-4 h-4 ${webSearchEnabled ? 'text-[#10a37f]' : 'text-[#666666] dark:text-[#b4b4b4]'}`} />
+                                            <Globe className={`w-4 h-4 ${webSearchEnabled ? 'text-[#0c9344]' : 'text-[#666666] dark:text-[#b4b4b4]'}`} />
                                             {webSearchEnabled ? 'Disable search' : 'Search the web'}
                                         </button>
                                     </div>
@@ -646,7 +729,7 @@ export default function ChatView({
                         <button
                             type="button"
                             onClick={() => setWebSearchEnabled(false)}
-                            className="flex items-center gap-1.5 px-2.5 py-1 bg-[#10a37f]/10 text-[#10a37f] rounded-full text-xs font-medium hover:bg-[#10a37f]/20 transition-colors"
+                            className="flex items-center gap-1.5 px-2.5 py-1 bg-[#0c9344]/10 text-[#0c9344] rounded-full text-xs font-medium hover:bg-[#0c9344]/20 transition-colors"
                         >
                             <Globe className="w-3.5 h-3.5" />
                             Search
@@ -739,7 +822,7 @@ export default function ChatView({
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
-                        className={`absolute top-4 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-full shadow-lg text-sm font-medium ${notification.type === 'success' ? 'bg-[#10a37f] text-white' :
+                        className={`absolute top-4 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-full shadow-lg text-sm font-medium ${notification.type === 'success' ? 'bg-[#0c9344] text-white' :
                             notification.type === 'error' ? 'bg-red-500 text-white' :
                                 'bg-yellow-500 text-white'
                             }`}
@@ -805,7 +888,7 @@ export default function ChatView({
                         <AnimatePresence initial={false}>
                             {messages.map((message, index) => (
                                 <motion.div
-                                    key={message.id || index}
+                                    key={index}
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.2 }}
@@ -823,12 +906,12 @@ export default function ChatView({
                                                         className="w-7 h-7 rounded-full object-cover"
                                                     />
                                                 ) : (
-                                                    <div className="w-7 h-7 rounded-full bg-[#10a37f] flex items-center justify-center text-xs font-medium text-white">
+                                                    <div className="w-7 h-7 rounded-full bg-[#0c9344] flex items-center justify-center text-xs font-medium text-white">
                                                         {user?.name?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase() || 'U'}
                                                     </div>
                                                 )
                                             ) : (
-                                                <div className="w-7 h-7 rounded-sm bg-[#10a37f] flex items-center justify-center">
+                                                <div className="w-7 h-7 rounded-sm bg-[#0c9344] flex items-center justify-center">
                                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-white">
                                                         <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                                         <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -862,7 +945,11 @@ export default function ChatView({
                                                             }
                                                         }}
                                                         autoFocus
-                                                        className="w-full bg-[#f4f4f4] dark:bg-[#2f2f2f] border border-[#e5e5e5] dark:border-[#424242] rounded-xl p-4 text-base resize-none outline-none focus:border-[#10a37f] dark:focus:border-[#10a37f] transition-colors text-[#0d0d0d] dark:text-[#ececec] min-h-[100px]"
+                                                        onFocus={(e) => {
+                                                            const len = e.target.value.length;
+                                                            e.target.setSelectionRange(len, len);
+                                                        }}
+                                                        className="w-full bg-[#f4f4f4] dark:bg-[#2f2f2f] border border-[#e5e5e5] dark:border-[#424242] rounded-xl p-4 text-base resize-none outline-none focus:border-[#0c9344] dark:focus:border-[#0c9344] transition-colors text-[#0d0d0d] dark:text-[#ececec] min-h-[100px]"
                                                         rows={Math.min(Math.max(editContent.split('\n').length, 3), 10)}
                                                     />
                                                     <div className="flex items-center justify-end gap-2 mt-3">
@@ -884,6 +971,22 @@ export default function ChatView({
                                             ) : (
                                                 // Display mode
                                                 <>
+                                                    {/* Judgment Search sources summary (persisted via message.metadata) */}
+                                                    {message.role === 'assistant' && message.metadata?.judgmentSearch && (
+                                                        <div className="flex flex-wrap items-center gap-2 mb-3">
+                                                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#10a37f]/10 text-[#10a37f] border border-[#10a37f]/20">
+                                                                <CheckCircle2 className="w-3 h-3" />
+                                                                {message.metadata.judgmentSearch.successfulSources} sources found
+                                                            </span>
+                                                            {message.metadata.judgmentSearch.blockedSources.length > 0 && (
+                                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#f59e0b]/10 text-[#f59e0b] border border-[#f59e0b]/20">
+                                                                    <ShieldAlert className="w-3 h-3" />
+                                                                    {message.metadata.judgmentSearch.blockedSources.length} blocked
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    )}
+
                                                     {message.role === 'assistant' ? (
                                                         isJudgmentDocument(message.content) ? (
                                                             <div className="message-content font-serif text-[#0d0d0d] dark:text-[#ececec]">
@@ -936,7 +1039,7 @@ export default function ChatView({
                                                         title="Copy"
                                                     >
                                                         {copiedMessageId === message.id ? (
-                                                            <Check className="w-4 h-4 text-[#10a37f]" />
+                                                            <Check className="w-4 h-4 text-[#0c9344]" />
                                                         ) : (
                                                             <Copy className="w-4 h-4" />
                                                         )}
@@ -967,7 +1070,7 @@ export default function ChatView({
                                                                 title="Good response"
                                                             >
                                                                 <ThumbsUp className={`w-4 h-4 ${(feedbackState[message.id] || message.metadata?.feedback) === 'like'
-                                                                    ? 'fill-current text-[#10a37f]'
+                                                                    ? 'fill-current text-[#0c9344]'
                                                                     : ''
                                                                     }`} />
                                                             </button>
@@ -1033,6 +1136,75 @@ export default function ChatView({
                                                     )}
                                                 </div>
                                             )}
+
+                                            {/* Judgment Search sources collapsible (persisted via message.metadata) */}
+                                            {message.role === 'assistant' && message.metadata?.judgmentSearch && (
+                                                <div className="mt-4">
+                                                    <button
+                                                        onClick={() => setExpandedSourcesId(expandedSourcesId === message.id ? null : message.id)}
+                                                        className="flex items-center gap-2 text-sm font-medium text-[#666666] dark:text-[#b4b4b4] hover:text-[#0d0d0d] dark:hover:text-[#ececec] transition-colors"
+                                                    >
+                                                        {expandedSourcesId === message.id ? (
+                                                            <ChevronUp className="w-4 h-4" />
+                                                        ) : (
+                                                            <ChevronDown className="w-4 h-4" />
+                                                        )}
+                                                        View {message.metadata.judgmentSearch.sourcesSearched.length} sources searched
+                                                    </button>
+
+                                                    <AnimatePresence>
+                                                        {expandedSourcesId === message.id && (
+                                                            <motion.div
+                                                                initial={{ height: 0, opacity: 0 }}
+                                                                animate={{ height: 'auto', opacity: 1 }}
+                                                                exit={{ height: 0, opacity: 0 }}
+                                                                transition={{ duration: 0.2 }}
+                                                                className="overflow-hidden"
+                                                            >
+                                                                <div className="mt-3 space-y-2">
+                                                                    {message.metadata.judgmentSearch.sourcesSearched.map((source, si) => (
+                                                                        <div
+                                                                            key={si}
+                                                                            className="flex items-start gap-3 p-3 rounded-xl bg-[#f9f9f9] dark:bg-[#171717] border border-[#e5e5e5] dark:border-[#2f2f2f]"
+                                                                        >
+                                                                            <div className="mt-0.5">
+                                                                                {getSourceStatusIcon(source.status)}
+                                                                            </div>
+                                                                            <div className="flex-1 min-w-0">
+                                                                                <div className="flex items-center gap-2 flex-wrap">
+                                                                                    <span className="text-sm font-medium text-[#0d0d0d] dark:text-[#ececec] truncate">
+                                                                                        {source.source_name}
+                                                                                    </span>
+                                                                                    <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium border ${getSourceStatusBadgeClass(source.status)}`}>
+                                                                                        {source.status}
+                                                                                    </span>
+                                                                                </div>
+                                                                                <p className="text-xs text-[#999999] dark:text-[#666666] mt-0.5 truncate">
+                                                                                    {source.domain}
+                                                                                </p>
+                                                                                {source.content_preview && source.status === 'success' && (
+                                                                                    <p className="text-xs text-[#666666] dark:text-[#b4b4b4] mt-1 line-clamp-2">
+                                                                                        {source.content_preview.slice(0, 150)}...
+                                                                                    </p>
+                                                                                )}
+                                                                            </div>
+                                                                            <a
+                                                                                href={source.url}
+                                                                                target="_blank"
+                                                                                rel="noopener noreferrer"
+                                                                                className="p-1 rounded hover:bg-[#ececec] dark:hover:bg-[#2f2f2f] transition-colors flex-shrink-0"
+                                                                                title="Open source"
+                                                                            >
+                                                                                <ExternalLink className="w-3.5 h-3.5 text-[#666666] dark:text-[#b4b4b4]" />
+                                                                            </a>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            </motion.div>
+                                                        )}
+                                                    </AnimatePresence>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </motion.div>
@@ -1047,7 +1219,7 @@ export default function ChatView({
                                 className="py-6"
                             >
                                 <div className="flex items-start gap-4">
-                                    <div className="w-7 h-7 rounded-sm bg-[#10a37f] flex items-center justify-center flex-shrink-0">
+                                    <div className="w-7 h-7 rounded-sm bg-[#0c9344] flex items-center justify-center flex-shrink-0">
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-white">
                                             <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                             <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -1058,7 +1230,7 @@ export default function ChatView({
                                         <div className="font-semibold text-sm text-[#0d0d0d] dark:text-[#ececec] mb-1">JudicialGPT</div>
                                         <div className="flex items-center gap-1">
                                             {isWebSearchMode && (
-                                                <span className="text-sm text-[#10a37f] mr-2">Searching the web...</span>
+                                                <span className="text-sm text-[#0c9344] mr-2">Searching the web...</span>
                                             )}
                                             <span className="w-2 h-2 bg-[#666666] dark:bg-[#b4b4b4] rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                                             <span className="w-2 h-2 bg-[#666666] dark:bg-[#b4b4b4] rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />

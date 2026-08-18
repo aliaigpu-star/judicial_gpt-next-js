@@ -1,0 +1,149 @@
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                     ⚖  JUDICIAL DOCUMENT SUMMARY  ⚖
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+### SECTION 1 — DOCUMENT PROFILE
+- **Document Type:** Final Judgment / Sentencing Order (Draft Format)
+- **Court / Authority:** Court of Sessions Judge, Lahore
+- **Jurisdiction:** Criminal Jurisdiction, Lahore, Pakistan (P.S. Model Town, Lahore)
+- **Case / File Reference Number:** Sessions Case No. 123 of 2022; FIR No. 145 dated 10.02.2022 (registered at P.S. Model Town, Lahore)
+- **Date of Instrument / Judgment / Filing:** 
+  * FIR Date: 10.02.2022
+  * Date of Commencement: 15.03.2022
+  * Charge Framing Date: 22.04.2022
+  * Date of Decision / Announcement: 20.08.2022
+- **Total Pages / Segments Processed:** 5 Segments
+
+---
+
+### SECTION 2 — PARTIES
+| Role | Name / Designation | Counsel (if any) |
+|------|--------------------|------------------|
+| **Prosecution** | The State | Mr. Ahmad Hassan, Learned Additional Prosecutor General (APG) |
+| **Accused** | Muhammad Ali s/o Muhammad Khan, r/o House No. 12, Street No. 5, Model Town, Lahore (aged approx. 32 years) | Mr. Muhammad Aslam, Advocate (Learned Defence Counsel) |
+| **Deceased / Victim** | Muhammad Riaz | N/A |
+| **Complainant / PW-1** | Unnamed brother of deceased Muhammad Riaz | N/A |
+| **Eyewitness / PW-2** | Muhammad Imran | N/A |
+| **Eyewitness / PW-3** | Abdul Rehman | N/A |
+| **Medical Witness / PW-4**| Dr. Amjad Ali (Medical Officer) | N/A |
+| **Investigating Witness / PW-5** | ASI Muhammad Ashraf (Investigating Officer) | N/A |
+
+---
+
+### SECTION 3 — EXECUTIVE SUMMARY
+This matter arises from Sessions Case No. 123 of 2022, stemming from FIR No. 145/2022 registered at P.S. Model Town, Lahore. On February 10, 2022, at approximately 9:00 p.m., near a mosque in Model Town, Lahore, the accused, Muhammad Ali, allegedly shot the deceased, Muhammad Riaz, in the head at close range with a pistol, resulting in his instant death. The crime was witnessed by PW-2 (Muhammad Imran) and PW-3 (Abdul Rehman), leading to an FIR lodged by the deceased’s brother (PW-1). The police recovered the murder weapon (pistol, Exh.P-1) via ASI Muhammad Ashraf (PW-5), and Dr. Amjad Ali (PW-4) performed the post-mortem examination, confirming a single gunshot entry wound to the head. 
+
+The accused pleaded not guilty to the charge framed under Section 302(b) PPC on April 22, 2022. In his examination under Section 342 Cr.P.C., the accused claimed false implication and alibi, but produced no defense evidence. The Sessions Court, Lahore found the prosecution's eyewitness accounts consistent, credible, and corroborated by medical evidence. On August 20, 2022, the court convicted Muhammad Ali under Section 302(b) PPC, sentencing him to imprisonment for life and a fine of Rs. 50,000/- (in default, six months' simple imprisonment), extending the benefit of Section 382-B Cr.P.C. from February 10, 2022.
+
+---
+
+### SECTION 4 — DETAILED FACTUAL BACKGROUND
+#### 1. The Incident and Registration of FIR
+* **Date & Time:** February 10, 2022, at approximately 9:00 p.m.
+* **Location:** Near the mosque in Model Town, Lahore.
+* **The Offence:** Accused Muhammad Ali allegedly fired a single gunshot at close range hitting deceased Muhammad Riaz directly in the head, causing instant death.
+* **FIR Lodging:** FIR No. 145/2022 was registered on February 10, 2022, at Police Station Model Town, Lahore, by PW-1 (unnamed brother of deceased Muhammad Riaz) based on the immediate eyewitness accounts provided by PW-2 (Muhammad Imran) and PW-3 (Abdul Rehman).
+
+#### 2. Investigation and Medical Examination
+* **Police Investigation:** PW-5 (ASI Muhammad Ashraf) conducted the investigation and recovered a pistol (Exh.P-1) from the possession of the accused.
+* **Post-Mortem Examination:** PW-4 (Dr. Amjad Ali) conducted the post-mortem examination of deceased Muhammad Riaz and documented a single entry wound on the head consistent with a gunshot wound.
+
+#### 3. Trial Proceedings & Accused's Defense
+* **Commencement:** Proceedings commenced on March 15, 2022.
+* **Charge Framing:** On April 22, 2022, formal charges were framed against accused Muhammad Ali under Section 302(b) of the Pakistan Penal Code (PPC). The accused pleaded not guilty and claimed trial.
+* **Custody:** Accused remained in judicial custody continuously from February 10, 2022.
+* **Section 342 Cr.P.C. Statement:** When examined under Section 342 Cr.P.C. without oath, the accused denied the allegations, claimed he was not present at the scene, asserted false implication due to ulterior motives, but declined to testify on oath or produce defense evidence.
+
+---
+
+### SECTION 5 — LEGAL ISSUES FRAMED
+1. Whether the prosecution has established beyond reasonable doubt that accused Muhammad Ali committed the qatl-i-amd (intentional murder) of deceased Muhammad Riaz by shooting him in the head, attracting liability under Section 302(b) PPC.
+2. Whether the eye-witness testimonies of PW-2 (Muhammad Imran) and PW-3 (Abdul Rehman) are consistent, reliable, and corroborated by the medical evidence of PW-4 (Dr. Amjad Ali) and recovery evidence of PW-5 (ASI Muhammad Ashraf).
+3. Whether the plea of alibi and false implication raised by the accused in his statement under Section 342 Cr.P.C. holds credibility in the absence of defense evidence.
+
+---
+
+### SECTION 6 — STATUTORY PROVISIONS & CASE LAW CITED
+| # | Statute / Case | Section / Citation | Relevance / How Invoked |
+|---|----------------|--------------------|-------------------------|
+| 1 | Pakistan Penal Code (PPC), 1860 | Section 302(b) | Substantive charge framed against accused for qatl-i-amd; basis for conviction and sentence of life imprisonment. |
+| 2 | Code of Criminal Procedure (Cr.P.C.), 1898 | Section 342 | Invoked for the legal examination of the accused without oath to explain incriminating circumstances. |
+| 3 | Code of Criminal Procedure (Cr.P.C.), 1898 | Section 382-B | Invoked to grant set-off benefit for pre-trial custody (from 10.02.2022) against total sentence duration. |
+
+---
+
+### SECTION 7 — ARGUMENTS & CONTENTIONS
+#### 7A — Arguments of the Prosecution (Learned APG)
+* Submitted that eyewitnesses PW-2 (Muhammad Imran) and PW-3 (Abdul Rehman) provided direct, consistent, and undisputed eyewitness accounts of the shooting at close range.
+* Contended that the eyewitness testimony was fully corroborated by medical evidence (PW-4 Dr. Amjad Ali), which established a single entry gunshot wound to the head, and recovery evidence (PW-5 ASI Muhammad Ashraf), who recovered the pistol (Exh.P-1).
+* Argued that the murder was premeditated and that the accused's statement under Section 342 Cr.P.C. was an unproven afterthought lacking credibility.
+
+#### 7B — Arguments of the Defence (Learned Defence Counsel)
+* Contended that eyewitnesses PW-2 and PW-3 were untrustworthy, unreliable, and acted out of ulterior motives.
+* Asserted that the accused was falsely implicated and was not present at the scene of occurrence at the time of the incident (plea of alibi).
+
+#### 7C — Arguments of Any Third Party / Amicus / Intervener
+* Not applicable.
+
+---
+
+### SECTION 8 — COURT'S ANALYSIS & FINDINGS
+1. **Reliability of Eyewitnesses & Medical Corroboration:** The Court observed that PW-2 and PW-3 were present at the scene of occurrence (undisputed presence) and their testimonies remained consistent and unshakeable under thorough cross-examination. Their accounts were fully corroborated by the post-mortem report (PW-4) confirming a single gunshot entry wound to the head causing instant death.
+2. **Premeditation & Weapon Recovery:** The Court held that the act was premeditated in nature involving a firearm, and the recovery of the weapon (Exh.P-1) by PW-5 further substantiated the prosecution case.
+3. **Evaluation of Section 342 Cr.P.C. Plea:** The Court held that the accused’s plea of false implication and alibi was vague, unsupported by any defense evidence, and lacked legal substance.
+4. **Standard of Proof:** The Court concluded that the prosecution successfully proved the charge under Section 302(b) PPC against the accused beyond all reasonable doubt.
+
+---
+
+### SECTION 9 — DECISION / ORDER / OPERATIVE CLAUSE
+* **Verdict:** Accused Muhammad Ali is **CONVICTED** under Section 302(b) PPC.
+* **Sentence Awarded:** 
+  1. **Imprisonment for LIFE** under Section 302(b) PPC.
+  2. **Fine:** Ordered to pay a fine of **Rs. 50,000/-**; in default of payment, the accused shall undergo **six months' simple imprisonment**.
+* **Custody Set-Off:** Benefit of **Section 382-B Cr.P.C.** extended, directing that the period of custody spent by the accused since **10.02.2022** be set off against the substantive sentence of imprisonment.
+* **Administrative Direction:** Jail warrant to issue accordingly.
+* **Announcement:** Judgment signed and announced in open court on **20.08.2022** by Sessions Judge, Lahore.
+
+---
+
+### SECTION 10 — RELIEFS & REMEDIES
+- **Relief Sought:** Conviction and maximum penalty under Section 302(b) PPC sought by the State; acquittal sought by the Defence.
+- **Relief Granted / Refused:** Prosecution granted conviction and sentence of life imprisonment against the accused; Defence plea of acquittal refused.
+- **Set-Off Benefit Granted:** Benefit under Section 382-B Cr.P.C. granted (custody period counted from 10.02.2022).
+- **Costs Awarded / Waived:** Fine of Rs. 50,000/- imposed (with default clause). No explicit court costs awarded.
+- **Any Interim / Ad-Interim Orders:** Not applicable.
+
+---
+
+### SECTION 11 — CRITICAL LEGAL OBSERVATIONS
+* The court observed that a bare plea of false implication or alibi raised under Section 342 Cr.P.C. without cogent defense evidence or material produced on record remains vague, lacks substance, and cannot displace consistent, cross-examined eyewitness testimony corroborated by medical evidence.
+
+---
+
+### SECTION 12 — COMPLIANCE CHECKLIST FOR JUDGE
+- [x] Sign and seal judgment/order announced on 20.08.2022.
+- [ ] Issue formal Jail Warrant to the Superintendent of Jail for execution of the life sentence.
+- [ ] Monitor recovery of the fine of Rs. 50,000/- or enforce the default imprisonment clause of 6 months simple imprisonment.
+- [ ] Ensure calculation of Section 382-B Cr.P.C. set-off starting from 10.02.2022 by prison authorities.
+
+---
+
+### SECTION 13 — FLAGS & ANOMALIES
+* **Text Truncation across Segments:** Several text segments contained abrupt sentence cuts (e.g., Segment 1 cut off at "...shot", Segment 2 cut off at "...found a single", Segment 3 cut off at "...but their", and Segment 4 started mid-sentence with "...had ulterior motives.").
+* **Omission of PW-1's Name:** Complainant / PW-1 is identified solely as "brother of deceased Muhammad Riaz" without a personal proper name provided in any segment.
+* **Draft Instrument Nature:** The document header notes `"Draft a Sessions Court judgment under Section 302"`, indicating this text originates from a draft format or model judicial text.
+
+---
+
+### SECTION 14 — GLOSSARY OF KEY TERMS
+* **APG:** Additional Prosecutor General / Assistant Public Prosecutor representing the State in criminal trials.
+* **ASI:** Assistant Sub-Inspector of Police.
+* **Exh.P-1:** Prosecution Exhibit 1 (referring specifically to the recovered murder pistol).
+* **PW:** Prosecution Witness.
+* **Qatl-i-amd:** Intentional murder as defined under Section 300/302 of the Pakistan Penal Code.
+* **Section 342 Cr.P.C. Statement:** Formal examination of the accused by the judge to explain evidence presented against him, recorded without oath.
+* **Section 382-B Cr.P.C. Benefit:** A statutory direction reducing a convict's prison sentence by the exact duration spent in pre-trial or trial detention prior to conviction.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   END OF SUMMARY  |  Generated by JudicialGPT  |  CONFIDENTIAL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

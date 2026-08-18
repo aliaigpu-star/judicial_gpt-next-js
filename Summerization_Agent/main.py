@@ -1,6 +1,6 @@
 # ============================================================
 #  main.py  —  JudicialGPT Legal Document RAG Summarizer
-#  Stack: LangChain + Groq API + FAISS + HuggingFace Embeddings
+#  Stack: LangChain + Gemini API + FAISS + HuggingFace Embeddings
 #  Fix: Manual map-reduce — bypasses langchain_classic's broken
 #       GPT-2 token counter that caused the ValueError crash.
 # ============================================================
@@ -18,7 +18,7 @@ from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.rule import Rule
 
 # ── LangChain imports ──────────────────────────────────────────
-from langchain_groq import ChatGroq
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_community.document_loaders import (
     PyPDFLoader,
     TextLoader,
@@ -51,11 +51,11 @@ console = Console()
 class Config:
     """Central configuration — edit here or use .env overrides."""
 
-    # Groq — llama-3.3-70b-versatile has 128k context & high free-tier TPM
-    GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
-    GROQ_MODEL: str = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
-    GROQ_TEMPERATURE: float = 0.0     # 0 = fully deterministic; best for legal accuracy
-    GROQ_MAX_TOKENS: int = 4096       # output tokens per call
+    # Google Gemini
+    GOOGLE_API_KEY: str = os.getenv("GOOGLE_API_KEY", "")
+    GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-3.6-flash")
+    GEMINI_TEMPERATURE: float = 0.0   # 0 = fully deterministic; best for legal accuracy
+    GEMINI_MAX_TOKENS: int = 4096     # output tokens per call
 
     # Embeddings (runs fully locally — no API call)
     EMBEDDING_MODEL: str = "sentence-transformers/all-MiniLM-L6-v2"
@@ -155,27 +155,27 @@ def build_vector_store(chunks: list[Document], cfg: Config) -> FAISS:
 
 
 # ══════════════════════════════════════════════════════════════
-#  LLM  (Groq)
+#  LLM  (Gemini)
 # ══════════════════════════════════════════════════════════════
-def build_llm(cfg: Config) -> ChatGroq:
-    """Initialise the Groq-backed LLM."""
-    if not cfg.GROQ_API_KEY:
+def build_llm(cfg: Config) -> ChatGoogleGenerativeAI:
+    """Initialise the Gemini-backed LLM."""
+    if not cfg.GOOGLE_API_KEY:
         console.print(
-            "[red]ERROR:[/red] GROQ_API_KEY is not set.\n"
+            "[red]ERROR:[/red] GOOGLE_API_KEY is not set.\n"
             "Create a .env file in this folder and add:\n"
-            "  GROQ_API_KEY=your_key_here\n"
-            "Get a free key at https://console.groq.com/keys"
+            "  GOOGLE_API_KEY=your_key_here\n"
+            "Get a key at https://aistudio.google.com/apikey"
         )
         sys.exit(1)
 
-    llm = ChatGroq(
-        groq_api_key=cfg.GROQ_API_KEY,
-        model_name=cfg.GROQ_MODEL,
-        temperature=cfg.GROQ_TEMPERATURE,
-        max_tokens=cfg.GROQ_MAX_TOKENS,
+    llm = ChatGoogleGenerativeAI(
+        google_api_key=cfg.GOOGLE_API_KEY,
+        model=cfg.GEMINI_MODEL,
+        temperature=cfg.GEMINI_TEMPERATURE,
+        max_tokens=cfg.GEMINI_MAX_TOKENS,
     )
     console.print(
-        f"[green]✓ LLM ready[/green]  →  model: [bold]{cfg.GROQ_MODEL}[/bold]"
+        f"[green]✓ LLM ready[/green]  →  model: [bold]{cfg.GEMINI_MODEL}[/bold]"
     )
     return llm
 
@@ -191,7 +191,7 @@ def build_llm(cfg: Config) -> ChatGroq:
 #    directly via langchain_core chains (no internal tokenizer used).
 # ══════════════════════════════════════════════════════════════
 def summarize_documents(
-    llm: ChatGroq,
+    llm: ChatGoogleGenerativeAI,
     chunks: list[Document],
     cfg: Config,
 ) -> str:
@@ -235,7 +235,7 @@ def summarize_documents(
     if not partial_summaries:
         raise RuntimeError(
             "All chunks failed during MAP step. "
-            "Check your GROQ_API_KEY and internet connection."
+            "Check your GOOGLE_API_KEY and internet connection."
         )
 
     console.print(
@@ -280,7 +280,7 @@ def summarize_documents(
 #  QA CHAIN
 # ══════════════════════════════════════════════════════════════
 def build_qa_chain(
-    llm: ChatGroq,
+    llm: ChatGoogleGenerativeAI,
     vector_store: FAISS,
     cfg: Config,
 ) -> RetrievalQA:

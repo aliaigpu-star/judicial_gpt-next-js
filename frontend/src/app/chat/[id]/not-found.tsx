@@ -28,7 +28,7 @@ export default function NotFound() {
                     </button>
                     <Link
                         href="/chat"
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-[#0c9344] text-white rounded-lg hover:bg-[#0c9344] transition-colors"
                     >
                         <Home className="w-4 h-4" />
                         New Chat

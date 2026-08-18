@@ -305,7 +305,7 @@ export default function SettingsModal({ isOpen, onClose, showArchived, onToggleA
                             </div>
                             <button
                                 onClick={() => setNotifications(!notifications)}
-                                className={`relative w-10 h-6 rounded-full transition-colors ${notifications ? 'bg-emerald-600' : 'bg-gray-200 dark:bg-gray-600'}`}
+                                className={`relative w-10 h-6 rounded-full transition-colors ${notifications ? 'bg-[#0c9344]' : 'bg-gray-200 dark:bg-gray-600'}`}
                             >
                                 <span
                                     className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${notifications ? 'translate-x-4' : ''}`}
@@ -332,7 +332,7 @@ export default function SettingsModal({ isOpen, onClose, showArchived, onToggleA
                                 className="w-full h-28 p-3 text-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-1 focus:ring-gray-300 dark:focus:ring-gray-600 outline-none text-gray-900 dark:text-white resize-none"
                             />
                             {instructionsMessage && (
-                                <div className={`mt-3 p-2 text-sm rounded-lg ${instructionsMessage.type === 'success' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20' : 'bg-red-50 text-red-600 dark:bg-red-900/20'}`}>
+                                <div className={`mt-3 p-2 text-sm rounded-lg ${instructionsMessage.type === 'success' ? 'bg-[#0c9344]/10 text-[#0c9344] dark:bg-[#0c9344]/20' : 'bg-red-50 text-red-600 dark:bg-red-900/20'}`}>
                                     {instructionsMessage.text}
                                 </div>
                             )}
@@ -357,7 +357,7 @@ export default function SettingsModal({ isOpen, onClose, showArchived, onToggleA
                                         disabled={isSavingInstructions}
                                         aria-label="Save personalization changes"
                                         title="Save changes"
-                                        className="p-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors disabled:opacity-50"
+                                        className="p-2 rounded-lg bg-[#0c9344] text-white hover:bg-[#0c9344] transition-colors disabled:opacity-50"
                                     >
                                         {isSavingInstructions ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
                                     </button>
@@ -379,7 +379,7 @@ export default function SettingsModal({ isOpen, onClose, showArchived, onToggleA
                             </div>
                             <button
                                 onClick={onToggleArchived}
-                                className={`relative w-10 h-6 rounded-full transition-colors ${showArchived ? 'bg-emerald-600' : 'bg-gray-200 dark:bg-gray-600'}`}
+                                className={`relative w-10 h-6 rounded-full transition-colors ${showArchived ? 'bg-[#0c9344]' : 'bg-gray-200 dark:bg-gray-600'}`}
                             >
                                 <span
                                     className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${showArchived ? 'translate-x-4' : ''}`}
@@ -388,7 +388,7 @@ export default function SettingsModal({ isOpen, onClose, showArchived, onToggleA
                         </div>
 
                         {dataMessage && (
-                            <div className={`p-2 text-sm rounded-lg ${dataMessage.type === 'success' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20' : 'bg-red-50 text-red-600 dark:bg-red-900/20'}`}>
+                            <div className={`p-2 text-sm rounded-lg ${dataMessage.type === 'success' ? 'bg-[#0c9344]/10 text-[#0c9344] dark:bg-[#0c9344]/20' : 'bg-red-50 text-red-600 dark:bg-red-900/20'}`}>
                                 {dataMessage.text}
                             </div>
                         )}
@@ -556,7 +556,7 @@ export default function SettingsModal({ isOpen, onClose, showArchived, onToggleA
                                     {user?.avatarUrl ? (
                                         <img src={user.avatarUrl} alt="" className="w-full h-full object-cover" />
                                     ) : (
-                                        <div className="w-full h-full flex items-center justify-center bg-emerald-600 text-white text-xl font-bold">
+                                        <div className="w-full h-full flex items-center justify-center bg-[#0c9344] text-white text-xl font-bold">
                                             {user?.name?.[0] || user?.email?.[0] || 'U'}
                                         </div>
                                     )}
@@ -600,7 +600,7 @@ export default function SettingsModal({ isOpen, onClose, showArchived, onToggleA
                         </div>
 
                         {profileMessage && (
-                            <div className={`p-2 text-sm rounded-lg ${profileMessage.type === 'success' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20' : 'bg-red-50 text-red-600 dark:bg-red-900/20'}`}>
+                            <div className={`p-2 text-sm rounded-lg ${profileMessage.type === 'success' ? 'bg-[#0c9344]/10 text-[#0c9344] dark:bg-[#0c9344]/20' : 'bg-red-50 text-red-600 dark:bg-red-900/20'}`}>
                                 {profileMessage.text}
                             </div>
                         )}
@@ -645,7 +645,7 @@ export default function SettingsModal({ isOpen, onClose, showArchived, onToggleA
                                 }
                             }}
                             disabled={isSavingProfile}
-                            className="px-4 py-2 bg-emerald-600 text-white text-sm rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+                            className="px-4 py-2 bg-[#0c9344] text-white text-sm rounded-lg hover:bg-[#0c9344] transition-colors disabled:opacity-50 flex items-center gap-2"
                         >
                             {isSavingProfile ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
                             Save Changes
@@ -701,7 +701,7 @@ export default function SettingsModal({ isOpen, onClose, showArchived, onToggleA
                                             : 'text-gray-600 dark:text-gray-400 hover:bg-white/50 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white'
                                             }`}
                                     >
-                                        <Icon className={`w-4 h-4 ${isActive ? 'text-emerald-600' : ''}`} />
+                                        <Icon className={`w-4 h-4 ${isActive ? 'text-[#0c9344]' : ''}`} />
                                         {tab.label}
                                     </button>
                                 );

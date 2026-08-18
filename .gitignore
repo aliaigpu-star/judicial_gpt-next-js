@@ -15,3 +15,6 @@ service_account.json
 client_secret_*.json
 ~$*.doc*
 dump.txt
+uvicorn_out.log
+uvicorn_err.log
+uvicorn_debug.log

@@ -74,7 +74,7 @@ const FloatingParticles = () => {
       {particles.map((p, i) => (
         <motion.div
           key={i}
-          className="absolute w-1 h-1 rounded-full bg-emerald-500/35"
+          className="absolute w-1 h-1 rounded-full bg-[#0c9344]/35"
           style={{ left: p.left, top: p.top }}
           animate={{ y: [0, -40, 0], opacity: [0.08, 0.4, 0.08], scale: [1, 2, 1] }}
           transition={{ duration: p.duration, repeat: Infinity, delay: p.delay, ease: 'easeInOut' }}
@@ -179,221 +179,89 @@ const HERO_RING_GEOMETRY = (() => {
   return { cx, cy, nodes, lines, hexBand, floatHexes };
 })();
 
-/** Right-side glowing circular hexagonal ring (matches reference composition) */
-const HeroCircularRing = () => {
-  const { cx, cy, nodes, lines, hexBand, floatHexes } = HERO_RING_GEOMETRY;
+/**
+ * Full-page AI abstract background image — starts behind the navbar and
+ * extends through the entire Hero section. Uses fixed positioning so it is
+ * visible from the very top of the viewport.
+ */
+const HeroAbstractBg = () => (
+  <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }} aria-hidden>
+    {/* Base colour while image loads */}
+    <div className="absolute inset-0 bg-[#F4FBF8]" />
 
-  return (
-    <div className="absolute pointer-events-none hero-ring-stage" aria-hidden>
-      <div className="relative w-full h-full hero-ring">
-        <svg
-          viewBox="0 0 100 100"
-          className="w-full h-full"
-          preserveAspectRatio="xMidYMid meet"
-        >
-          <defs>
-            <radialGradient id="heroRingGlow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#99f6e4" stopOpacity="0.45" />
-              <stop offset="40%" stopColor="#5eead4" stopOpacity="0.2" />
-              <stop offset="100%" stopColor="#14b8a6" stopOpacity="0" />
-            </radialGradient>
-            <linearGradient id="heroRingStroke" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#5eead4" stopOpacity="0.95" />
-              <stop offset="50%" stopColor="#2dd4bf" stopOpacity="0.65" />
-              <stop offset="100%" stopColor="#14b8a6" stopOpacity="0.9" />
-            </linearGradient>
-            <filter id="heroNodeBloom" x="-100%" y="-100%" width="300%" height="300%">
-              <feGaussianBlur stdDeviation="1.2" result="b" />
-              <feMerge>
-                <feMergeNode in="b" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-            <filter id="heroRingSoftGlow" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="0.8" result="b" />
-              <feMerge>
-                <feMergeNode in="b" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-          </defs>
-
-          {/* Soft luminous core */}
-          <circle cx={cx} cy={cy} r={46} fill="url(#heroRingGlow)" />
-
-          {/* Concentric rings — mix of solid + dashed like the reference */}
-          <circle cx={cx} cy={cy} r={14} fill="none" stroke="url(#heroRingStroke)" strokeWidth={0.22} strokeOpacity={0.35} />
-          <circle cx={cx} cy={cy} r={19} fill="none" stroke="#5eead4" strokeWidth={0.2} strokeOpacity={0.28} strokeDasharray="0.9 1.4" />
-          <circle cx={cx} cy={cy} r={24} fill="none" stroke="url(#heroRingStroke)" strokeWidth={0.28} strokeOpacity={0.4} filter="url(#heroRingSoftGlow)" />
-          <circle cx={cx} cy={cy} r={32} fill="none" stroke="#2dd4bf" strokeWidth={0.35} strokeOpacity={0.5} filter="url(#heroRingSoftGlow)" />
-          <circle cx={cx} cy={cy} r={32} fill="none" stroke="#99f6e4" strokeWidth={0.15} strokeOpacity={0.35} strokeDasharray="2.2 1.8" />
-          <circle cx={cx} cy={cy} r={38} fill="none" stroke="url(#heroRingStroke)" strokeWidth={0.25} strokeOpacity={0.38} />
-          <circle cx={cx} cy={cy} r={42} fill="none" stroke="#5eead4" strokeWidth={0.18} strokeOpacity={0.3} strokeDasharray="1.1 1.7" />
-          <circle cx={cx} cy={cy} r={45} fill="none" stroke="#14b8a6" strokeWidth={0.22} strokeOpacity={0.28} />
-
-          {/* Hexagonal band around the mid ring */}
-          {hexBand.map((h, i) => (
-            <polygon
-              key={`hb-${i}`}
-              points={hexPoints(h.x, h.y, h.size)}
-              fill="#5eead4"
-              fillOpacity={0.12}
-              stroke="#2dd4bf"
-              strokeWidth={0.18}
-              strokeOpacity={0.55}
-            />
-          ))}
-
-          {/* Network lines */}
-          {lines.map((l, i) => (
-            <line
-              key={`ln-${i}`}
-              x1={l.x1}
-              y1={l.y1}
-              x2={l.x2}
-              y2={l.y2}
-              stroke="#14b8a6"
-              strokeWidth={0.16}
-              strokeOpacity={0.32}
-            />
-          ))}
-
-          {/* Glowing mesh nodes */}
-          {nodes.map((n, i) => (
-            <g key={`nd-${i}`} filter="url(#heroNodeBloom)">
-              <circle cx={n.x} cy={n.y} r={n.glowR} fill="#99f6e4" fillOpacity={0.28} />
-              <polygon
-                points={hexPoints(n.x, n.y, n.hexR)}
-                fill="#2dd4bf"
-                fillOpacity={0.8}
-                stroke="#ccfbf1"
-                strokeWidth={0.12}
-              />
-            </g>
-          ))}
-
-          {/* Floating translucent hex accents */}
-          {floatHexes.map((h, i) => (
-            <polygon
-              key={`fh-${i}`}
-              points={hexPoints(h.x, h.y, h.size)}
-              fill="#5eead4"
-              fillOpacity={h.opacity}
-              stroke="#99f6e4"
-              strokeWidth={0.2}
-              strokeOpacity={0.45}
-            />
-          ))}
-
-          {/* Center hub */}
-          <circle cx={cx} cy={cy} r={4} fill="#5eead4" fillOpacity={0.18} />
-          <circle cx={cx} cy={cy} r={1.6} fill="#2dd4bf" fillOpacity={0.85} />
-        </svg>
-      </div>
-    </div>
-  );
-};
-
-const HeroBackground = () => (
-  <div className="absolute inset-0 overflow-hidden pointer-events-none">
-    {/* Soft white → light mint gradient (full cover) */}
-    <div className="absolute inset-0 bg-[#F8FCFB]" />
-    <div className="absolute inset-0 bg-gradient-to-br from-white via-[#F3FAF7] to-[#E8F7F3]" />
-
-    {/* Left — Judge's gavel (wooden courtroom hammer), soft atmospheric wash */}
-    <div
-      className="absolute left-[-8%] sm:left-[-4%] md:left-[-2%] top-[8%] bottom-[4%] w-[55%] sm:w-[48%] md:w-[42%] max-w-[560px]"
-      style={{
-        backgroundImage: 'url(/judges-gavel.png?v=2)',
-        backgroundSize: 'contain',
-        backgroundPosition: 'left center',
-        backgroundRepeat: 'no-repeat',
-        opacity: 1,
-        filter: 'blur(1.25px) saturate(0.78) brightness(1.12) contrast(0.96)',
-        WebkitFilter: 'blur(1.25px) saturate(0.78) brightness(1.12) contrast(0.96)',
-        WebkitMaskImage:
-          'linear-gradient(90deg, #000 0%, #000 52%, rgba(0,0,0,0.4) 75%, transparent 100%), linear-gradient(180deg, transparent 0%, #000 10%, #000 88%, transparent 100%)',
-        maskImage:
-          'linear-gradient(90deg, #000 0%, #000 52%, rgba(0,0,0,0.4) 75%, transparent 100%), linear-gradient(180deg, transparent 0%, #000 10%, #000 88%, transparent 100%)',
-        WebkitMaskComposite: 'source-in',
-        maskComposite: 'intersect',
-      }}
-      aria-hidden
-    />
-    {/* Soft mint lighting washes on the left */}
-    <div
-      className="absolute left-[-8%] top-[5%] w-[52%] h-[75%] rounded-full"
-      style={{
-        background:
-          'radial-gradient(ellipse at 30% 40%, rgba(45,212,191,0.16) 0%, rgba(16,185,129,0.07) 42%, transparent 70%)',
-      }}
-    />
-    <div
-      className="absolute left-[2%] bottom-[8%] w-[40%] h-[45%] rounded-full"
-      style={{
-        background:
-          'radial-gradient(ellipse at center, rgba(94,234,212,0.12) 0%, transparent 68%)',
-      }}
-    />
-    {/* Subtle static network watermark on the left (reference-style) */}
-    <svg
-      className="absolute left-0 top-0 w-[50%] h-full opacity-[0.28] hidden sm:block"
-      viewBox="0 0 100 100"
-      preserveAspectRatio="xMinYMid slice"
-      aria-hidden
+    {/* Animated image layer — constant gentle parallax float, no fade */}
+    <motion.div
+      // animate={{
+      //   scale: [1.04, 1.08, 1.04],
+      //   x: [0, 16, 0],
+      //   y: [0, -18, 0],
+      // }}
+      transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }}
+      className="absolute inset-0 w-full h-full"
     >
-      <defs>
-        <radialGradient id="leftNodeGlow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#5eead4" stopOpacity="0.55" />
-          <stop offset="100%" stopColor="#14b8a6" stopOpacity="0" />
-        </radialGradient>
-      </defs>
-      {[
-        [8, 22, 18, 30], [18, 30, 28, 24], [28, 24, 36, 34], [18, 30, 22, 42],
-        [22, 42, 34, 48], [36, 34, 42, 44], [12, 55, 22, 42], [12, 55, 20, 68],
-        [20, 68, 32, 62], [34, 48, 32, 62], [32, 62, 40, 74], [8, 72, 20, 68],
-        [28, 24, 22, 14], [22, 14, 12, 18], [42, 44, 48, 56],
-      ].map(([x1, y1, x2, y2], i) => (
-        <line
-          key={`ll-${i}`}
-          x1={x1}
-          y1={y1}
-          x2={x2}
-          y2={y2}
-          stroke="#14b8a6"
-          strokeWidth="0.22"
-          strokeOpacity="0.45"
-        />
-      ))}
-      {[
-        [8, 22], [18, 30], [28, 24], [36, 34], [22, 42], [34, 48],
-        [12, 55], [20, 68], [32, 62], [40, 74], [22, 14], [42, 44], [48, 56],
-      ].map(([x, y], i) => (
-        <g key={`ln-${i}`}>
-          <circle cx={x} cy={y} r={2.2} fill="url(#leftNodeGlow)" />
-          <circle cx={x} cy={y} r={0.7} fill="#2dd4bf" fillOpacity="0.7" />
-        </g>
-      ))}
-    </svg>
+      <img
+        src="/hero-scale-ai.png"
+        alt=""
+        className="w-full h-full object-cover object-center opacity-55"
+        style={{ filter: 'grayscale(1) contrast(1.0) brightness(1.0)' }}
+        draggable={false}
+      />
+    </motion.div>
 
-    {/* Right ambient glow behind the ring (upper-right) */}
+    {/* Green colour tint (mix-blend-mode: color) */}
     <div
-      className="absolute right-[-6%] top-[-5%] w-[58%] h-[75%] rounded-full"
+      className="absolute inset-0"
+      style={{ background: 'rgb(130,280,210)', mixBlendMode: 'color' }}
+    />
+
+    {/* White readability gradient: strong on left where text lives, fades right */}
+    <div
+      className="absolute inset-0"
       style={{
         background:
-          'radial-gradient(ellipse at 58% 35%, rgba(94,234,212,0.32) 0%, rgba(45,212,191,0.14) 38%, transparent 68%)',
+          'linear-gradient(108deg, rgba(255,255,255,0.82) 0%, rgba(240,253,249,0.55) 36%, rgba(204,251,241,0.20) 60%, transparent 100%)',
       }}
     />
 
-    {/* Animated circular hexagonal ring — upper-RIGHT */}
-    <HeroCircularRing />
+    {/* Soft emerald glow — upper right */}
+    <div
+      className="absolute -top-20 -right-20 w-[55%] h-[70%] rounded-full"
+      style={{
+        background:
+          'radial-gradient(ellipse at 65% 28%, rgba(52,211,153,0.26) 0%, rgba(16,185,129,0.10) 48%, transparent 72%)',
+        filter: 'blur(36px)',
+      }}
+    />
 
-    {/* Light overlay for readable content (~20–30%) */}
-    <div className="absolute inset-0 bg-white/18" />
-    <div className="absolute inset-0 bg-gradient-to-r from-white/55 via-white/15 to-transparent lg:from-white/50 lg:via-white/8" />
-    <div className="absolute bottom-0 inset-x-0 h-28 bg-gradient-to-b from-transparent to-[#F8FCFB]" />
+    {/* Soft emerald glow — lower left */}
+    <div
+      className="absolute -bottom-10 -left-10 w-[45%] h-[55%] rounded-full"
+      style={{
+        background:
+          'radial-gradient(ellipse at 28% 72%, rgba(52,211,153,0.16) 0%, rgba(16,185,129,0.06) 58%, transparent 80%)',
+        filter: 'blur(28px)',
+      }}
+    />
+
+    {/* Bottom fade so the hero blends into the next section */}
+    <div
+      className="absolute bottom-0 inset-x-0 h-48"
+      style={{ background: 'linear-gradient(to bottom, transparent, #F8FCFB)' }}
+    />
   </div>
 );
+
+/** Hero background — image spans behind navbar → hero bottom */
+const HeroBackground = () => (
+  <div className="absolute inset-0 overflow-hidden pointer-events-none">
+    {/* Base page colour (visible while image loads) */}
+    <div className="absolute inset-0 bg-[#F4FBF8]" />
+    {/* Abstract AI image — full-width, green & white themed */}
+    <HeroAbstractBg />
+  </div>
+);
+
+
 
 /** Shared scroll reveal — matches Features section (bottom → top + fade) */
 const ScrollReveal = ({
@@ -440,10 +308,10 @@ const SectionHeading = ({
     className={`mb-16 ${center ? 'text-center' : ''}`}
   >
     <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] mb-5 ${light
-      ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/25'
-      : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+      ? 'bg-[#0c9344]/15 text-[#0c9344] border border-[#0c9344]/25'
+      : 'bg-[#0c9344]/10 text-[#0c9344] border border-[#0c9344]/25'
       }`}>
-      <span className={`w-1.5 h-1.5 rounded-full ${light ? 'bg-emerald-400' : 'bg-emerald-500'} animate-pulse`} />
+      <span className={`w-1.5 h-1.5 rounded-full ${light ? 'bg-[#0c9344]' : 'bg-[#0c9344]'} animate-pulse`} />
       {label}
     </div>
     <h2 className={`font-heading text-4xl md:text-5xl lg:text-[3.15rem] font-semibold leading-[1.15] tracking-tight mb-5 ${light ? 'text-white' : 'text-slate-900'
@@ -463,13 +331,14 @@ const SectionHeading = ({
 // ============================================================================
 const Header = () => {
   const router = useRouter();
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 24);
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
+    const handleScroll = () => setIsScrolled(window.scrollY > 0);
+    handleScroll(); // set on mount in case page loads mid-scroll
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const navItems = [
@@ -483,10 +352,13 @@ const Header = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled
-        ? 'bg-white/96 backdrop-blur-2xl shadow-sm shadow-slate-900/5 border-b border-slate-200/70'
-        : 'bg-[#F2FBF6]/90 backdrop-blur-xl border-b border-emerald-100/60'
-        }`}
+      className="fixed top-0 left-0 right-0 z-[9999]"
+      style={{
+        backgroundColor: isScrolled ? '#ffffff' : 'transparent',
+        boxShadow: isScrolled ? '0 1px 6px rgba(0,0,0,0.08)' : 'none',
+        borderBottom: isScrolled ? '1px solid rgba(226,232,240,0.7)' : '1px solid transparent',
+        transition: 'background-color 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease',
+      }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-[4.5rem]">
@@ -496,11 +368,11 @@ const Header = () => {
             whileHover={{ scale: 1.02 }}
             onClick={() => router.push('/')}
           >
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-700 flex items-center justify-center shadow-lg shadow-emerald-600/30">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#0c9344] to-[#0c9344] flex items-center justify-center shadow-lg shadow-[#0c9344]/30">
               <Scale className="w-[18px] h-[18px] text-white" />
             </div>
             <span className="text-xl font-extrabold tracking-tight text-slate-900 transition-colors duration-300">
-              Judicial<span className="text-emerald-500">GPT</span>
+              Judicial<span className="text-[#0c9344]">GPT</span>
             </span>
           </motion.div>
 
@@ -510,7 +382,7 @@ const Header = () => {
               <a
                 key={item.name}
                 href={item.href}
-                className="px-3.5 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900 hover:bg-emerald-50/80"
+                className="px-3.5 py-2 text-sm font-semibold rounded-lg transition-all duration-200 text-slate-800 hover:text-[#0c9344] hover:bg-white/60"
               >
                 {item.name}
               </a>
@@ -523,7 +395,7 @@ const Header = () => {
               onClick={() => router.push('/login')}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="px-4 py-2.5 text-sm font-semibold rounded-lg transition-all text-slate-700 hover:bg-emerald-50"
+              className="px-4 py-2.5 text-sm font-semibold rounded-lg transition-all text-slate-700 hover:bg-[#0c9344]/10"
             >
               Sign In
             </motion.button>
@@ -531,7 +403,7 @@ const Header = () => {
               onClick={() => router.push('/signup')}
               whileHover={{ scale: 1.03, boxShadow: '0 8px 28px rgba(16,185,129,0.4)' }}
               whileTap={{ scale: 0.97 }}
-              className="px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-lg shadow-md shadow-emerald-500/25 transition-all"
+              className="px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-[#0c9344] to-[#0c9344] rounded-lg shadow-md shadow-[#0c9344]/25 transition-all"
             >
               Get Started Free
             </motion.button>
@@ -540,7 +412,7 @@ const Header = () => {
           {/* Mobile toggle */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-2 rounded-lg transition-colors text-slate-900 hover:bg-emerald-50"
+            className="lg:hidden p-2 rounded-lg transition-colors text-slate-900 hover:bg-[#0c9344]/10"
           >
             {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -561,7 +433,7 @@ const Header = () => {
                 <a
                   key={item.name}
                   href={item.href}
-                  className="block px-4 py-3 text-slate-700 font-medium rounded-xl hover:bg-emerald-50 hover:text-emerald-700 transition-colors"
+                  className="block px-4 py-3 text-slate-700 font-medium rounded-xl hover:bg-[#0c9344]/10 hover:text-[#0c9344] transition-colors"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {item.name}
@@ -576,7 +448,7 @@ const Header = () => {
                 </button>
                 <button
                   onClick={() => { router.push('/signup'); setIsMobileMenuOpen(false); }}
-                  className="w-full py-3 text-sm font-bold text-center text-white bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-xl"
+                  className="w-full py-3 text-sm font-bold text-center text-white bg-gradient-to-r from-[#0c9344] to-[#0c9344] rounded-xl"
                 >
                   Get Started Free
                 </button>
@@ -590,126 +462,206 @@ const Header = () => {
 };
 
 // ============================================================================
-// ANIMATED CHAT WIDGET
+// ANIMATED CHAT WIDGET — multilingual (EN → UR → AR → ZH → SD), cycling
 // ============================================================================
+const LEGAL_QA_LANGUAGES = [
+  {
+    lang: 'English',
+    code: 'en',
+    dir: 'ltr' as const,
+    flag: 'en',
+    question:
+      'What are the legal consequences of breaching a contract in Pakistan, and can a court order specific performance?',
+    answer:
+      'Under Pakistani law, breaching a contract exposes the defaulting party to two primary remedies: compensatory damages under Section 73 of the Contract Act 1872, or a decree of specific performance under the Specific Relief Act 1877. Damages are awarded when the loss is a natural consequence of the breach or was foreseeable at the time the contract was formed. Specific performance, which compels the breaching party to fulfil their exact obligations, is granted when monetary compensation is inadequate, such as in contracts for immovable property or unique goods. ',
+  },
+  {
+    lang: 'اردو',
+    code: 'ur',
+    dir: 'rtl' as const,
+    flag: '🇵🇰',
+    question:
+      'پاکستان میں معاہدے کی خلاف ورزی کے قانونی نتائج کیا ہیں، اور کیا عدالت مخصوص کارکردگی کا حکم دے سکتی ہے؟',
+    answer:
+      'پاکستانی قانون کے تحت، معاہدے کی خلاف ورزی پر دو بنیادی تدارکات دستیاب ہیں: معاہدہ ایکٹ 1872 کی دفعہ 73 کے تحت معاوضاتی نقصانات، یا اسپیسیفک ریلیف ایکٹ 1877 کے تحت مخصوص کارکردگی کا ڈگری۔ نقصانات اس وقت دیے جاتے ہیں جب نقصان خلاف ورزی کا فطری نتیجہ ہو یا معاہدے کے وقت قابل پیش بینی تھا۔ مخصوص کارکردگی، جس میں عدالت خلاف ورزی کرنے والے کو معاہدہ پورا کرنے پر مجبور کرتی ہے، اس وقت دی جاتی ہے جب مالی معاوضہ ناکافی ہو، جیسے غیر منقولہ جائیداد کے معاملات میں۔ سپریم کورٹ آف پاکستان نے PLD 2023 SC 145 میں واضح کیا کہ یہ اختیار احتیاط سے استعمال کیا جائے۔',
+  },
+  {
+    lang: 'بلوچی',
+    code: 'bal',
+    dir: 'rtl' as const,
+    flag: '🇵🇰',
+    question:
+      'پاکستان ءَ معاہدے شکستی چے قانونی نتیجہ انت، و آیا عدالت خاص اجرا ءِ حکم دئے سکیت؟',
+    answer:
+      'پاکستانی قانون طبق، معاہدے شکست ءَ دو اصلی علاج دست انت: معاہدہ ایکٹ 1872 ءِ دفعہ 73 طبق نقصانی تاوان، یا اسپیسیفک ریلیف ایکٹ 1877 طبق خاص اجرا ءِ ڈگری۔ تاوان هما وختا دئیگ بیت کہ نقصان شکست ءِ طبیعی نتیجہ بوت یا معاہدے وختا پیش بینی بوتگ بیت۔ خاص اجرا، کہ عدالت شکست کننگ ءِ جانبا معاہدہ پورا کرنا مجبور کنت، هما وختا دئیگ بیت کہ مالی تاوان کم بیت، جیئن غیر منقولہ جائیداد ءِ معاملات ءَ۔ سپریم کورٹ آف پاکستان PLD 2023 SC 145 ءَ واضح کرت کہ این اختیار احتیاط سرا استعمال بیت۔',
+  },
+  {
+    lang: 'پنجابی',
+    code: 'pa',
+    dir: 'rtl' as const,
+    flag: '🇵🇰',
+    question:
+      'پاکستان وچ معاہدے دی خلاف ورزی دے کیہ قانونی نتیجے ہوندے نیں، تے کیہ عدالت خاص کارکردگی دا حکم دے سکدی اے؟',
+    answer:
+      'پاکستانی قانون دے مطابق، معاہدے دی خلاف ورزی اُتے دو مُکھ اپائے ملدے نیں: کنٹریکٹ ایکٹ 1872 دی دفعہ 73 تحت ہرجانہ، یا اسپیسیفک ریلیف ایکٹ 1877 تحت خاص کارکردگی دا ڈگری۔ ہرجانہ اودوں دتا جاندا اے جدوں نقصان خلاف ورزی دا قدرتی نتیجہ ہووے یا معاہدے ویلے پیشگی اندازہ لایا جا سکدا ہووے۔ خاص کارکردگی، جس وچ عدالت خلاف ورزی کرن والے نوں معاہدہ پورا کرن اُتے مجبور کردی اے، اودوں دتی جاندی اے جدوں مالی ہرجانہ ناکافی ہووے، جویں غیر منقولہ جائیداد دے معاملیاں وچ۔ سپریم کورٹ آف پاکستان نے PLD 2023 SC 145 وچ واضح کیتا کہ ایہ اختیار سوچ سمجھ کے ورتیا جاوے۔',
+  },
+  {
+    lang: 'سنڌي',
+    code: 'sd',
+    dir: 'rtl' as const,
+    flag: '🌙',
+    question:
+      'پاڪستان ۾ معاهدي جي ڀڃڪڙي جا قانوني نتيجا ڇا آهن، ۽ ڇا عدالت مخصوص ڪارگذاري جو حڪم ڏئي سگهي ٿي؟',
+    answer:
+      'پاڪستاني قانون موجب، معاهدي جي ڀڃڪڙي تي ٻه بنيادي اپاءَ موجود آهن: معاهدو ايڪٽ 1872 جي دفعي 73 تحت هاڃي جو تاوان، يا اسپيسفڪ ريلف ايڪٽ 1877 تحت مخصوص ڪارگذاري جو حڪمنامو. هاڃي جو تاوان تڏهن ملندو آهي جڏهن نقصان ڀڃڪڙي جو قدرتي نتيجو هجي يا معاهدي جي وقت اڳ ۾ ئي سمجهي سگهجي. مخصوص ڪارگذاري، جنهن ۾ عدالت ڀڃڻ واري کي معاهدو پورو ڪرڻ تي مجبور ڪري ٿي، اها تڏهن ڏني ويندي آهي جڏهن مالي تاوان ناڪافي هجي، جيئن غير منقوله ملڪيت جي معاملن ۾. سپريم ڪورٽ آف پاڪستان PLD 2023 SC 145 ۾ چيو ته هي اختيار سوچ سمجهه سان استعمال ٿيڻ گهرجي.',
+  },
+];
+
 const AnimatedChatWidget = () => {
-  const [convoIndex, setConvoIndex] = useState(0);
+  const [langIndex, setLangIndex] = useState(0);
   const [typedText, setTypedText] = useState('');
   const [showCursor, setShowCursor] = useState(false);
   const [buttonClicked, setButtonClicked] = useState(false);
   const [showResponse, setShowResponse] = useState(false);
   const [responseStream, setResponseStream] = useState('');
+  const isRunning = useRef(false);
 
-  const conversations = [
-    {
-      query: "breach of contract specific performance",
-      response: "Specific performance may be enforced when compensation in money cannot adequately relieve the non-performance. See the following relevant authorities:",
-      cards: [
-        { icon: BookOpen, title: "PLD 2023 Supreme Court 145", desc: "Specific Performance - Contract Act..." },
-        { icon: BookOpen, title: "2022 CLC 892 (Lahore)", desc: "Breach of Contract - Damages..." },
-        { icon: Scale, title: "Contract Act, 1872 - Section 12", desc: "When specific performance may be enforced..." }
-      ]
-    },
-    {
-      query: "what are the grounds for khula in Pakistan?",
-      response: "Under Muslim family law in Pakistan, a wife may seek Khula if she feels she cannot live within the limits prescribed by Allah. See relevant statutes and case law:",
-      cards: [
-        { icon: BookOpen, title: "Dissolution of Muslim Marriages Act", desc: "Section 2 - Grounds for decree..." },
-        { icon: Scale, title: "PLD 2021 Supreme Court 89", desc: "Khula - Right of wife to dissolve marriage..." },
-        { icon: BookOpen, title: "2019 YLR 1234 (Karachi)", desc: "Cruelty as a ground for divorce..." }
-      ]
-    },
-    {
-      query: "trademark infringement penalties",
-      response: "Trademark infringement can lead to civil injunctions and criminal penalties under the Trade Marks Ordinance, 2001, including fines and confiscation of goods.",
-      cards: [
-        { icon: Scale, title: "Trade Marks Ordinance, 2001", desc: "Section 99 - Penalties for infringement..." },
-        { icon: BookOpen, title: "2020 CLD 456 (Islamabad)", desc: "Infringement and passing off..." },
-        { icon: BookOpen, title: "PLD 2018 Supreme Court 321", desc: "Prior use vs prior registration..." }
-      ]
-    }
-  ];
+  const current = LEGAL_QA_LANGUAGES[langIndex];
+  const isRtl = current.dir === 'rtl';
+  // Nastaliq script: Urdu, Sindhi, Punjabi (Shahmukhi), Balochi
+  const NASTALIQ_CODES = new Set(['ur', 'sd', 'pa', 'bal']);
+  const isNastaliq = NASTALIQ_CODES.has(current.code);
 
   useEffect(() => {
-    let isActive = true;
+    let cancelled = false;
 
-    const runSequence = async () => {
-      while (isActive) {
-        const current = conversations[convoIndex];
+    const run = async () => {
+      if (isRunning.current) return;
+      isRunning.current = true;
 
-        setTypedText('');
-        setShowResponse(false);
-        setResponseStream('');
-        setButtonClicked(false);
-        setShowCursor(false);
+      // Reset
+      setTypedText('');
+      setShowResponse(false);
+      setResponseStream('');
+      setButtonClicked(false);
+      setShowCursor(false);
 
-        await new Promise(r => setTimeout(r, 800));
-        for (let i = 0; i <= current.query.length; i++) {
-          if (!isActive) return;
-          setTypedText(current.query.slice(0, i));
-          await new Promise(r => setTimeout(r, 30 + Math.random() * 40));
-        }
+      await new Promise((r) => setTimeout(r, 700));
+      if (cancelled) return;
 
-        if (!isActive) return;
-        await new Promise(r => setTimeout(r, 400));
-        setShowCursor(true);
-        await new Promise(r => setTimeout(r, 600));
-        setButtonClicked(true);
-        await new Promise(r => setTimeout(r, 150));
-        setButtonClicked(false);
-        setShowCursor(false);
-
-        await new Promise(r => setTimeout(r, 300));
-        if (!isActive) return;
-        setShowResponse(true);
-
-        for (let i = 0; i <= current.response.length; i++) {
-          if (!isActive) return;
-          setResponseStream(current.response.slice(0, i));
-          await new Promise(r => setTimeout(r, 15 + Math.random() * 20));
-        }
-
-        await new Promise(r => setTimeout(r, 5000));
-
-        if (!isActive) return;
-        setConvoIndex((prev) => (prev + 1) % conversations.length);
+      // Type the question
+      const q = LEGAL_QA_LANGUAGES[langIndex].question;
+      for (let i = 0; i <= q.length; i++) {
+        if (cancelled) return;
+        setTypedText(q.slice(0, i));
+        await new Promise((r) => setTimeout(r, 22 + Math.random() * 28));
       }
+
+      if (cancelled) return;
+      await new Promise((r) => setTimeout(r, 350));
+      setShowCursor(true);
+      await new Promise((r) => setTimeout(r, 600));
+      setButtonClicked(true);
+      await new Promise((r) => setTimeout(r, 140));
+      setButtonClicked(false);
+      setShowCursor(false);
+
+      await new Promise((r) => setTimeout(r, 280));
+      if (cancelled) return;
+      setShowResponse(true);
+
+      // Stream the answer
+      const a = LEGAL_QA_LANGUAGES[langIndex].answer;
+      for (let i = 0; i <= a.length; i++) {
+        if (cancelled) return;
+        setResponseStream(a.slice(0, i));
+        await new Promise((r) => setTimeout(r, 12 + Math.random() * 16));
+      }
+
+      // Pause before next language
+      await new Promise((r) => setTimeout(r, 4200));
+      if (cancelled) return;
+
+      isRunning.current = false;
+      setLangIndex((prev) => (prev + 1) % LEGAL_QA_LANGUAGES.length);
     };
 
-    runSequence();
-    return () => { isActive = false; };
-  }, [convoIndex]);
+    run();
+    return () => { cancelled = true; isRunning.current = false; };
+  }, [langIndex]);
 
   return (
-    <div className="relative w-full max-w-xl xl:max-w-2xl mx-auto bg-white/80 backdrop-blur-xl border border-emerald-100 rounded-3xl p-6 md:p-8 shadow-xl shadow-emerald-900/5 text-left">
-      <div className="absolute inset-0 bg-[radial-gradient(#05966914_1px,transparent_1px)] [background-size:20px_20px] rounded-3xl opacity-60" />
+    <div className="relative w-full max-w-xl xl:max-w-2xl mx-auto bg-white/80 backdrop-blur-xl border border-[#0c9344]/15 rounded-3xl shadow-xl shadow-[#0c9344]/5 text-left overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(#05966914_1px,transparent_1px)] [background-size:20px_20px] rounded-3xl opacity-60 pointer-events-none" />
 
-      <div className="relative z-10 flex flex-col gap-6 min-h-[380px] overflow-hidden">
-        {/* Search Input */}
-        <div className="relative flex items-center bg-white rounded-2xl shadow-lg border border-slate-100 p-4 md:p-5 shrink-0">
-          <Search className="w-6 h-6 text-slate-400 mr-4 shrink-0" />
-          <div className="flex-1 text-slate-800 font-medium text-base md:text-lg min-h-[1.75rem] flex items-center">
-            <span className="whitespace-pre-wrap leading-snug">
+      {/* Language indicator pills */}
+      <div className="relative z-10 flex items-center gap-1.5 px-5 pt-4 pb-3 border-b border-[#0c9344]/15/60">
+        {LEGAL_QA_LANGUAGES.map((l, i) => (
+          <motion.div
+            key={l.code}
+            animate={{
+              backgroundColor: i === langIndex ? '#10b981' : '#f0fdf4',
+              color: i === langIndex ? '#ffffff' : '#6b7280',
+              borderColor: i === langIndex ? '#10b981' : '#d1fae5',
+              scale: i === langIndex ? 1 : 0.92,
+            }}
+            transition={{ duration: 0.3 }}
+            className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold border select-none"
+          >
+            {l.flag} {l.lang}
+          </motion.div>
+        ))}
+        <div className="ml-auto flex items-center gap-1 shrink-0">
+          <Scale className="w-3 h-3 text-[#0c9344]" />
+          <span className="text-[10px] font-bold uppercase tracking-widest text-[#0c9344]">JudicialGPT</span>
+        </div>
+      </div>
+
+      <div className="relative z-10 flex flex-col gap-5 p-5 md:p-6">
+        {/* Search / Question Input */}
+        <div
+          className="relative flex items-start bg-white rounded-2xl shadow-lg border border-slate-100 px-4 py-3.5 shrink-0"
+          dir={isRtl ? 'rtl' : 'ltr'}
+        >
+          <Search className={`w-5 h-5 text-slate-400 mt-0.5 shrink-0 ${isRtl ? 'ml-3' : 'mr-3'}`} />
+          <div
+            className={`flex-1 text-slate-800 font-medium flex items-start pt-0.5 ${isNastaliq
+              ? 'nastaliq-question'
+              : 'text-[13px] md:text-sm leading-snug'
+              }`}
+            style={{
+              minHeight: '5.5rem',
+              ...(!isNastaliq && isRtl ? { direction: 'rtl', textAlign: 'right' } : {}),
+            }}
+          >
+            <span className="whitespace-pre-wrap w-full">
               {typedText}
-              {!showResponse && <span className="w-0.5 h-5 bg-emerald-500 animate-pulse ml-0.5 inline-block align-middle" />}
+              {!showResponse && (
+                <span className={`w-0.5 h-4 bg-[#0c9344] animate-pulse inline-block align-middle ${isRtl ? 'mr-0.5' : 'ml-0.5'}`} />
+              )}
             </span>
           </div>
 
-          <div className={`shrink-0 ml-4 w-10 h-10 rounded-full flex items-center justify-center transition-colors ${buttonClicked ? 'bg-slate-100' : 'bg-transparent'}`}>
-            <ArrowRight className="w-6 h-6 text-slate-400" />
+          {/* Send button */}
+          <div
+            className={`shrink-0 ${isRtl ? 'mr-3' : 'ml-3'} mt-0.5 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${buttonClicked ? 'bg-[#0c9344]/15' : 'bg-slate-50'
+              }`}
+          >
+            <ArrowRight className="w-4 h-4 text-slate-400" />
           </div>
 
+          {/* Animated cursor */}
           <AnimatePresence>
             {showCursor && (
               <motion.div
-                initial={{ x: -100, y: 120, opacity: 0 }}
+                initial={{ x: isRtl ? 80 : -80, y: 100, opacity: 0 }}
                 animate={{ x: 0, y: 0, opacity: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
-                className="absolute right-3 bottom-1 z-50 pointer-events-none"
+                transition={{ duration: 0.55, ease: 'easeOut' }}
+                className={`absolute bottom-0 z-50 pointer-events-none ${isRtl ? 'left-3' : 'right-3'}`}
                 style={{ originX: 0, originY: 0 }}
               >
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="black" xmlns="http://www.w3.org/2000/svg" className="drop-shadow-md">
+                <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="drop-shadow-md">
                   <path d="M5.5 3.21V20.8c0 .45.54.67.85.35l4.86-4.86a.5.5 0 01.35-.15h6.43c.45 0 .67-.54.35-.85L6.35 3.35a.5.5 0 00-.85.35z" fill="black" stroke="white" strokeWidth="1.5" />
                 </svg>
               </motion.div>
@@ -717,30 +669,52 @@ const AnimatedChatWidget = () => {
           </AnimatePresence>
         </div>
 
-        {/* Results */}
-        <div className="flex-1">
-          <AnimatePresence mode="popLayout">
+        {/* Answer area — fixed height so card never resizes between languages */}
+        <div className="overflow-hidden h-[15rem]">
+          <AnimatePresence mode="wait">
             {showResponse && (
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="flex flex-col gap-4"
+                key={langIndex}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.35 }}
+                className="flex items-start gap-3"
+                dir={isRtl ? 'rtl' : 'ltr'}
               >
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center shrink-0 shadow-md">
-                    <Bot className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="bg-emerald-50/90 backdrop-blur-md border border-emerald-100 text-slate-700 text-base leading-relaxed p-5 rounded-2xl rounded-tl-sm shadow-sm min-h-[5rem]">
-                    {responseStream}
-                    {responseStream.length < conversations[convoIndex].response.length && (
-                      <span className="w-1.5 h-4 bg-emerald-500 animate-pulse ml-1 inline-block align-middle" />
-                    )}
-                  </div>
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#0c9344] to-[#0c9344] flex items-center justify-center shadow-md shadow-[#0c9344]/30 shrink-0 mt-0.5">
+                  <Scale className="w-[16px] h-[16px] text-white" />
+                </div>
+                <div
+                  className={`flex-1 bg-[#0c9344]/10/90 border border-[#0c9344]/15 text-slate-700 px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm ${isNastaliq
+                    ? 'nastaliq-text'
+                    : 'text-[13px] leading-relaxed'
+                    }`}
+                  style={!isNastaliq && isRtl ? { direction: 'rtl', textAlign: 'right', lineHeight: '1.85' } : {}}
+                >
+                  {responseStream}
+                  {responseStream.length < current.answer.length && (
+                    <span className={`w-1 h-3.5 bg-[#0c9344] animate-pulse inline-block align-middle ${isRtl ? 'mr-0.5' : 'ml-0.5'}`} />
+                  )}
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
+        </div>
+
+        {/* Progress dots */}
+        <div className="flex items-center gap-1.5 justify-center pt-1">
+          {LEGAL_QA_LANGUAGES.map((_, i) => (
+            <motion.div
+              key={i}
+              animate={{
+                width: i === langIndex ? 22 : 6,
+                backgroundColor: i === langIndex ? '#10b981' : '#d1fae5',
+              }}
+              transition={{ duration: 0.35 }}
+              className="h-1.5 rounded-full"
+            />
+          ))}
         </div>
       </div>
     </div>
@@ -800,7 +774,7 @@ const HeroSection = () => {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       <HeroBackground />
 
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16 lg:pb-20 grid lg:grid-cols-2 gap-10 lg:gap-8 items-center text-center lg:text-left">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 md:pt-24 lg:pt-20 pb-8 lg:pb-10 grid lg:grid-cols-2 gap-6 lg:gap-4 items-center text-center lg:text-left">
         {/* Left Column: Content */}
         <div className="flex flex-col items-center lg:items-start">
           {/* Badge */}
@@ -808,11 +782,11 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.6 }}
-            className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-emerald-200 bg-white/70 backdrop-blur-sm mb-6 lg:mb-8 shadow-sm shadow-emerald-900/5"
+            className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-[#0c9344]/25 bg-white/70 backdrop-blur-sm mb-3 lg:mb-4 shadow-sm shadow-[#0c9344]/5"
           >
-            <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-            <span className="text-emerald-700 text-sm font-medium">AI-Powered Judicial Intelligence Platform</span>
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <Sparkles className="w-3.5 h-3.5 text-[#0c9344]" />
+            <span className="text-[#0c9344] text-sm font-medium">AI-Powered Judicial Intelligence Platform</span>
+            <span className="w-2 h-2 rounded-full bg-[#0c9344] animate-pulse" />
           </motion.div>
 
           {/* Headline */}
@@ -820,10 +794,10 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.7 }}
-            className="w-full flex flex-col items-center text-center font-heading text-4xl sm:text-5xl md:text-6xl lg:text-5xl xl:text-[3.75rem] font-semibold text-slate-900 leading-[1.12] tracking-tight mb-4 lg:mb-5"
+            className="w-full flex flex-col items-center text-center font-heading text-4xl sm:text-5xl md:text-6xl lg:text-5xl xl:text-[3.75rem] font-semibold text-slate-900 leading-[1.12] tracking-tight mb-2 lg:mb-3"
           >
             <span>JudicialGPT</span>
-            <span>for</span>
+            <span className="text-3xl sm:text-4xl font-normal tracking-wide my-0.5">for</span>
             <span className="relative w-full flex justify-center mt-2 min-h-[1.2em]">
               <AnimatePresence mode="wait">
                 <motion.span
@@ -832,7 +806,7 @@ const HeroSection = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -28 }}
                   transition={{ duration: 0.45 }}
-                  className="absolute bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-600 bg-clip-text text-transparent whitespace-nowrap"
+                  className="absolute bg-gradient-to-r from-[#0c9344] via-[#0c9344] to-[#0c9344] bg-clip-text text-transparent whitespace-nowrap"
                 >
                   {heroTopics[currentTopic].title}
                 </motion.span>
@@ -845,7 +819,7 @@ const HeroSection = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.35, duration: 0.6 }}
-            className="w-full max-w-2xl mx-auto mb-8 lg:mb-10 min-h-[4rem] md:min-h-[3rem] flex items-center justify-center text-center"
+            className="w-full max-w-2xl mx-auto mb-4 lg:mb-6 min-h-[4rem] md:min-h-[3rem] flex items-center justify-center text-center"
           >
             <AnimatePresence mode="wait">
               <motion.p
@@ -866,13 +840,13 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.45, duration: 0.6 }}
-            className="w-full flex flex-col sm:flex-row items-center justify-center gap-4 mb-10 lg:mb-12"
+            className="w-full flex flex-col sm:flex-row items-center justify-center gap-4 mb-6 lg:mb-8"
           >
             <motion.button
               onClick={() => router.push('/chat')}
               whileHover={{ scale: 1.04, boxShadow: '0 20px 48px rgba(16,185,129,0.35)' }}
               whileTap={{ scale: 0.96 }}
-              className="px-8 py-4 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold rounded-xl text-base flex items-center gap-3 shadow-xl shadow-emerald-500/25"
+              className="px-8 py-4 bg-gradient-to-r from-[#0c9344] to-[#0c9344] text-white font-bold rounded-xl text-base flex items-center gap-3 shadow-xl shadow-[#0c9344]/25"
             >
               <Bot className="w-5 h-5" />
               Try AI Assistant Free
@@ -886,7 +860,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.6 }}
-            className="grid grid-cols-2 md:grid-cols-4 w-full max-w-3xl mx-auto lg:mx-0 rounded-2xl overflow-hidden border border-emerald-100 divide-x divide-y md:divide-y-0 divide-emerald-100 bg-white/70 shadow-sm shadow-emerald-900/5"
+            className="grid grid-cols-2 md:grid-cols-4 w-full max-w-3xl mx-auto lg:mx-0 rounded-2xl overflow-hidden border border-[#0c9344]/15 divide-x divide-y md:divide-y-0 divide-emerald-100 bg-white/70 shadow-sm shadow-[#0c9344]/5"
           >
             {heroStats.map((stat, i) => (
               <div key={i} className="backdrop-blur-sm px-3 py-4 md:py-3.5 text-center flex flex-col items-center justify-center relative">
@@ -895,7 +869,7 @@ const HeroSection = () => {
                 </div>
                 <div className="text-[10px] md:text-[11px] text-slate-500 font-medium uppercase tracking-wider">{stat.label}</div>
                 {(stat as any).badge && (
-                  <div className="mt-1.5 px-2 py-0.5 rounded-full bg-emerald-100 border border-emerald-200 text-emerald-700 text-[9px] font-bold uppercase tracking-wider shadow-sm">
+                  <div className="mt-1.5 px-2 py-0.5 rounded-full bg-[#0c9344]/15 border border-[#0c9344]/25 text-[#0c9344] text-[9px] font-bold uppercase tracking-wider shadow-sm">
                     {(stat as any).badge}
                   </div>
                 )}
@@ -904,7 +878,7 @@ const HeroSection = () => {
           </motion.div>
         </div>
 
-        {/* Right Column: Animated Chat Widget */}
+        {/* Right Column: Multilingual Legal Q&A Card */}
         <div className="hidden lg:block w-full relative z-10">
           <motion.div
             initial={{ opacity: 0, x: 40 }}
@@ -941,29 +915,29 @@ const HeroSection = () => {
 // ============================================================================
 const TrustBarSection = () => {
   const trustItems = [
-    { icon: Shield, title: 'Open to All', subtitle: 'Ask Legal Questions', color: 'bg-teal-500' },
-    { icon: Scale, title: 'All-in-One', subtitle: 'Judicial AI Platform', color: 'bg-sky-400' },
-    { icon: Globe, title: 'Multi-language', subtitle: 'Coverage', color: 'bg-violet-500' },
-    { icon: ShieldCheck, title: 'Safe & Secure', subtitle: 'Ad-Free', color: 'bg-emerald-500' },
-    { icon: Zap, title: 'Learn Smarter,', subtitle: 'Not Harder', color: 'bg-amber-400' },
-    { icon: DollarSign, title: 'Affordable', subtitle: 'Premium Access', color: 'bg-teal-600' },
+    { icon: Shield, title: 'Open to All', subtitle: 'Ask Legal Questions', color: 'bg-[#0c9344]' },
+    { icon: Scale, title: 'All-in-One', subtitle: 'Judicial AI Platform', color: 'bg-[#0c9344]' },
+    { icon: Globe, title: 'Multi-language', subtitle: 'Coverage', color: 'bg-[#0c9344]' },
+    { icon: ShieldCheck, title: 'Safe & Secure', subtitle: 'Ad-Free', color: 'bg-[#0c9344]' },
+    { icon: Zap, title: 'Learn Smarter,', subtitle: 'Not Harder', color: 'bg-[#0c9344]' },
+    { icon: DollarSign, title: 'Affordable', subtitle: 'Premium Access', color: 'bg-[#0c9344]' },
   ];
 
   const audiences = [
     { label: 'General Public / Citizens', star: 'text-orange-500' },
-    { label: 'Judges', star: 'text-emerald-500' },
+    { label: 'Judges', star: 'text-[#0c9344]' },
     { label: 'Justice Sector Institutions', star: 'text-violet-500' },
     { label: 'Police Investigation Officers (IO)', star: 'text-sky-500' },
     { label: 'Prosecution', star: 'text-rose-500' },
     { label: 'Prisons & Correctional Facilities', star: 'text-amber-500' },
     { label: 'Lawyers', star: 'text-orange-500' },
-    { label: 'Revenue & Land Records', star: 'text-emerald-500' },
+    { label: 'Revenue & Land Records', star: 'text-[#0c9344]' },
     { label: 'Tax & Revenue Authorities', star: 'text-violet-500' },
     { label: 'Banking & Financial Institutions', star: 'text-sky-500' },
     { label: 'District Judiciary', star: 'text-rose-500' },
     { label: "Prosecutor General's Office", star: 'text-amber-500' },
     { label: 'Corporate & Commercial Sector', star: 'text-orange-500' },
-    { label: 'E-Governance & Public Administration', star: 'text-emerald-500' },
+    { label: 'E-Governance & Public Administration', star: 'text-[#0c9344]' },
   ];
 
   const marqueeItems = [...audiences, ...audiences];
@@ -1024,43 +998,48 @@ const FeatureCard = ({ icon: Icon, title, description, delay, gradient, glow }: 
   gradient: string;
   glow: string;
 }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 32 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={SCROLL_VIEWPORT}
-    transition={{ duration: 0.55, delay, ease: 'easeOut' }}
-    whileHover={{
-      y: -8,
-      scale: 1.02,
-      boxShadow: `0 20px 40px rgba(16, 185, 129, 0.18), 0 6px 16px rgba(16, 185, 129, 0.10)`,
-      transition: { duration: 0.35, ease: 'easeOut' },
-    }}
-    className="feature-card group relative bg-white rounded-2xl p-7 border border-slate-200 shadow-sm hover:border-emerald-100 flex-shrink-0"
+  <div
+    className="feature-card group relative bg-white rounded-2xl p-7 border border-slate-200 shadow-sm flex-shrink-0"
     style={{
       width: 'clamp(260px, 28vw, 320px)',
       scrollSnapAlign: 'start',
       boxShadow: '0 4px 18px rgba(16, 185, 129, 0.07)',
+      transition: 'transform 0.25s ease, box-shadow 0.25s ease',
+      willChange: 'transform',
+      isolation: 'isolate',
+      transformOrigin: 'center center',
+      animation: `fadeInUp 0.55s ease-out ${delay}s both`,
+    }}
+    onMouseEnter={e => {
+      const el = e.currentTarget as HTMLElement;
+      el.style.transform = 'scale(1.03)';
+      el.style.boxShadow = '0 20px 48px rgba(12, 147, 68, 0.18)';
+    }}
+    onMouseLeave={e => {
+      const el = e.currentTarget as HTMLElement;
+      el.style.transform = 'scale(1)';
+      el.style.boxShadow = '0 4px 18px rgba(16, 185, 129, 0.07)';
     }}
   >
     {/* Bottom accent line */}
-    <div className={`absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r ${gradient} scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left`} />
+    <div className={`absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r ${gradient}`} />
 
-    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center mb-5 shadow-md group-hover:scale-110 group-hover:rotate-3 transition-transform duration-400`}>
+    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center mb-5 shadow-md`}>
       <Icon className="w-6 h-6 text-white" />
     </div>
     <h3 className="text-base font-bold text-slate-900 mb-2.5">{title}</h3>
     <p className="text-slate-500 text-sm leading-relaxed">{description}</p>
-  </motion.div>
+  </div>
 );
 
 const FeaturesSection = () => {
   const features = [
-    { icon: Brain, title: 'AI Legal Assistant', description: 'Get instant answers to complex legal questions. Our AI breaks down legal jargon into simple, actionable advice.', gradient: 'from-emerald-500 to-teal-600', glow: 'rgba(16, 185, 129, 0.18)' },
-    { icon: FileSearch, title: 'Case Research Tool', description: 'Access millions of case precedents and legal documents instantly. Find relevant cases in seconds, not hours.', gradient: 'from-blue-500 to-indigo-600', glow: 'rgba(16, 185, 129, 0.18)' },
-    { icon: MessageCircle, title: 'Virtual Consultation', description: '24/7 AI-powered consultation to understand your case, predict outcomes, and provide strategic guidance.', gradient: 'from-violet-500 to-purple-600', glow: 'rgba(16, 185, 129, 0.18)' },
-    { icon: FileText, title: 'Document Analysis', description: 'Upload contracts and legal documents for instant AI analysis. Identify risks, obligations, and key clauses.', gradient: 'from-amber-500 to-orange-600', glow: 'rgba(16, 185, 129, 0.18)' },
-    { icon: Shield, title: 'Privacy Protected', description: 'All conversations are encrypted and private. Option for temporary chats that are never stored.', gradient: 'from-rose-500 to-pink-600', glow: 'rgba(16, 185, 129, 0.18)' },
-    { icon: Globe, title: 'Multi-Platform Access', description: 'Access from any device — web, mobile, or desktop. Seamless experience across all platforms.', gradient: 'from-cyan-500 to-sky-600', glow: 'rgba(16, 185, 129, 0.18)' },
+    { icon: Brain, title: 'AI Legal Assistant', description: 'Get instant answers to complex legal questions. Our AI breaks down legal jargon into simple, actionable advice.', gradient: 'from-[#0c9344] to-[#0c9344]', glow: 'rgba(16, 185, 129, 0.18)' },
+    { icon: FileSearch, title: 'Case Research Tool', description: 'Access millions of case precedents and legal documents instantly. Find relevant cases in seconds, not hours.', gradient: 'from-[#0c9344] to-[#0c9344]', glow: 'rgba(15, 23, 42, 0.18)' },
+    { icon: MessageCircle, title: 'Virtual Consultation', description: '24/7 AI-powered consultation to understand your case, predict outcomes, and provide strategic guidance.', gradient: 'from-[#0c9344] to-[#0c9344]', glow: 'rgba(148, 163, 184, 0.18)' },
+    { icon: FileText, title: 'Document Analysis', description: 'Upload contracts and legal documents for instant AI analysis. Identify risks, obligations, and key clauses.', gradient: 'from-[#0c9344] to-[#0c9344]', glow: 'rgba(16, 185, 129, 0.18)' },
+    { icon: Shield, title: 'Privacy Protected', description: 'All conversations are encrypted and private. Option for temporary chats that are never stored.', gradient: 'from-[#0c9344] to-[#0c9344]', glow: 'rgba(15, 23, 42, 0.18)' },
+    { icon: Globe, title: 'Multi-Platform Access', description: 'Access from any device — web, mobile, or desktop. Seamless experience across all platforms.', gradient: 'from-[#0c9344] to-[#0c9344]', glow: 'rgba(148, 163, 184, 0.18)' },
   ];
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -1116,14 +1095,14 @@ const FeaturesSection = () => {
   };
 
   const arrowBtnClass =
-    'absolute top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white border border-slate-200 text-slate-600 shadow-md shadow-slate-900/8 flex items-center justify-center transition-all duration-300 hover:border-emerald-200 hover:text-emerald-600 hover:shadow-lg hover:shadow-emerald-500/15 disabled:opacity-35 disabled:pointer-events-none disabled:shadow-none';
+    'absolute top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white border border-slate-200 text-slate-600 shadow-md shadow-slate-900/8 flex items-center justify-center transition-all duration-300 hover:border-[#0c9344]/25 hover:text-[#0c9344] hover:shadow-lg hover:shadow-[#0c9344]/15 disabled:opacity-35 disabled:pointer-events-none disabled:shadow-none';
 
   return (
-    <section id="features" className="py-24 lg:py-32 bg-slate-50/60">
+    <section id="features" className="py-6 lg:py-8 bg-slate-50/60">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           label="Features"
-          title={<>Innovative Features That<br /><span className="text-emerald-600">Redefine Legal Assistance</span></>}
+          title={<>Innovative Features That<br /><span className="text-[#0c9344]">Redefine Legal Assistance</span></>}
           subtitle="Powered by advanced AI technology trained on millions of legal documents, delivering accurate and reliable legal intelligence."
         />
       </div>
@@ -1162,15 +1141,22 @@ const FeaturesSection = () => {
             WebkitOverflowScrolling: 'touch',
             scrollbarWidth: 'none',
             msOverflowStyle: 'none',
-            paddingBottom: '20px',
-            paddingTop: '8px',
+            paddingBottom: '24px',
+            paddingTop: '12px',
+            touchAction: 'pan-x',
           }}
         >
           {features.map((f, i) => <FeatureCard key={i} {...f} delay={i * 0.08} />)}
         </div>
       </div>
       {/* Hide WebKit scrollbar for this row */}
-      <style>{`.features-scroll::-webkit-scrollbar { display: none; }`}</style>
+      <style>{`
+        .features-scroll::-webkit-scrollbar { display: none; }
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(32px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </section>
   );
 };
@@ -1199,11 +1185,11 @@ const AIToolsSection = () => {
         'NLP',
         'Contextual Understanding',
       ],
-      gradient: 'from-emerald-500 to-teal-600',
-      accent: 'bg-emerald-500',
-      accentSoft: 'bg-emerald-50',
-      accentText: 'text-emerald-600',
-      accentBorder: 'border-emerald-200',
+      gradient: 'from-[#0c9344] to-[#0c9344]',
+      accent: 'bg-[#0c9344]',
+      accentSoft: 'bg-[#0c9344]/10',
+      accentText: 'text-[#0c9344]',
+      accentBorder: 'border-[#0c9344]/25',
       glow: 'rgba(16, 185, 129, 0.45)',
       glowSoft: 'rgba(16, 185, 129, 0.12)',
       ring: '#10b981',
@@ -1228,7 +1214,6 @@ const AIToolsSection = () => {
       icon: Mic,
       title: 'Voice Command Processing',
       description: 'Transform spoken instructions into accurate text and interact with JudicialGPT hands-free. The system understands legal terminology and local accents to provide a smooth and efficient user experience.',
-      
       features: ['Speech-to-Text', 'Hands-Free Control', 'Legal Terminology', 'Accent Recognition'],
       gradient: 'from-violet-500 to-purple-600',
       accent: 'bg-violet-500',
@@ -1278,22 +1263,22 @@ const AIToolsSection = () => {
   ];
 
   const marqueeChips = [
-    { label: 'JudicialGPT AI Chatbot', star: 'text-emerald-500' },
+    { label: 'JudicialGPT AI Chatbot', star: 'text-[#0c9344]' },
     { label: 'Case Prism — Research Tool', star: 'text-blue-500' },
     { label: 'Virtual Legal Consultant', star: 'text-violet-500' },
-    { label: 'Real-time Legal Updates', star: 'text-teal-500' },
+    { label: 'Real-time Legal Updates', star: 'text-[#0c9344]' },
     { label: 'Case Law Database', star: 'text-sky-500' },
     { label: 'NLP', star: 'text-amber-500' },
     { label: 'Contextual Understanding', star: 'text-rose-500' },
     { label: 'Advanced Search Filters', star: 'text-indigo-500' },
     { label: 'Citation Analysis', star: 'text-cyan-500' },
-    { label: 'Precedent Mapping', star: 'text-emerald-600' },
+    { label: 'Precedent Mapping', star: 'text-[#0c9344]' },
     { label: 'Export Capabilities', star: 'text-orange-500' },
     { label: 'Outcome Prediction', star: 'text-violet-500' },
     { label: 'Strategy Suggestions', star: 'text-blue-600' },
     { label: 'Risk Assessment', star: 'text-rose-500' },
-    { label: 'Available 24/7', star: 'text-teal-600' },
-    { label: 'PLG', star: 'text-emerald-500' },
+    { label: 'Available 24/7', star: 'text-[#0c9344]' },
+    { label: 'PLG', star: 'text-[#0c9344]' },
   ];
   const marqueeItems = [...marqueeChips, ...marqueeChips];
 
@@ -1305,7 +1290,7 @@ const AIToolsSection = () => {
   });
 
   return (
-    <section ref={sectionRef} id="ai-tools" className="py-24 lg:py-32 bg-[#F7FAF8]">
+    <section ref={sectionRef} id="ai-tools" className="py-6 lg:py-8 bg-[#F7FAF8]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -1315,13 +1300,13 @@ const AIToolsSection = () => {
           transition={{ duration: 0.6, ease: 'easeOut' }}
           className="max-w-3xl mb-10 lg:mb-12"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] mb-5 bg-emerald-50 text-emerald-700 border border-emerald-200">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] mb-5 bg-[#0c9344]/10 text-[#0c9344] border border-[#0c9344]/25">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#0c9344] animate-pulse" />
             AI Tools
           </div>
           <h2 className="font-heading text-4xl md:text-5xl lg:text-[3.15rem] font-semibold leading-[1.12] tracking-tight text-slate-900 mb-4">
             Integrated AI-Powered<br />
-            <span className="text-emerald-600">Legal Solutions</span>
+            <span className="text-[#0c9344]">Legal Solutions</span>
           </h2>
           <p className="text-lg md:text-xl leading-[1.8] text-slate-500">
             Experience the power of AI tools designed specifically for legal professionals and individuals seeking legal guidance.
@@ -1337,18 +1322,18 @@ const AIToolsSection = () => {
             viewport={SCROLL_VIEWPORT}
             transition={{ duration: 0.5 }}
             whileHover={hasMounted ? cardHover(core.glow) : undefined}
-            className="lg:col-span-2 relative rounded-[1.75rem] border border-emerald-100 bg-white p-6 md:p-8 h-full"
+            className="lg:col-span-2 relative rounded-[1.75rem] border border-[#0c9344]/15 bg-white p-6 md:p-8 h-full"
             style={{ boxShadow: `0 10px 40px ${core.glowSoft}` }}
           >
             <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[1.75rem]" aria-hidden>
-              <div className="absolute top-0 right-0 w-72 h-72 rounded-full bg-emerald-400/10 blur-3xl" />
+              <div className="absolute top-0 right-0 w-72 h-72 rounded-full bg-[#0c9344]/10 blur-3xl" />
             </div>
             <div className="relative flex flex-col h-full min-h-[320px]">
               {/* Top: copy aligned to top */}
               <div className="flex flex-col gap-6 md:gap-8 items-start">
                 <div>
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-700 text-[11px] font-bold uppercase tracking-wider mb-4 w-fit">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0c9344]/10 border border-[#0c9344]/15 text-[#0c9344] text-[11px] font-bold uppercase tracking-wider mb-4 w-fit">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#0c9344]" />
                     {core.badge}
                   </div>
                   <h3 className="font-heading text-2xl md:text-3xl font-semibold text-slate-900 tracking-tight mb-3">
@@ -1415,11 +1400,11 @@ const AIToolsSection = () => {
               viewport={SCROLL_VIEWPORT}
               transition={{ duration: 0.5, delay: i * 0.1 }}
               whileHover={hasMounted ? cardHover(tool.glow) : undefined}
-              className="group relative grid grid-rows-[auto_1fr_auto] h-full rounded-[1.5rem] border border-slate-200 hover:border-emerald-300 bg-white px-5 py-6 overflow-hidden transition-colors duration-300"
+              className="group relative grid grid-rows-[auto_1fr_auto] h-full rounded-[1.5rem] border border-slate-200 hover:border-[#0c9344] bg-white px-5 py-6 overflow-hidden transition-colors duration-300"
               style={{ boxShadow: `0 6px 22px rgba(16, 185, 129, 0.10)` }}
             >
               {/* Animated green bottom line */}
-              <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-emerald-400 to-teal-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left rounded-b-[1.5rem]" />
+              <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#0c9344] to-[#0c9344] scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left rounded-b-[1.5rem]" />
 
               <div className={`absolute left-0 top-4 bottom-4 w-1 rounded-full ${tool.accent}`} />
 
@@ -1490,7 +1475,7 @@ const HowItWorksSection = () => {
   ];
 
   return (
-    <section id="how-it-works" className="py-24 lg:py-32 bg-white overflow-hidden">
+    <section id="how-it-works" className="py-6 lg:py-8 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           label="How It Works"
@@ -1500,7 +1485,7 @@ const HowItWorksSection = () => {
 
         <div className="relative max-w-3xl mx-auto mt-20">
           {/* Vertical Line */}
-          <div className="absolute left-6 md:left-1/2 top-4 bottom-4 w-0.5 bg-emerald-200 -translate-x-1/2" />
+          <div className="absolute left-6 md:left-1/2 top-4 bottom-4 w-0.5 bg-[#0c9344]/25 -translate-x-1/2" />
 
           <div className="space-y-16">
             {steps.map((step, i) => {
@@ -1523,7 +1508,7 @@ const HowItWorksSection = () => {
                   {/* Center Marker */}
                   <div className="absolute left-6 md:left-1/2 -translate-x-1/2 flex items-center justify-center">
                     <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-sm font-bold shadow-md transition-colors duration-300 ${isEven
-                      ? 'bg-emerald-500 text-white shadow-emerald-500/25'
+                      ? 'bg-[#0c9344] text-white shadow-[#0c9344]/25'
                       : 'bg-slate-900 text-white shadow-slate-900/25'
                       }`}>
                       {step.number}
@@ -1565,7 +1550,7 @@ const PricingSection = () => {
       features: ['Unlimited AI queries', 'Advanced case research', 'Priority response time', 'Document analysis (50/mo)', 'Priority support', 'Multi-platform access', 'Export capabilities'],
       cta: 'Start Free Trial',
       popular: true,
-      accentGradient: 'from-emerald-500 to-emerald-700',
+      accentGradient: 'from-[#0c9344] to-[#0c9344]',
     },
     {
       name: 'Enterprise',
@@ -1580,11 +1565,11 @@ const PricingSection = () => {
   ];
 
   return (
-    <section id="pricing" className="py-24 lg:py-32 bg-white">
+    <section id="pricing" className="py-6 lg:py-8 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           label="Pricing"
-          title={<>Simple, Transparent<br /><span className="text-emerald-600">Pricing Plans</span></>}
+          title={<>Simple, Transparent<br /><span className="text-[#0c9344]">Pricing Plans</span></>}
           subtitle="Choose the plan that fits your needs. All plans include access to our core AI features with no hidden fees."
         />
 
@@ -1600,13 +1585,13 @@ const PricingSection = () => {
             >
               {plan.popular && (
                 <div className="absolute -top-4 inset-x-0 flex justify-center z-10">
-                  <span className="px-4 py-1.5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-xs font-bold rounded-full shadow-lg shadow-emerald-500/30 uppercase tracking-wide">
+                  <span className="px-4 py-1.5 bg-gradient-to-r from-[#0c9344] to-[#0c9344] text-white text-xs font-bold rounded-full shadow-lg shadow-[#0c9344]/30 uppercase tracking-wide">
                     Most Popular
                   </span>
                 </div>
               )}
               <div className={`h-full rounded-3xl border overflow-hidden shadow-sm transition-all duration-300 ${plan.popular
-                ? 'border-emerald-300 shadow-xl shadow-emerald-500/12 hover:shadow-emerald-500/20'
+                ? 'border-[#0c9344] shadow-xl shadow-[#0c9344]/12 hover:shadow-[#0c9344]/20'
                 : 'border-slate-200 hover:border-slate-300 hover:shadow-md'
                 }`}>
                 <div className={`h-1.5 bg-gradient-to-r ${plan.accentGradient}`} />
@@ -1622,15 +1607,15 @@ const PricingSection = () => {
                   <ul className="space-y-3 mb-8 flex-1">
                     {plan.features.map((feat, fi) => (
                       <li key={fi} className="flex items-center gap-3 text-sm text-slate-600">
-                        <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                          <Check className="w-3 h-3 text-emerald-600" />
+                        <div className="w-5 h-5 rounded-full bg-[#0c9344]/15 flex items-center justify-center flex-shrink-0">
+                          <Check className="w-3 h-3 text-[#0c9344]" />
                         </div>
                         {feat}
                       </li>
                     ))}
                   </ul>
                   <button className={`w-full py-3.5 rounded-xl text-sm font-bold transition-all duration-300 ${plan.popular
-                    ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-md shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:from-emerald-400 hover:to-emerald-500'
+                    ? 'bg-gradient-to-r from-[#0c9344] to-[#0c9344] text-white shadow-md shadow-[#0c9344]/20 hover:shadow-[#0c9344]/40 hover:from-[#0c9344] hover:to-[#0c9344]'
                     : 'bg-slate-100 text-slate-900 hover:bg-slate-200'
                     }`}>
                     {plan.cta}
@@ -1656,7 +1641,7 @@ const StarRating = ({ rating, size = 'w-4 h-4' }: { rating: number; size?: strin
         <span key={i} className={`relative inline-block ${size}`}>
           <Star className={`${size} text-slate-200 fill-slate-200`} />
           <span className="absolute inset-y-0 left-0 overflow-hidden" style={{ width: `${fill * 100}%` }}>
-            <Star className={`${size} text-emerald-500 fill-emerald-500`} />
+            <Star className={`${size} text-[#0c9344] fill-emerald-500`} />
           </span>
         </span>
       );
@@ -1684,9 +1669,9 @@ const TestimonialsSection = () => {
   ];
 
   return (
-    <section id="testimonials" className="relative py-24 lg:py-32 bg-[#F7FAF8] overflow-hidden">
-      <div className="absolute top-0 left-1/3 w-[420px] h-[420px] rounded-full bg-emerald-400/10 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 w-[360px] h-[360px] rounded-full bg-teal-400/10 blur-3xl pointer-events-none" />
+    <section id="testimonials" className="relative py-6 lg:py-8 bg-[#F7FAF8] overflow-hidden">
+      <div className="absolute top-0 left-1/3 w-[420px] h-[420px] rounded-full bg-[#0c9344]/10 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-[360px] h-[360px] rounded-full bg-[#0c9344]/10 blur-3xl pointer-events-none" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
@@ -1697,13 +1682,13 @@ const TestimonialsSection = () => {
           transition={{ duration: 0.6, ease: 'easeOut' }}
           className="text-center max-w-3xl mx-auto mb-12 lg:mb-16"
         >
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.16em] mb-6 bg-white text-emerald-700 border border-emerald-200 shadow-sm">
-            <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.16em] mb-6 bg-white text-[#0c9344] border border-[#0c9344]/25 shadow-sm">
+            <Sparkles className="w-3.5 h-3.5 text-[#0c9344]" />
             Peer-Validated Intelligence
           </div>
           <h2 className="font-heading text-4xl sm:text-5xl md:text-[3.35rem] font-semibold text-slate-900 leading-[1.15] tracking-tight mb-5">
             Trusted by the{' '}
-            <span className="italic font-medium bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-500 bg-clip-text text-transparent">
+            <span className="italic font-medium bg-gradient-to-r from-[#0c9344] via-[#0c9344] to-[#0c9344] bg-clip-text text-transparent">
               Highest Offices
             </span>
           </h2>
@@ -1726,14 +1711,14 @@ const TestimonialsSection = () => {
                 boxShadow: '0 16px 36px rgba(16, 185, 129, 0.20), 0 6px 16px rgba(16, 185, 129, 0.10)',
                 transition: { duration: 0.38, ease: [0.22, 1, 0.36, 1] },
               }}
-              className="group relative flex flex-col rounded-[1.25rem] border border-slate-100 hover:border-emerald-200 bg-white p-8 md:p-10 gap-6 h-full overflow-hidden"
+              className="group relative flex flex-col rounded-[1.25rem] border border-slate-100 hover:border-[#0c9344]/25 bg-white p-8 md:p-10 gap-6 h-full overflow-hidden"
               style={{
                 boxShadow: '0 4px 18px rgba(16, 185, 129, 0.07)',
                 transition: 'box-shadow 0.38s ease, transform 0.38s ease',
               }}
             >
               {/* Animated green bottom line */}
-              <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-emerald-400 to-teal-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+              <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#0c9344] to-[#0c9344] scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
 
               <div className="flex items-center gap-1 shrink-0">
                 <StarRating rating={5} size="w-5 h-5" />
@@ -1775,16 +1760,7 @@ const AnimatedMissionChatWidget = () => {
       query: "How many users rely on JudicialGPT?",
       response: "We are incredibly proud to support a growing community of over 10,000 happy users, empowering them with instant and reliable legal intelligence.",
     },
-    {
-      query: "Is this platform trusted by professional law firms?",
-      response: "Absolutely. JudicialGPT is currently trusted and actively used by over 500+ law firms to streamline their legal research and case analysis.",
-    },
-    {
-      query: "Who builds and verifies the AI answers?",
-      response: "Our AI models are trained, fine-tuned, and continuously verified by a dedicated team of over 100+ expert lawyers to ensure the highest benchmark of legal accuracy.",
-    }
   ];
-
   useEffect(() => {
     let isActive = true;
 
@@ -1798,33 +1774,33 @@ const AnimatedMissionChatWidget = () => {
         setButtonClicked(false);
         setShowCursor(false);
 
-        await new Promise(r => setTimeout(r, 800));
+        await new Promise((r) => setTimeout(r, 800));
         for (let i = 0; i <= current.query.length; i++) {
           if (!isActive) return;
           setTypedText(current.query.slice(0, i));
-          await new Promise(r => setTimeout(r, 20 + Math.random() * 30));
+          await new Promise((r) => setTimeout(r, 20 + Math.random() * 30));
         }
 
         if (!isActive) return;
-        await new Promise(r => setTimeout(r, 400));
+        await new Promise((r) => setTimeout(r, 400));
         setShowCursor(true);
-        await new Promise(r => setTimeout(r, 600));
+        await new Promise((r) => setTimeout(r, 600));
         setButtonClicked(true);
-        await new Promise(r => setTimeout(r, 150));
+        await new Promise((r) => setTimeout(r, 150));
         setButtonClicked(false);
         setShowCursor(false);
 
-        await new Promise(r => setTimeout(r, 300));
+        await new Promise((r) => setTimeout(r, 300));
         if (!isActive) return;
         setShowResponse(true);
 
         for (let i = 0; i <= current.response.length; i++) {
           if (!isActive) return;
           setResponseStream(current.response.slice(0, i));
-          await new Promise(r => setTimeout(r, 15 + Math.random() * 20));
+          await new Promise((r) => setTimeout(r, 15 + Math.random() * 20));
         }
 
-        await new Promise(r => setTimeout(r, 3000));
+        await new Promise((r) => setTimeout(r, 3000));
 
         if (!isActive) return;
         setConvoIndex((prev) => (prev + 1) % conversations.length);
@@ -1836,17 +1812,18 @@ const AnimatedMissionChatWidget = () => {
   }, [convoIndex]);
 
   return (
-    <div className="relative w-full max-w-2xl xl:max-w-3xl mx-auto bg-slate-900 backdrop-blur-xl border border-slate-800 rounded-[2rem] p-8 md:p-10 shadow-2xl shadow-emerald-900/15 text-left">
+    <div className="relative w-full max-w-2xl xl:max-w-3xl mx-auto bg-slate-900 backdrop-blur-xl border border-slate-800 rounded-[2rem] p-8 md:p-10 shadow-2xl shadow-[#0c9344]/15 text-left">
       <div className="absolute inset-0 bg-[radial-gradient(#ffffff1a_1px,transparent_1px)] [background-size:24px_24px] rounded-[2rem] opacity-20" />
 
       <div className="relative z-10 flex flex-col gap-8 min-h-[440px] overflow-hidden">
         {/* Search Input */}
         <div className="relative flex items-center bg-white rounded-2xl shadow-lg border border-slate-100 p-5 md:p-6 shrink-0">
           <Search className="w-7 h-7 text-slate-400 mr-4 shrink-0" />
+
           <div className="flex-1 text-slate-800 font-medium text-lg md:text-xl min-h-[2rem] flex items-center">
             <span className="whitespace-pre-wrap leading-snug">
               {typedText}
-              {!showResponse && <span className="w-0.5 h-6 bg-emerald-500 animate-pulse ml-0.5 inline-block align-middle" />}
+              {!showResponse && <span className="w-0.5 h-6 bg-[#0c9344] animate-pulse ml-0.5 inline-block align-middle" />}
             </span>
           </div>
 
@@ -1883,13 +1860,13 @@ const AnimatedMissionChatWidget = () => {
                 className="flex flex-col gap-5"
               >
                 <div className="flex items-start gap-5">
-                  <div className="w-12 h-12 rounded-full bg-emerald-500 flex items-center justify-center shrink-0 shadow-lg">
-                    <Bot className="w-6 h-6 text-white" />
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0c9344] to-[#0c9344] flex items-center justify-center shrink-0 shadow-lg shadow-[#0c9344]/30">
+                    <Scale className="w-6 h-6 text-white" />
                   </div>
                   <div className="bg-white/10 backdrop-blur-md border border-white/10 text-white text-lg md:text-xl leading-relaxed p-6 md:p-8 rounded-2xl rounded-tl-sm shadow-inner min-h-[6rem]">
                     {responseStream}
                     {responseStream.length < conversations[convoIndex].response.length && (
-                      <span className="w-2 h-5 bg-emerald-400 animate-pulse ml-1 inline-block align-middle" />
+                      <span className="w-2 h-5 bg-[#0c9344] animate-pulse ml-1 inline-block align-middle" />
                     )}
                   </div>
                 </div>
@@ -1906,7 +1883,7 @@ const AnimatedMissionChatWidget = () => {
 // ABOUT / MISSION SECTION
 // ============================================================================
 const AboutSection = () => (
-  <section id="about" className="py-24 lg:py-32 bg-white">
+  <section id="about" className="py-6 lg:py-8 bg-white">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="grid lg:grid-cols-2 gap-16 items-center">
         {/* Left */}
@@ -1916,13 +1893,13 @@ const AboutSection = () => (
           viewport={SCROLL_VIEWPORT}
           transition={{ duration: 0.6, ease: 'easeOut' }}
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] bg-emerald-50 text-emerald-700 border border-emerald-200 mb-5">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] bg-[#0c9344]/10 text-[#0c9344] border border-[#0c9344]/25 mb-5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#0c9344]" />
             Our Mission
           </div>
           <h2 className="font-heading text-4xl md:text-5xl lg:text-[3.15rem] font-semibold text-slate-900 leading-[1.12] mb-6">
             Making Legal Help<br />
-            <span className="text-emerald-600">Accessible to All</span>
+            <span className="text-[#0c9344]">Accessible to All</span>
           </h2>
           <p className="text-slate-500 text-lg leading-relaxed mb-4">
             We believe that everyone deserves access to quality legal assistance. Our mission is to democratize legal knowledge by leveraging cutting-edge AI technology to make legal research, consultation, and document analysis accessible and affordable for everyone.
@@ -1937,9 +1914,9 @@ const AboutSection = () => (
               { icon: Target, label: 'Highest Benchmark' },
               { icon: Users, label: 'Expert Support' },
             ].map((item, i) => (
-              <div key={i} className="flex items-center gap-3 p-3.5 bg-slate-50 rounded-xl border border-slate-100 hover:border-emerald-200 hover:bg-emerald-50/40 transition-all duration-200">
-                <div className="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                  <item.icon className="w-4 h-4 text-emerald-600" />
+              <div key={i} className="flex items-center gap-3 p-3.5 bg-slate-50 rounded-xl border border-slate-100 hover:border-[#0c9344]/25 hover:bg-[#0c9344]/10/40 transition-all duration-200">
+                <div className="w-9 h-9 rounded-lg bg-[#0c9344]/15 flex items-center justify-center flex-shrink-0">
+                  <item.icon className="w-4 h-4 text-[#0c9344]" />
                 </div>
                 <span className="text-slate-800 font-semibold text-sm">{item.label}</span>
               </div>
@@ -1955,7 +1932,7 @@ const AboutSection = () => (
           transition={{ duration: 0.6, delay: 0.1, ease: 'easeOut' }}
           className="relative lg:pl-10"
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-teal-500/10 rounded-3xl blur-3xl" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#0c9344]/20 to-[#0c9344]/10 rounded-3xl blur-3xl" />
           <div className="relative">
             <AnimatedMissionChatWidget />
           </div>
@@ -1975,8 +1952,8 @@ const IntelligenceDashboardSection = () => {
   const isInView = hasMounted && inView;
 
   const integrity = [
-    { label: 'Highest Benchmark', value: 96, color: 'from-emerald-500 to-teal-500' },
-    { label: 'Privacy First', value: 98, color: 'from-teal-500 to-cyan-500' },
+    { label: 'Highest Benchmark', value: 96, color: 'from-[#0c9344] to-[#0c9344]' },
+    { label: 'Privacy First', value: 98, color: 'from-[#0c9344] to-cyan-500' },
     { label: 'Expert Support', value: 92, color: 'from-blue-500 to-indigo-500' },
     { label: '24/7 Available', value: 99, color: 'from-violet-500 to-purple-500' },
   ];
@@ -1999,8 +1976,8 @@ const IntelligenceDashboardSection = () => {
       title: 'JudicialGPT AI Chatbot',
       badge: 'Core Tool',
       status: 'Active',
-      statusColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-      accent: 'bg-emerald-500',
+      statusColor: 'bg-[#0c9344]/10 text-[#0c9344] border-[#0c9344]/25',
+      accent: 'bg-[#0c9344]',
       text: 'Our AI chatbot is trained on an extensive database of legal cases and can fetch real-time updates including new judgments and amendments.',
     },
     {
@@ -2073,10 +2050,10 @@ const IntelligenceDashboardSection = () => {
     <section
       ref={sectionRef}
       id="intelligence"
-      className="py-24 lg:py-32 bg-[#F7FAF8] relative overflow-hidden"
+      className="py-6 lg:py-8 bg-[#F7FAF8] relative overflow-hidden"
     >
-      <div className="absolute top-0 right-0 w-[420px] h-[420px] rounded-full bg-emerald-400/10 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[360px] h-[360px] rounded-full bg-teal-400/10 blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-0 w-[420px] h-[420px] rounded-full bg-[#0c9344]/10 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[360px] h-[360px] rounded-full bg-[#0c9344]/10 blur-3xl pointer-events-none" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
@@ -2087,13 +2064,13 @@ const IntelligenceDashboardSection = () => {
           transition={{ duration: 0.6, ease: 'easeOut' }}
           className="max-w-2xl mb-10 lg:mb-12"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] mb-5 bg-emerald-50 text-emerald-700 border border-emerald-200">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] mb-5 bg-[#0c9344]/10 text-[#0c9344] border border-[#0c9344]/25">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#0c9344] animate-pulse" />
             AI-Powered Legal Intelligence Platform
           </div>
           <h2 className="font-heading text-4xl md:text-5xl lg:text-[3.15rem] font-semibold leading-[1.12] tracking-tight text-slate-900 mb-4">
             Legal Intelligence<br />
-            <span className="text-emerald-600">Dashboard</span>
+            <span className="text-[#0c9344]">Dashboard</span>
           </h2>
           <p className="text-lg leading-relaxed text-slate-500">
             Experience the power of AI tools designed specifically for legal professionals and individuals seeking legal guidance.
@@ -2109,7 +2086,7 @@ const IntelligenceDashboardSection = () => {
             viewport={SCROLL_VIEWPORT}
             transition={{ duration: 0.5 }}
             whileHover={cardHover('rgba(16, 185, 129, 0.28)')}
-            className="lg:col-span-2 relative rounded-[1.75rem] border border-emerald-100 bg-white p-6 md:p-8 overflow-hidden"
+            className="lg:col-span-2 relative rounded-[1.75rem] border border-[#0c9344]/15 bg-white p-6 md:p-8 overflow-hidden"
             style={{ boxShadow: '0 10px 36px rgba(16, 185, 129, 0.08)' }}
           >
             <div className="flex flex-wrap items-start justify-between gap-4 mb-5">
@@ -2117,15 +2094,15 @@ const IntelligenceDashboardSection = () => {
                 <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400 mb-2">Documents Analyzed</p>
                 <div className="flex items-end gap-3">
                   <span className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">2.4M</span>
-                  <span className="text-sm font-semibold text-emerald-600 mb-1.5">Legal Documents</span>
+                  <span className="text-sm font-semibold text-[#0c9344] mb-1.5">Legal Documents</span>
                 </div>
               </div>
               <div className="flex items-center gap-4 text-xs font-medium text-slate-500">
                 <span className="inline-flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500" /> Legal Research
+                  <span className="w-2 h-2 rounded-full bg-[#0c9344]" /> Legal Research
                 </span>
                 <span className="inline-flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-teal-400" /> Case Analysis
+                  <span className="w-2 h-2 rounded-full bg-[#0c9344]" /> Case Analysis
                 </span>
               </div>
             </div>
@@ -2285,7 +2262,7 @@ const IntelligenceDashboardSection = () => {
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-extrabold text-slate-900">System Integrity</h3>
-                <Target className="w-4 h-4 text-emerald-500" />
+                <Target className="w-4 h-4 text-[#0c9344]" />
               </div>
               <div className="space-y-3.5">
                 {integrity.map((item, i) => (
@@ -2316,7 +2293,7 @@ const IntelligenceDashboardSection = () => {
               viewport={SCROLL_VIEWPORT}
               transition={{ duration: 0.5, delay: 0.14 }}
               whileHover={cardHover('rgba(16, 185, 129, 0.28)')}
-              className="rounded-[1.5rem] border border-emerald-100 bg-white p-5 md:p-6"
+              className="rounded-[1.5rem] border border-[#0c9344]/15 bg-white p-5 md:p-6"
               style={{ boxShadow: '0 8px 24px rgba(16, 185, 129, 0.10)' }}
             >
               <div className="flex items-start justify-between mb-3">
@@ -2324,15 +2301,15 @@ const IntelligenceDashboardSection = () => {
                   <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Platform Status</p>
                   <h3 className="text-2xl font-black text-slate-900">Operational</h3>
                 </div>
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0c9344] to-[#0c9344] flex items-center justify-center shadow-md">
                   <ShieldCheck className="w-5 h-5 text-white" />
                 </div>
               </div>
               <p className="text-sm text-slate-500 leading-relaxed mb-4">
                 24/7 AI Availability — secure and confidential assistance for every legal query.
               </p>
-              <div className="flex items-center gap-2 text-xs font-semibold text-emerald-700">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <div className="flex items-center gap-2 text-xs font-semibold text-[#0c9344]">
+                <span className="w-2 h-2 rounded-full bg-[#0c9344] animate-pulse" />
                 Highest Accuracy Rate
               </div>
             </motion.div>
@@ -2410,7 +2387,7 @@ const IntelligenceDashboardSection = () => {
           >
             <div className="flex items-center justify-between mb-5">
               <h3 className="text-base font-extrabold text-slate-900">Critical AI Insights</h3>
-              <Sparkles className="w-4 h-4 text-emerald-500" />
+              <Sparkles className="w-4 h-4 text-[#0c9344]" />
             </div>
             <div className="space-y-4">
               {insights.map((item) => (
@@ -2444,308 +2421,95 @@ const IntelligenceDashboardSection = () => {
 // ============================================================================
 const TeamSection = () => {
   const teamMembers = [
-    { name: 'Prof. Dr. M. Usman Ghani Khan', role: 'Founder', badge: 'Founder', bio: 'Founded JudicialGPT to make quality legal assistance accessible through AI. Sets company strategy, product vision, and partnerships while guiding the team to build trustworthy legal technology.', photoUrl: '/DR_Usman.jpeg', gradient: 'from-emerald-500 to-teal-600', initials: 'UG' },
+    { name: 'Prof. Dr. M. Usman Ghani Khan', role: 'Founder', badge: 'Founder', bio: 'Founded JudicialGPT to make quality legal assistance accessible through AI. Sets company strategy, product vision, and partnerships while guiding the team to build trustworthy legal technology.', photoUrl: '/DR_Usman.jpeg', gradient: 'from-[#0c9344] to-[#0c9344]', initials: 'UG' },
+    { name: 'Ayesha Azam', role: 'Team Lead', badge: 'Leadership', bio: 'Coordinates engineering delivery, sprint planning, and cross-functional collaboration to ship reliable AI-powered legal features on time and at scale.', photoUrl: '/Ayesha.png', gradient: 'from-[#0c9344] to-[#0c9344]', initials: 'AA' },
     { name: 'Syed Ali Hassan', role: 'Lead Developer / AI Engineer', badge: 'Engineering & AI', bio: 'Architects the full-stack platform and fine-tunes AI models for legal document analysis, case summarization, and intelligent query responses.', photoUrl: '/ali.jpg', gradient: 'from-blue-500 to-indigo-600', initials: 'AH' },
-    { name: 'Dr. Abdul Nasir', role: 'Legal Domain Expert', badge: 'Domain Expert', bio: "A legal practitioner for providing judicial domain expertise to validate legal accuracy, guide court-relevant content, and ensure JudicialGPT meets professional standards.", photoUrl: '/dr_abdul_nasir.jpg', icon: Scale, gradient: 'from-amber-500 to-orange-600', initials: 'AN' },
-    { name: 'Zubaid Rasool', role: 'Full-Stack & DevOps Engineer', badge: 'Dev & DevOps', bio: 'Builds and maintains frontend and backend features while managing CI/CD pipelines, server infrastructure, and deployment workflows on the cloud.', photoUrl: '/Zubaid.png', gradient: 'from-purple-500 to-violet-600', initials: 'ZR' },
     { name: 'Laiba Saleem', role: 'Data Analyst', badge: 'Data & Analytics', bio: 'Analyzes user engagement metrics, legal dataset patterns, and AI model performance to drive data-informed product decisions and improvements.', photoUrl: '/laiba.png', gradient: 'from-rose-500 to-pink-600', initials: 'LS' },
-    { name: 'Ayesha Azam', role: 'Team Lead', badge: 'Leadership', bio: 'Coordinates engineering delivery, sprint planning, and cross-functional collaboration to ship reliable AI-powered legal features on time and at scale.', photoUrl: '/Ayesha.png', gradient: 'from-emerald-500 to-teal-600', initials: 'AA' },
+    { name: 'Zubaid Rasool', role: 'Full-Stack & DevOps Engineer', badge: 'Dev & DevOps', bio: 'Builds and maintains frontend and backend features while managing CI/CD pipelines, server infrastructure, and deployment workflows on the cloud.', photoUrl: '/Zubaid.png', gradient: 'from-purple-500 to-violet-600', initials: 'ZR' },
+    { name: 'Dr. Abdul Nasir', role: 'Legal Domain Expert', badge: 'Domain Expert', bio: "A legal practitioner for providing judicial domain expertise to validate legal accuracy, guide court-relevant content, and ensure JudicialGPT meets professional standards.", photoUrl: '/dr_abdul_nasir.jpg', icon: Scale, gradient: 'from-amber-500 to-orange-600', initials: 'AN' },
   ];
 
-  const n = teamMembers.length; // 6
-  const CARD_W = 255;           // card width in px
-  const OVERLAP = 14;           // how much cards overlap
-  const STEP = CARD_W - OVERLAP; // pixels per card step = 241
-
-  // Triplicate cards so we can loop infinitely without visual jumps
-  const tripled = [...teamMembers, ...teamMembers, ...teamMembers]; // 18 cards total
-
-  // Start pointing at the MIDDLE copy's index 0 (index n in tripled)
-  const [activeIdx, setActiveIdx] = useState(n);
-  const [transitioning, setTransitioning] = useState(true);
-  const dragStartX = useRef<number | null>(null);
-  const touchStartX = useRef<number | null>(null);
-  const preventClick = useRef(false);
-
-  // Track translateX: center the activeIdx card in the container
-  // Container has left:50%, so trackX shifts the track so card[activeIdx] is centered
-  const trackX = -(activeIdx * STEP + CARD_W / 2);
-
-  const navigate = (delta: number) => {
-    if (delta === 0) return;
-    setTransitioning(true);
-    setActiveIdx(prev => prev + delta);
-  };
-
-  // After a transition, if we drifted out of the "middle" copy, silently jump back
-  useEffect(() => {
-    if (activeIdx < n || activeIdx >= 2 * n) {
-      const timer = setTimeout(() => {
-        setTransitioning(false);
-        setActiveIdx(prev => {
-          if (prev < n) return prev + n;
-          if (prev >= 2 * n) return prev - n;
-          return prev;
-        });
-      }, 520); // slightly after the 500ms CSS transition
-      return () => clearTimeout(timer);
-    }
-  }, [activeIdx, n]);
-
-  // Re-enable transition after silent reset (double-rAF to skip a frame)
-  useEffect(() => {
-    if (!transitioning) {
-      const id = requestAnimationFrame(() =>
-        requestAnimationFrame(() => setTransitioning(true))
-      );
-      return () => cancelAnimationFrame(id);
-    }
-  }, [transitioning]);
-
-  // Mouse drag handlers
-  const onMouseDown = (e: React.MouseEvent) => {
-    dragStartX.current = e.clientX;
-    preventClick.current = false;
-  };
-  const onMouseMove = (e: React.MouseEvent) => {
-    if (dragStartX.current !== null && Math.abs(e.clientX - dragStartX.current) > 8) {
-      preventClick.current = true;
-    }
-  };
-  const onMouseUp = (e: React.MouseEvent) => {
-    if (dragStartX.current === null) return;
-    const diff = e.clientX - dragStartX.current;
-    if (Math.abs(diff) > 50) {
-      navigate(diff < 0 ? 1 : -1);
-      preventClick.current = true;
-    }
-    dragStartX.current = null;
-  };
-
-  // Touch swipe handlers
-  const onTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-    preventClick.current = false;
-  };
-  const onTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX.current === null) return;
-    const diff = e.changedTouches[0].clientX - touchStartX.current;
-    if (Math.abs(diff) > 50) navigate(diff < 0 ? 1 : -1);
-    touchStartX.current = null;
-  };
-
   return (
-    <section id="team" className="relative overflow-hidden bg-white pb-16">
-      {/* Green background covering top half */}
-      <div
-        className="absolute inset-x-0 top-0"
-        style={{
-          bottom: '374px', // half of active card (480/2=240) + bottom track offset (30) + dot area pt-8 (32) + dot height (8) + section pb-16 (64) = 374px
-          background: 'linear-gradient(160deg, #052e16 0%, #064e3b 50%, #065f46 100%)'
-        }}
-      >
-        {/* Full-section Islamic geometric tile pattern */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='0.5' stroke-opacity='0.18'%3E%3Crect x='10' y='10' width='100' height='100' rx='4'/%3E%3Crect x='20' y='20' width='80' height='80' rx='4' transform='rotate(45 60 60)'/%3E%3Ccircle cx='60' cy='60' r='20'/%3E%3Ccircle cx='60' cy='60' r='40'/%3E%3Cline x1='0' y1='60' x2='120' y2='60'/%3E%3Cline x1='60' y1='0' x2='60' y2='120'/%3E%3C/g%3E%3C/svg%3E")`,
-            backgroundSize: '120px 120px',
-            opacity: 0.9,
-          }}
-        />
-      </div>
-
-      <div className="relative z-10">
-        {/* Section header */}
-        <div className="text-center pt-16 pb-10 px-4 max-w-3xl mx-auto">
-          <motion.h2
+    <section id="team" className="relative py-6 lg:py-8 bg-slate-50 border-t border-slate-200">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="text-center mb-6 lg:mb-8 flex flex-col items-center">
+          <motion.div
             initial={{ opacity: 0, y: 32 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={SCROLL_VIEWPORT}
-            transition={{ duration: 0.6, ease: 'easeOut' }}
-            className="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight drop-shadow-lg"
+            className="flex flex-col items-center"
           >
-            Our Team
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 32 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={SCROLL_VIEWPORT}
-            transition={{ delay: 0.12, duration: 0.55, ease: 'easeOut' }}
-            className="text-emerald-100/80 text-base md:text-lg leading-relaxed"
-          >
-            Meet the Minds Behind JudicialGPT — a passionate team of legal experts, AI researchers, and engineers united by a shared mission to make justice accessible through technology.
-          </motion.p>
+            <div className="mb-4 bg-white p-3 rounded-2xl shadow-sm border border-slate-200 inline-flex items-center justify-center">
+              <Users className="w-8 h-8 text-slate-700" />
+            </div>
+            <h2 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight">
+              Meet Our Team
+            </h2>
+          </motion.div>
         </div>
 
-        {/* ── CAROUSEL VIEWPORT (fixed, never moves) ── */}
-        <ScrollReveal delay={0.15} className="w-full">
-          <div
-            className="relative w-full overflow-hidden cursor-grab active:cursor-grabbing select-none"
-            style={{ height: 530 }}
-            onMouseDown={onMouseDown}
-            onMouseMove={onMouseMove}
-            onMouseUp={onMouseUp}
-            onMouseLeave={() => { if (dragStartX.current !== null) { dragStartX.current = null; } }}
-            onTouchStart={onTouchStart}
-            onTouchEnd={onTouchEnd}
-          >
-            {/* ── SLIDING TRACK (only this moves) ── */}
-            <div
-              className="absolute flex items-end"
-              style={{
-                bottom: 30,
-                left: '50%',
-                transform: `translateX(${trackX}px)`,
-                transition: transitioning ? 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)' : 'none',
-                willChange: 'transform',
-              }}
+        {/* Responsive Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 justify-items-center">
+          {teamMembers.map((member, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={SCROLL_VIEWPORT}
+              transition={{ delay: idx * 0.1, duration: 0.5 }}
+              className="group relative w-full max-w-[420px] h-[164px] shrink-0 rounded-[4rem] bg-white shadow-sm hover:shadow-md border border-slate-200 overflow-hidden cursor-pointer flex items-center p-3 transition-shadow duration-300"
             >
-              {tripled.map((member, idx) => {
-                const dist = Math.abs(idx - activeIdx);
-                const isActive = dist === 0;
-                const isAdj = dist === 1;
-                const isFar = dist === 2;
-                const isEdge = dist === 3;
-                const isHidden = dist > 3;
+              {/* Default State - Image & Basic Info */}
+              <div className="flex items-center gap-4 w-full h-full relative z-10">
+                {/* Circular Avatar */}
+                <div className="w-[116px] h-[116px] shrink-0 rounded-full overflow-hidden border border-slate-100 shadow-sm bg-slate-100">
+                  {member.photoUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={member.photoUrl} alt={member.name} className="w-full h-full object-cover object-top" />
+                  ) : (
+                    <div className={`w-full h-full flex items-center justify-center bg-gradient-to-br ${member.gradient}`}>
+                      <span className="text-3xl font-black text-white">{member.initials}</span>
+                    </div>
+                  )}
+                </div>
+                {/* Basic Info */}
+                <div className="flex flex-col min-w-0 pr-4">
+                  <h3 className="text-[17px] md:text-lg font-bold text-slate-900 leading-tight mb-1 text-balance">{member.name}</h3>
+                  <p className="text-slate-500 text-[13px] md:text-sm font-medium leading-snug">{member.role}</p>
+                </div>
+              </div>
 
-                // Height decreases with distance from center — produces the "rising center" look
-                const cardH = isActive ? 480 : isAdj ? 360 : isFar ? 290 : isEdge ? 220 : 160;
-                const cardOpacity = isActive ? 1 : isAdj ? 1 : isFar ? 1 : isEdge ? 0.5 : 0;
-                const zIdx = isHidden ? 0 : 20 - dist;
+              {/* Hover Overlay (Slides from left) */}
+              <div className="absolute inset-0 bg-[#0c9344]/90 backdrop-blur-sm transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out z-20 pointer-events-none rounded-[4rem]" />
 
-                return (
-                  <div
-                    key={`t-${idx}`}
-                    onClick={() => {
-                      if (!preventClick.current && !isActive && !isHidden) navigate(idx - activeIdx);
-                    }}
-                    style={{
-                      width: CARD_W,
-                      height: cardH,
-                      marginLeft: idx === 0 ? 0 : -OVERLAP,
-                      opacity: cardOpacity,
-                      zIndex: zIdx,
-                      flexShrink: 0,
-                      cursor: isActive ? 'default' : isHidden ? 'default' : 'pointer',
-                      pointerEvents: isHidden ? 'none' : 'auto',
-                      backgroundColor: '#ffffff',
-                      borderRadius: '24px',
-                      overflow: 'hidden',
-                      position: 'relative',
-                      boxShadow: isActive
-                        ? '0 12px 40px rgba(0,0,0,0.15), 0 -4px 12px rgba(0,0,0,0.05)'
-                        : '0 4px 20px rgba(0,0,0,0.08)',
-                      transition: 'height 0.5s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.5s ease, box-shadow 0.5s ease',
-                    }}
-                  >
-                    {/* Green accent box — always visible on every card */}
-                    {!isHidden && (
-                      <div
-                        aria-hidden
-                        className="absolute top-0 left-0 right-0 pointer-events-none"
-                        style={{
-                          height: isActive ? 118 : isAdj ? 88 : isFar ? 72 : 56,
-                          background: 'linear-gradient(160deg, #052e16 0%, #064e3b 50%, #065f46 100%)',
-                          transition: 'height 0.5s cubic-bezier(0.25,0.46,0.45,0.94)',
-                        }}
-                      />
-                    )}
-
-                    {!isHidden && (
-                      <div
-                        className="relative z-10 h-full flex flex-col items-center text-center min-h-0"
-                        style={{ padding: isActive ? '48px 28px 24px' : isAdj ? '36px 18px 16px' : '28px 12px 12px' }}
-                      >
-                        {/* Avatar */}
-                        <div
-                          className="rounded-full overflow-hidden flex-shrink-0 border-4 transition-all duration-500"
-                          style={{
-                            width: isActive ? 88 : isAdj ? 60 : 44,
-                            height: isActive ? 88 : isAdj ? 60 : 44,
-                            borderColor: isActive ? '#6ee7b7' : '#ffffff',
-                            marginBottom: isActive ? 16 : 10,
-                            boxShadow: '0 4px 14px rgba(0,0,0,0.12)',
-                          }}
-                        >
-                          {member.photoUrl ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img src={member.photoUrl} alt={member.name} className="w-full h-full object-cover object-top" />
-                          ) : (
-                            <div className={`w-full h-full flex items-center justify-center bg-gradient-to-br ${member.gradient}`}>
-                              {member.icon
-                                ? <member.icon className="w-4 h-4 text-white" />
-                                : <span className="font-black text-white text-sm">{member.initials}</span>
-                              }
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Name */}
-                        <h3
-                          className="font-black text-slate-900 leading-tight transition-all duration-500 shrink-0"
-                          style={{
-                            fontSize: isActive ? '1.2rem' : isAdj ? '0.85rem' : '0.72rem',
-                            marginBottom: 4,
-                          }}
-                        >
-                          {member.name}
-                        </h3>
-
-                        {/* Role */}
-                        <p
-                          className="font-bold text-emerald-600 uppercase tracking-widest transition-all duration-500 shrink-0"
-                          style={{
-                            fontSize: isActive ? '0.72rem' : '0.6rem',
-                            marginBottom: isActive ? 12 : 6,
-                          }}
-                        >
-                          {member.role}
-                        </p>
-
-                        {/* Bio — show complete info for all cards */}
-                        <p
-                          className={`text-slate-500 leading-relaxed flex-1 min-h-0 overflow-hidden ${isActive ? 'text-sm' : 'text-xs line-clamp-3'
-                            }`}
-                        >
-                          {member.bio}
-                        </p>
-
-                        {/* Badge — show complete info for all cards */}
-                        <div className="mt-auto pt-4 shrink-0">
-                          <span
-                            className="inline-block font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 rounded uppercase tracking-wider"
-                            style={{
-                              padding: isActive ? '6px 16px' : '4px 10px',
-                              fontSize: isActive ? '11px' : '9px',
-                            }}
-                          >
-                            {member.badge}
-                          </span>
-                        </div>
-                      </div>
-                    )}
+              {/* Hover Content (Fades in) — starts from left with the avatar visible */}
+              <div className="absolute inset-0 z-30 flex items-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-[50ms] pl-4 pr-5 py-4 pointer-events-auto gap-4">
+                {/* Avatar stays visible on hover */}
+                <div className="w-[108px] h-[108px] shrink-0 rounded-full overflow-hidden border-2 border-white/40 shadow-md bg-slate-100">
+                  {member.photoUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={member.photoUrl} alt={member.name} className="w-full h-full object-cover object-top" />
+                  ) : (
+                    <div className={`w-full h-full flex items-center justify-center bg-gradient-to-br ${member.gradient}`}>
+                      <span className="text-2xl font-black text-white">{member.initials}</span>
+                    </div>
+                  )}
+                </div>
+                {/* Text content */}
+                <div className="flex flex-col h-full justify-center min-w-0 flex-1">
+                  <p className="text-white font-bold text-[14px] leading-tight mb-0.5">{member.name}</p>
+                  <p className="text-white/80 text-[12px] font-semibold mb-2 leading-snug">{member.role}</p>
+                  <div className="overflow-y-auto flex-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                    <p className="text-white/90 text-[12px] leading-relaxed text-pretty pb-1">
+                      {member.bio}
+                    </p>
                   </div>
-                );
-              })}
-            </div>
-          </div>
-        </ScrollReveal>
-        {/* Small hint dots */}
-        <ScrollReveal delay={0.2} y={20}>
-          <div className="flex justify-center gap-2 pt-8 pb-0">
-            {teamMembers.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => navigate(((n + i - activeIdx % n) % n) - (((n + i - activeIdx % n) % n) > n / 2 ? n : 0))}
-                className={`rounded-full transition-all duration-300 ${i === activeIdx % n
-                  ? 'w-6 h-2 bg-emerald-500'
-                  : 'w-2 h-2 bg-slate-200 hover:bg-slate-300'
-                  }`}
-              />
-            ))}
-          </div>
-        </ScrollReveal>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -2767,7 +2531,7 @@ const CTASection = () => {
           className="relative rounded-3xl overflow-hidden"
         >
           {/* Background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-900" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#0c9344] via-[#0c9344] to-[#0c9344]" />
           <div className="absolute inset-0"
             style={{
               backgroundImage: `radial-gradient(circle at 2px 2px, rgba(255,255,255,0.07) 1px, transparent 0)`,
@@ -2804,7 +2568,7 @@ const CTASection = () => {
                 onClick={() => router.push('/signup')}
                 whileHover={{ scale: 1.04, boxShadow: '0 20px 48px rgba(16, 185, 129, 0.35)' }}
                 whileTap={{ scale: 0.96 }}
-                className="px-8 py-4 bg-white text-emerald-700 font-extrabold rounded-xl text-base flex items-center gap-3 shadow-xl"
+                className="px-8 py-4 bg-white text-[#0c9344] font-extrabold rounded-xl text-base flex items-center gap-3 shadow-xl"
               >
                 Get Started Free
                 <ArrowRight className="w-4 h-4" />
@@ -2849,7 +2613,7 @@ const VideoSection = () => {
             className="relative"
           >
             {/* Decorative background glows behind video */}
-            <div className="absolute -inset-4 bg-gradient-to-tr from-emerald-500/20 to-teal-500/20 blur-2xl rounded-[2.5rem]" />
+            <div className="absolute -inset-4 bg-gradient-to-tr from-[#0c9344]/20 to-[#0c9344]/20 blur-2xl rounded-[2.5rem]" />
 
             <div className="relative rounded-3xl overflow-hidden border border-white/60 shadow-2xl shadow-slate-900/10 bg-white/50 backdrop-blur-md">
               <div className="relative w-full pb-[56.25%]"> {/* 16:9 Aspect Ratio */}
@@ -2862,7 +2626,7 @@ const VideoSection = () => {
                   src="https://assets.mixkit.co/videos/preview/mixkit-abstract-technology-network-connection-background-24624-large.mp4"
                 />
                 {/* Glassmorphism overlay gradient on video to make it premium */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-emerald-900/20 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-tr from-[#0c9344]/20 to-transparent pointer-events-none" />
               </div>
             </div>
           </motion.div>
@@ -2874,13 +2638,13 @@ const VideoSection = () => {
             viewport={SCROLL_VIEWPORT}
             transition={{ duration: 0.6, delay: 0.15, ease: 'easeOut' }}
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-700 text-[11px] font-bold uppercase tracking-[0.15em] mb-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0c9344]/10 border border-[#0c9344]/15 text-[#0c9344] text-[11px] font-bold uppercase tracking-[0.15em] mb-6">
               <Sparkles className="w-3.5 h-3.5" />
               See JudicialGPT in Action
             </div>
 
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-slate-900 mb-6 leading-tight tracking-tight">
-              Experience the Future of <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">AI-Powered Legal Assistance</span>
+              Experience the Future of <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0c9344] to-[#0c9344]">AI-Powered Legal Assistance</span>
             </h2>
 
             <p className="text-slate-600 text-lg leading-relaxed mb-8">
@@ -2890,8 +2654,8 @@ const VideoSection = () => {
             <ul className="space-y-4">
               {features.map((feature, idx) => (
                 <li key={idx} className="flex items-center gap-4">
-                  <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
-                    <Check className="w-4 h-4 text-emerald-600" />
+                  <div className="w-8 h-8 rounded-full bg-[#0c9344]/15 flex items-center justify-center shrink-0">
+                    <Check className="w-4 h-4 text-[#0c9344]" />
                   </div>
                   <span className="text-slate-700 font-medium text-base">{feature}</span>
                 </li>
@@ -2920,8 +2684,8 @@ export default function HomePage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#080E1C]">
         <div className="relative">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500" />
-          <Scale className="absolute inset-0 m-auto w-5 h-5 text-emerald-500" />
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0c9344]" />
+          <Scale className="absolute inset-0 m-auto w-5 h-5 text-[#0c9344]" />
         </div>
       </div>
     );
@@ -2945,3 +2709,4 @@ export default function HomePage() {
     </div>
   );
 }
+

@@ -321,7 +321,7 @@ function LoginContent() {
                                 </div>
                             )}
                             {success && (
-                                <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-600 text-sm">
+                                <div className="mb-4 p-3 bg-[#0c9344]/10 border border-[#0c9344]/25 rounded-lg text-[#0c9344] text-sm">
                                     {success}
                                 </div>
                             )}
@@ -393,7 +393,7 @@ function LoginContent() {
                                 <button
                                     type="submit"
                                     disabled={isLoading}
-                                    className="w-full py-2.5 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 text-sm bg-emerald-700 text-white border border-emerald-700 hover:bg-emerald-800 hover:border-emerald-800 disabled:opacity-60 disabled:cursor-not-allowed"
+                                    className="w-full py-2.5 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 text-sm bg-[#0c9344] text-white border border-[#0c9344] hover:bg-[#0c9344] hover:border-[#0c9344] disabled:opacity-60 disabled:cursor-not-allowed"
                                 >
                                     {isLoading ? 'Signing in...' : 'Continue'}
                                     <span>→</span>
@@ -405,7 +405,7 @@ function LoginContent() {
                                 Don&apos;t have an account?{" "}
                                 <button
                                     onClick={() => { setIsLogin(false); setError(''); setSuccess(''); }}
-                                    className="text-emerald-700 hover:text-emerald-800 font-semibold hover:underline"
+                                    className="text-[#0c9344] hover:text-[#0c9344] font-semibold hover:underline"
                                 >
                                     Sign up
                                 </button>
@@ -597,7 +597,7 @@ function LoginContent() {
                                 <button
                                     type="submit"
                                     disabled={strength !== "strong" || isLoading}
-                                    className="w-full py-2.5 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 text-sm bg-emerald-700 text-white border border-emerald-700 hover:bg-emerald-800 hover:border-emerald-800 disabled:opacity-60 disabled:cursor-not-allowed"
+                                    className="w-full py-2.5 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 text-sm bg-[#0c9344] text-white border border-[#0c9344] hover:bg-[#0c9344] hover:border-[#0c9344] disabled:opacity-60 disabled:cursor-not-allowed"
                                 >
                                     {isLoading ? 'Creating account...' : 'Continue'}
                                     <span>→</span>
@@ -609,7 +609,7 @@ function LoginContent() {
                                 Already have an account?{" "}
                                 <button
                                     onClick={() => { setIsLogin(true); setError(''); }}
-                                    className="text-emerald-700 hover:text-emerald-800 font-semibold hover:underline"
+                                    className="text-[#0c9344] hover:text-[#0c9344] font-semibold hover:underline"
                                 >
                                     Sign in
                                 </button>

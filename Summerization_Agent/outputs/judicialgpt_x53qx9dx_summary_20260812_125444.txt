@@ -1,0 +1,169 @@
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                     ⚖  JUDICIAL DOCUMENT SUMMARY  ⚖
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+### SECTION 1 — DOCUMENT PROFILE
+- **Document Type:** Judicial Order / Court Order (Refusing Leave to Appeal & Dismissing Petitions) [Marked: "NOT APPROVED FOR REPORTING"]
+- **Court / Authority:** Supreme Court of Pakistan (Appellate Jurisdiction)
+- **Jurisdiction:** Appellate Jurisdiction / Constitutional Review Jurisdiction
+- **Case / File Reference Number:** 
+  - Supreme Court: Civil Petitions No. 3451 to 3464 of 2017 AND Civil Petitions No. 3473 to 3651 of 2017
+  - Lower Forum: Miscellaneous Petitions No. 2630 to 2715 of 2016, etc. (Federal Service Tribunal, Islamabad)
+  - Earlier Connected Proceedings: Civil Petitions No. 840 to 844 of 1997; Civil Petitions No. 2281 to 2534 of 2009
+- **Date of Instrument / Judgment / Filing:** 
+  - Date of Order/Hearing: 15.12.2017
+  - Impugned FST Order Date: 17.07.2017
+- **Total Pages / Segments Processed:** 9 Partial Summaries / Segments
+
+---
+
+### SECTION 2 — PARTIES
+| Role | Name / Designation | Counsel (if any) |
+|------|--------------------|------------------|
+| **Petitioners** | WAPDA (Water and Power Development Authority) through its Chairman & others ("functionaries of the State") | • Mr. Umar Aslam Khan, ASC<br>• Ch. Akhtar Ali, AOR<br>• Ahmed Bakhsh Tarar, DG (Law), WAPDA |
+| **Respondents** | Raja Iftikhar Ahmed & others (Generation staff / non-generation staff / general employees / technical employees of Tarbela Power Plant) | N.R. (Not Represented) |
+| **Bench / Adjudicators** | • Mr. Justice Mian Saqib Nisar, HCJ<br>• Mr. Justice Umar Ata Bandial, J<br>• Mr. Justice Ijaz Ul Ahsan, J (Author of the Order) | N/A |
+
+---
+
+### SECTION 3 — EXECUTIVE SUMMARY
+The Supreme Court of Pakistan heard Civil Petitions No. 3451 to 3464 of 2017 and Civil Petitions No. 3473 to 3651 of 2017 filed by WAPDA seeking leave to appeal against the Federal Service Tribunal's (FST) order dated 17.07.2017. The core dispute centers on WAPDA's persistent refusal to grant "generation allowance" and attendant facilities (revised free electricity units, overtime allowance) to general/non-generation employees of Tarbela Power Plant from their initial appointment dates, despite final judgments of the FST and Supreme Court dating back to 1997 and 2009. WAPDA attempted to defeat full compliance by issuing an implementation order effective only prospectively from 31.03.2015. 
+
+On 17.07.2017, the FST allowed the employees' Miscellaneous Petitions, ordering complete implementation from initial appointment dates within one month under threat of coercive action. The Supreme Court deprecated WAPDA's conduct, holding that re-agitating settled issues reeked of *mala fide*, constituted a gross abuse of process, and violated the constitutional mandate binding all authorities to act in aid of the Supreme Court. Refusing leave to appeal, the Supreme Court dismissed all petitions, ordered immediate implementation within 07 days, and imposed a personal special cost of Rs. 50,000/- on the Chairman, WAPDA, payable out of his own pocket to the Fatimid Foundation.
+
+---
+
+### SECTION 4 — DETAILED FACTUAL BACKGROUND
+
+#### 1. Initial Grant and First Litigation Round (1997)
+- "Generation allowance" was originally granted exclusively to the generation staff of Tarbela Power Plant, while non-generation staff were excluded.
+- Aggrieved non-generation employees filed departmental representations before the competent authority, which were dismissed.
+- The aggrieved employees appealed to the Federal Service Tribunal (FST), Islamabad. On **22.03.1997**, the FST allowed their appeals and granted the allowance.
+- WAPDA challenged the FST order before the Supreme Court via Civil Petitions No. 840 to 844 of 1997. On **10.10.1997**, the Supreme Court dismissed WAPDA's petitions, affirming the FST's judgment.
+
+#### 2. Second Litigation Round for Similarly Placed Employees (2009–2010)
+- A second group of employees ("255 in number") claimed identical benefits as "similarly placed employees."
+- Their departmental representations were rejected by competent authorities.
+- On appeal, the FST allowed their claims on **22.10.2009**.
+- WAPDA challenged this decision in the Supreme Court via Civil Petitions No. 2281 to 2534 of 2009. The Supreme Court dismissed WAPDA's petitions on **12.10.2010**.
+
+#### 3. Non-Implementation and First Round of Execution Petitions (2015–2016)
+- WAPDA failed to implement the final judgments. The employees filed Miscellaneous Petitions (MPs) before the FST seeking implementation.
+- On **31.03.2015**, the FST allowed the MPs, directing WAPDA to implement the decisions.
+- WAPDA appealed to the Supreme Court; the Supreme Court dismissed WAPDA's appeals on **05.10.2015**.
+- WAPDA filed Review Petitions before the Supreme Court, which were dismissed on **24.02.2016**.
+
+#### 4. Defective Implementation and FST Order (2015–2017)
+- Following the dismissal of its legal remedies, WAPDA issued an order giving effect to the judgments *only* from **31.03.2015** onwards, rather than from the date of the employees' initial appointments.
+- Employees filed fresh Miscellaneous Petitions (MPs No. 2630 to 2715 of 2016, etc.) before the FST seeking complete implementation in true perspective from their initial appointment dates, including generation allowance, revised free electricity units, and overtime allowance.
+- On **17.07.2017**, the FST allowed the MPs, holding that WAPDA was bound to implement the orders in true perspective. The FST granted WAPDA "one month more time to implement the judgments/order in letter and spirit", failing which coercive measures would be taken under law.
+
+#### 5. Appeal to Supreme Court (15.12.2017)
+- WAPDA filed Civil Petitions No. 3451 to 3464 of 2017 and Civil Petitions No. 3473 to 3651 of 2017 challenging the FST's implementation order dated 17.07.2017. The Supreme Court consolidated all petitions for disposal via a single order on **15.12.2017**.
+
+---
+
+### SECTION 5 — LEGAL ISSUES FRAMED
+1. Whether non-generation / general employees of Tarbela Power Plant are legally entitled to the generation allowance and other facilities (revised free electricity units, overtime allowance) from the date of their initial appointment on par with generation staff.
+2. Whether WAPDA functionaries could lawfully restrict the execution of final judgments of the FST and Supreme Court to effective date 31.03.2015 instead of implementing them from initial appointment dates.
+3. Whether the FST exceeded its jurisdiction or interfered with the executive's policy-making domain by directing the grant of generation allowance to staff not directly performing generation duties.
+4. Whether the repeated filing of petitions and re-litigation of finalized issues by State functionaries constitutes *mala fide* conduct and a gross abuse of the process of the Court.
+5. Whether the refusal of executive authorities to comply with judicial mandates violates the constitutional directive requiring all executive and judicial authorities throughout Pakistan to act in aid of the Supreme Court.
+
+---
+
+### SECTION 6 — STATUTORY PROVISIONS & CASE LAW CITED
+
+| # | Statute / Case | Section / Citation | Relevance / How Invoked |
+|---|----------------|--------------------|-------------------------|
+| 1 | Constitution of the Islamic Republic of Pakistan | Unspecified Article (Act in Aid of Supreme Court) | Invoked to affirm that all executive and judicial authorities across Pakistan are constitutionally mandated to act in aid of the Supreme Court. |
+| 2 | Supreme Court Order dated 10.10.1997 | Civil Petitions No. 840 to 844 of 1997 | Precedent upholding FST order dated 22.03.1997 granting generation allowance. |
+| 3 | Supreme Court Order dated 12.10.2010 | Civil Petitions No. 2281 to 2534 of 2009 | Precedent upholding FST order dated 22.10.2009 granting allowance to 255 employees. |
+| 4 | Supreme Court Orders dated 05.10.2015 & 24.02.2016 | Appeals & Review Petitions | Dismissed WAPDA's challenge and review petitions against FST's implementation order dated 31.03.2015. |
+| 5 | FST Orders dated 22.03.1997, 22.10.2009, 31.03.2015, & 17.07.2017 | FST Appeals & MPs (incl. MPs No. 2630 to 2715 of 2016) | Binding orders granting allowance, electricity units, overtime, and directing execution under threat of coercive action. |
+
+---
+
+### SECTION 7 — ARGUMENTS & CONTENTIONS
+
+#### 7A — Arguments of the Petitioner (WAPDA)
+- The impugned FST order dated 17.07.2017 is legally and factually untenable.
+- The FST failed to appreciate the underlying philosophy, object, and purpose behind WAPDA's policy regarding the grant of generation allowance.
+- Generation allowance is admissible strictly to technical employees of Power Stations who are actually engaged in generation duties, and not to other/general employees.
+- The FST erred in law by interfering with the policy-making domain of the Executive, which is beyond its jurisdictional parameters.
+- WAPDA's administrative order making implementation effective from 31.03.2015 was lawful after exhausting legal remedies.
+
+#### 7B — Arguments of the Respondent (Employees)
+- Non-generation employees are "similarly placed employees" entitled to equal treatment and the same benefits granted to peers.
+- WAPDA exhausted all remedies across every judicial forum up to the Apex Court and failed repeatedly.
+- Implementing the judgment with effect only from 31.03.2015 was a clear violation of the binding FST orders dated 22.03.1997 and 22.10.2009, as affirmed by the Supreme Court.
+- WAPDA is legally bound to implement the decisions in true perspective, paying generation allowance, revised free electricity units, and overtime allowance from the date of initial appointment.
+
+#### 7C — Arguments of Any Third Party / Amicus / Intervener
+Not applicable.
+
+---
+
+### SECTION 8 — COURT'S ANALYSIS & FINDINGS
+
+1. **On Merits and Executive Policy (Issues 1 & 3):**
+   The points raised by WAPDA regarding the scope, policy, and applicability of the generation allowance have been repeatedly considered, addressed, and explicitly rejected by both the Service Tribunal and the Supreme Court in multiple previous rounds of litigation. The issue reached finality years ago and cannot be re-agitated.
+
+2. **On Abuse of Judicial Process and Mala Fide Conduct (Issues 2 & 4):**
+   WAPDA’s attempt to reopen settled points "for the umpteenth time" reeks of *mala fide*, constitutes a "denial of the fruits of justice", and represents a "gross abuse of the process of this Court." The Court expressed being "disappointed, shocked and perturbed by the conduct of the State functionaries", holding that their blatant violation and conscious refusal to implement decisions must be deprecated in the strongest terms.
+
+3. **On Constitutional Obligation (Issue 5):**
+   Under the command of the Constitution of Pakistan, all executive and judicial authorities throughout Pakistan are bound to act in aid of the Supreme Court. The refusal of State functionaries to abide by judicial orders threatens "to strike the very foundation of constitutionalism, rule of law and administration of justice." While minded to take more stringent action, the Court opted to exercise judicial restraint.
+
+---
+
+### SECTION 9 — DECISION / ORDER / OPERATIVE CLAUSE
+
+- **Dismissal:** Leave to appeal is **refused** and Civil Petitions No. 3451 to 3464 of 2017 and Civil Petitions No. 3473 to 3651 of 2017 are **dismissed**.
+- **Imposition of Personal Costs:** A special cost of **Rs. 50,000/-** is imposed on the **Chairman, WAPDA in his personal capacity**, to be paid out of his own pocket and deposited with the **Fatimid Foundation**. The payment receipt issued by the Fatimid Foundation shall be submitted under intimation to the Registrar of the Supreme Court.
+- **Mandatory Compliance Direction:** The petitioners shall forthwith implement the orders of the Service Tribunal in letter and spirit and submit a compliance report within **07 days** of the date of receipt of this order.
+- **Administrative Direction:** The office is directed to transmit a copy of [the order of] this Court to Chairman, WAPDA immediately.
+
+---
+
+### SECTION 10 — RELIEFS & REMEDIES
+- **Relief Sought by Petitioners:** Leave to appeal against the FST implementation order dated 17.07.2017. (Refused).
+- **Relief Granted to Respondents:** Full, immediate implementation of FST judgments granting generation allowance, revised free electricity units, and overtime allowance effective from the date of initial appointment.
+- **Costs Awarded:** Special cost of Rs. 50,000/- imposed on Chairman, WAPDA personally (payable to Fatimid Foundation).
+- **Interim / Compliance Orders:** Mandatory compliance report to be submitted within 07 days of order receipt.
+
+---
+
+### SECTION 11 — CRITICAL LEGAL OBSERVATIONS
+- **Abuse of Process:** Attempting to re-agitate finalized matters repeatedly by State functionaries constitutes mala fide litigation, deprives litigants of the fruits of justice, and amounts to a gross abuse of judicial process.
+- **Constitutional Imperative:** Refusal by State functionaries to implement court judgments strikes at the foundation of constitutionalism, the rule of law, and the administration of justice. Executive authorities are constitutionally mandated to act in aid of the Supreme Court.
+- **Judicial Restraint:** The Court explicitly noted that while the conduct of public officials warranted stringent punitive action, it chose to exercise judicial restraint by imposing personal monetary costs rather than harsher legal penalties.
+
+---
+
+### SECTION 12 — COMPLIANCE CHECKLIST FOR JUDGE
+1. **Receipt of Costs:** Verify submission of the official receipt from Fatimid Foundation acknowledging receipt of Rs. 50,000/- paid personally by Chairman, WAPDA, submitted under intimation to the Registrar.
+2. **Compliance Report:** Verify filing of WAPDA's implementation report within 07 days of receipt of the order confirming complete implementation in letter and spirit from initial appointment dates.
+3. **Office Transmission:** Ensure immediate administrative dispatch of the Court's order copy to Chairman, WAPDA.
+
+---
+
+### SECTION 13 — FLAGS & ANOMALIES
+1. **Unrepresented Respondents:** Respondents were unrepresented ("N.R.") during the hearing on 15.12.2017.
+2. **Source Text Typographical Errors:** The source document contains typographical/spacing errors including `"Civil Petiti ons"`, `"liti gation"`, `"err ed"`, `"act ually"`, `"a nd"`, `"comman d"`, and an FST clerical error using `"implant"` instead of `"implement"`.
+3. **Omission in Final Text:** The administrative direction in the source text reads *"transmit a copy of this Court to Chairman, Wapda immediately"*, inadvertently omitting the word *"order"*.
+4. **Segment Truncations:** Excerpt boundaries in partial summaries contained minor sentence truncations, though full narrative integrity is preserved in synthesis.
+
+---
+
+### SECTION 14 — GLOSSARY OF KEY TERMS
+- **Generation Allowance:** A specialized financial benefit granted to power plant employees working at power stations (such as Tarbela Power Plant).
+- **In Letter and Spirit:** Strict, complete, and genuine compliance following both the explicit text and the underlying purpose of a legal order.
+- **Mala Fide:** Bad faith; intent to deceive, evade, or abuse legal processes.
+- **Act in Aid of this Court:** The constitutional mandate requiring all state, executive, and judicial bodies in Pakistan to enforce and support the execution of Supreme Court orders.
+- **Judicial Restraint:** A principle where a court refrains from exercising full punitive power, selecting a milder remedy despite severe non-compliance.
+- **NOT APPROVED FOR REPORTING:** A administrative marking signifying that the judgment is non-reportable as precedent in official legal journals.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   END OF SUMMARY  |  Generated by JudicialGPT  |  CONFIDENTIAL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

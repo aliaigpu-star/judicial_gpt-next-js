@@ -80,9 +80,9 @@ export default function CareersPage() {
               const Icon = item.icon;
               return (
                 <FadeIn key={item.title} delay={i * 0.07}>
-                  <div className="h-full p-7 rounded-2xl border border-slate-200 bg-gradient-to-b from-white to-emerald-50/30 hover:border-emerald-200 hover:shadow-lg hover:shadow-emerald-500/5 transition-all">
-                    <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center mb-5">
-                      <Icon className="w-6 h-6 text-emerald-600" />
+                  <div className="h-full p-7 rounded-2xl border border-slate-200 bg-gradient-to-b from-white to-emerald-50/30 hover:border-[#0c9344]/25 hover:shadow-lg hover:shadow-[#0c9344]/5 transition-all">
+                    <div className="w-12 h-12 rounded-xl bg-[#0c9344]/15 flex items-center justify-center mb-5">
+                      <Icon className="w-6 h-6 text-[#0c9344]" />
                     </div>
                     <h3 className="font-extrabold text-slate-900 text-lg mb-2">{item.title}</h3>
                     <p className="text-slate-500 text-sm leading-relaxed">{item.description}</p>
@@ -95,10 +95,10 @@ export default function CareersPage() {
       </section>
 
       {/* Job listings — stacked cards with accent rail */}
-      <section className="py-20 lg:py-24 bg-[#F2FBF6]">
+      <section className="py-20 lg:py-24 bg-[#0c9344]/5">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="mb-12">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] mb-4 bg-emerald-100 text-emerald-800 border border-emerald-200">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] mb-4 bg-[#0c9344]/15 text-[#0c9344] border border-[#0c9344]/25">
               <Briefcase className="w-3.5 h-3.5" />
               Open Roles
             </div>
@@ -110,8 +110,8 @@ export default function CareersPage() {
           <div className="space-y-5">
             {CAREERS.map((job, i) => (
               <FadeIn key={job.title} delay={i * 0.06}>
-                <article className="group relative rounded-2xl bg-white border border-slate-200 overflow-hidden hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-500/8 transition-all">
-                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-emerald-400 to-teal-600 group-hover:w-1.5 transition-all" />
+                <article className="group relative rounded-2xl bg-white border border-slate-200 overflow-hidden hover:border-[#0c9344] hover:shadow-xl hover:shadow-[#0c9344]/8 transition-all">
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#0c9344] to-[#0c9344] group-hover:w-1.5 transition-all" />
                   <div className="p-6 md:p-8 pl-7 md:pl-9">
                     <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                       <div className="flex-1">
@@ -130,7 +130,7 @@ export default function CareersPage() {
                       </div>
                       <Link
                         href={`/contact?role=${encodeURIComponent(job.title)}`}
-                        className="shrink-0 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-emerald-500 text-white text-sm font-bold shadow-md shadow-emerald-500/25 hover:bg-emerald-600 transition-colors"
+                        className="shrink-0 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#0c9344] text-white text-sm font-bold shadow-md shadow-[#0c9344]/25 hover:bg-[#0c9344] transition-colors"
                       >
                         Apply <ArrowRight className="w-4 h-4" />
                       </Link>
@@ -160,9 +160,9 @@ export default function CareersPage() {
               const Icon = value.icon;
               return (
                 <FadeIn key={value.title} delay={i * 0.06}>
-                  <div className="flex gap-4 p-6 rounded-2xl border border-slate-200 hover:bg-emerald-50/40 hover:border-emerald-200 transition-all">
-                    <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0">
-                      <Icon className="w-5 h-5 text-emerald-600" />
+                  <div className="flex gap-4 p-6 rounded-2xl border border-slate-200 hover:bg-[#0c9344]/10/40 hover:border-[#0c9344]/25 transition-all">
+                    <div className="w-10 h-10 rounded-lg bg-[#0c9344]/15 flex items-center justify-center shrink-0">
+                      <Icon className="w-5 h-5 text-[#0c9344]" />
                     </div>
                     <div>
                       <h3 className="font-extrabold text-slate-900 mb-1">{value.title}</h3>

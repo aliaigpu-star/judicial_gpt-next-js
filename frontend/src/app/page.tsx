@@ -1177,13 +1177,13 @@ const AIToolsSection = () => {
   const tools = [
     {
       icon: Bot,
-      title: 'JudicialGPT AI Chatbot',
-      description: 'Our AI chatbot is trained on an extensive database of legal cases and can fetch real-time updates including new judgments and amendments. Get personalized, human-like interactions for all your legal queries.',
+      title: 'Legal Document Interpretation',
+      description: 'Analyze Pakistani land, revenue, and judicial documents using AI-powered intelligence. It extracts key information such as ownership, rights, and legal implications, presenting complex records in simple and understandable summaries.',
       features: [
-        'Real-time Legal Updates',
-        'Case Law Database',
-        'NLP',
-        'Contextual Understanding',
+        'Document Analysis',
+        'Land Record Support',
+        'Ownership Detection',
+        'Legal Summaries',
       ],
       gradient: 'from-[#0c9344] to-[#0c9344]',
       accent: 'bg-[#0c9344]',
@@ -1193,7 +1193,7 @@ const AIToolsSection = () => {
       glow: 'rgba(16, 185, 129, 0.45)',
       glowSoft: 'rgba(16, 185, 129, 0.12)',
       ring: '#10b981',
-      badge: 'Core Tool',
+      badge: 'Analysis',
     },
     {
       icon: ScanText,
@@ -1339,11 +1339,8 @@ const AIToolsSection = () => {
                   <h3 className="font-heading text-2xl md:text-3xl font-semibold text-slate-900 tracking-tight mb-3">
                     {core.title}
                   </h3>
-                  <p className="text-slate-500 text-base md:text-lg leading-[1.75] mb-4">
+                  <p className="text-slate-500 text-base md:text-lg leading-[1.75]">
                     {core.description}
-                  </p>
-                  <p className="text-slate-600 text-base leading-[1.75]">
-                    Ask complex legal questions in plain language and receive structured, citation-aware answers built for research, case prep, and everyday legal guidance.
                   </p>
                 </div>
               </div>

@@ -163,29 +163,40 @@ export function SiteHeader({ light = true }: { light?: boolean }) {
 
 export function SiteFooter() {
   return (
-    <footer className="bg-[#F9FAFB] text-slate-500 border-t border-slate-200/80">
+    <footer className="relative bg-[#0c9344]/15">
+      <svg
+        viewBox="0 0 1440 90"
+        preserveAspectRatio="none"
+        className="block w-full h-10 md:h-14 -mb-px"
+        aria-hidden="true"
+      >
+        <path
+          d="M0,55 C280,10 500,0 760,25 C1040,52 1220,85 1440,35 L1440,90 L0,90 Z"
+          fill="rgba(12,147,68,0.15)"
+        />
+      </svg>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn>
-          <div className="py-6 lg:py-8 grid grid-cols-2 md:grid-cols-6 gap-12 lg:gap-16">
-            <div className="col-span-2">
-              <Link href="/" className="flex items-center gap-2.5 mb-4 w-fit">
-                <div className="w-9 h-9 rounded-xl bg-[#0c9344] flex items-center justify-center shadow-sm shadow-[#0c9344]/25">
-                  <Scale className="w-[18px] h-[18px] text-white" />
+          <div className="pb-8 grid grid-cols-2 md:grid-cols-6 gap-x-8 gap-y-8">
+            <div className="col-span-2 pr-4">
+              <Link href="/" className="flex items-center gap-2.5 mb-3 w-fit">
+                <div className="w-8 h-8 rounded-xl bg-[#0c9344] flex items-center justify-center shadow-sm shadow-[#0c9344]/25">
+                  <Scale className="w-4 h-4 text-white" />
                 </div>
-                <span className="text-xl font-extrabold text-slate-900 tracking-tight">
+                <span className="text-lg font-extrabold text-slate-900 tracking-tight">
                   Judicial<span className="text-[#0c9344]">GPT</span>
                 </span>
               </Link>
-              <p className="text-slate-500 text-xl mb-8 leading-relaxed max-w-sm">{SITE.description}</p>
-              <div className="flex gap-2.5">
+              <p className="text-slate-600 text-sm mb-4 leading-relaxed max-w-xs">{SITE.description}</p>
+              <div className="flex gap-2">
                 {[Twitter, Linkedin, Github, Mail].map((Icon, i) => (
                   <a
                     key={i}
                     href="#"
                     aria-label={['Twitter', 'LinkedIn', 'GitHub', 'Email'][i]}
-                    className="w-12 h-12 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-[#0c9344] hover:border-[#0c9344]/25 hover:bg-[#0c9344]/10/50 transition-all duration-200"
+                    className="w-8 h-8 rounded-full bg-[#0c9344] flex items-center justify-center text-white hover:bg-[#0a7d3a] transition-colors duration-200"
                   >
-                    <Icon className="w-6 h-6" />
+                    <Icon className="w-4 h-4" />
                   </a>
                 ))}
               </div>
@@ -193,13 +204,13 @@ export function SiteFooter() {
 
             {Object.entries(FOOTER_LINKS).map(([title, links]) => (
               <div key={title}>
-                <h4 className="text-slate-900 font-bold text-xl mb-6">{title}</h4>
-                <ul className="space-y-5">
+                <h4 className="text-slate-900 font-bold text-sm mb-3">{title}</h4>
+                <ul className="space-y-2">
                   {links.map((link) => (
                     <li key={link.name}>
                       <Link
                         href={link.href}
-                        className="text-slate-500 text-xl hover:text-[#0c9344] transition-colors duration-200"
+                        className="text-slate-600 text-sm hover:text-[#0c9344] transition-colors duration-200"
                       >
                         {link.name}
                       </Link>
@@ -212,15 +223,15 @@ export function SiteFooter() {
         </FadeIn>
 
         <FadeIn delay={0.1} y={20}>
-          <div className="pt-6 pb-2 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-200/60 mt-4">
-            <p className="text-slate-400 text-xl">© 2026 JudicialGPT. All rights reserved.</p>
-            <div className="flex items-center gap-8 text-xl text-slate-400">
-              <span className="inline-flex items-center gap-2">
-                <Lock className="w-5 h-5" />
+          <div className="py-4 flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-[#0c9344]/15">
+            <p className="text-slate-500 text-xs">© 2026 JudicialGPT. All rights reserved.</p>
+            <div className="flex items-center gap-4 text-xs text-slate-500">
+              <span className="inline-flex items-center gap-1.5">
+                <Lock className="w-3.5 h-3.5" />
                 SSL Secured
               </span>
-              <span className="inline-flex items-center gap-2">
-                <Shield className="w-5 h-5" />
+              <span className="inline-flex items-center gap-1.5">
+                <Shield className="w-3.5 h-3.5" />
                 SOC 2 Compliant
               </span>
             </div>

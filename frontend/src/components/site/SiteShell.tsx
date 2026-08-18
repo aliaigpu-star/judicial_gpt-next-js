@@ -222,21 +222,14 @@ export function SiteFooter() {
           </div>
         </FadeIn>
 
-        <FadeIn delay={0.1} y={20}>
-          <div className="py-4 flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-[#0c9344]/15">
-            <p className="text-slate-500 text-xs">© 2026 JudicialGPT. All rights reserved.</p>
-            <div className="flex items-center gap-4 text-xs text-slate-500">
-              <span className="inline-flex items-center gap-1.5">
-                <Lock className="w-3.5 h-3.5" />
-                SSL Secured
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <Shield className="w-3.5 h-3.5" />
-                SOC 2 Compliant
-              </span>
-            </div>
+        <div className="py-4 flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-[#0c9344]/15">
+          <p className="text-slate-500 text-xs">© 2026 JudicialGPT. All rights reserved.</p>
+          <div className="flex items-center gap-4 text-xs text-slate-500">
+            <span className="inline-flex items-center gap-1.5">
+              Next-Generation Judicial Technology
+            </span>
           </div>
-        </FadeIn>
+        </div>
       </div>
     </footer>
   );

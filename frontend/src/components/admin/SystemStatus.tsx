@@ -54,11 +54,11 @@ export default function SystemStatus({ status, loading }: SystemStatusProps) {
                     ) : (
                         <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
                             status?.status === 'healthy'
-                                ? 'bg-[#0c9344]/10 text-[#0c9344]'
+                                ? 'bg-[#00a859]/10 text-[#00a859]'
                                 : 'bg-orange-500/10 text-orange-400'
                         }`}>
                             <span className={`w-1.5 h-1.5 rounded-full ${
-                                status?.status === 'healthy' ? 'bg-[#0c9344]' : 'bg-orange-400'
+                                status?.status === 'healthy' ? 'bg-[#00a859]' : 'bg-orange-400'
                             }`} />
                             {status?.status === 'healthy' ? 'All Systems Operational' : 'Degraded'}
                         </div>
@@ -75,14 +75,14 @@ export default function SystemStatus({ status, loading }: SystemStatusProps) {
                         <div className="flex items-center gap-3">
                             <check.icon className={`h-4 w-4 ${
                                 check.color === 'blue' ? 'text-blue-400' :
-                                check.color === 'purple' ? 'text-purple-400' : 'text-[#0c9344]'
+                                check.color === 'purple' ? 'text-purple-400' : 'text-[#00a859]'
                             }`} />
                             <span className="text-gray-300 text-sm font-medium">{check.name}</span>
                         </div>
                         {loading ? (
                             <Loader2 className="h-4 w-4 text-gray-500 animate-spin" />
                         ) : check.status ? (
-                            <CheckCircle className="h-4 w-4 text-[#0c9344]" />
+                            <CheckCircle className="h-4 w-4 text-[#00a859]" />
                         ) : (
                             <XCircle className="h-4 w-4 text-red-400" />
                         )}

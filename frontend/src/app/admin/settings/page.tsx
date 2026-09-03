@@ -38,8 +38,8 @@ function SettingsSection({ title, description, icon: Icon, children, delay = 0 }
             className="bg-gray-900/50 border border-gray-800 rounded-2xl p-6"
         >
             <div className="flex items-start gap-4 mb-6">
-                <div className="p-3 bg-[#0c9344]/10 rounded-xl">
-                    <Icon className="h-6 w-6 text-[#0c9344]" />
+                <div className="p-3 bg-[#00a859]/10 rounded-xl">
+                    <Icon className="h-6 w-6 text-[#00a859]" />
                 </div>
                 <div>
                     <h3 className="text-lg font-semibold text-white">{title}</h3>
@@ -69,7 +69,7 @@ function ToggleSetting({ label, description, enabled, onChange, disabled }: Togg
             <button
                 onClick={() => onChange(!enabled)}
                 disabled={disabled}
-                className={`relative w-12 h-6 rounded-full transition-colors ${enabled ? 'bg-[#0c9344]' : 'bg-gray-700'
+                className={`relative w-12 h-6 rounded-full transition-colors ${enabled ? 'bg-[#00a859]' : 'bg-gray-700'
                     } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
             >
                 <div
@@ -250,7 +250,7 @@ export default function SettingsPage() {
                         <motion.div
                             initial={{ opacity: 0, x: 10 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="flex items-center gap-2 text-[#0c9344]"
+                            className="flex items-center gap-2 text-[#00a859]"
                         >
                             <CheckCircle className="h-4 w-4" />
                             <span className="text-sm">Saved</span>
@@ -259,7 +259,7 @@ export default function SettingsPage() {
                     <button
                         onClick={handleSave}
                         disabled={saving}
-                        className="flex items-center gap-2 px-4 py-2.5 bg-[#0c9344] hover:bg-[#0c9344] text-white rounded-xl transition-all disabled:opacity-50"
+                        className="flex items-center gap-2 px-4 py-2.5 bg-[#00a859] hover:bg-[#00a859] text-white rounded-xl transition-all disabled:opacity-50"
                     >
                         {saving ? (
                             <RefreshCw className="h-4 w-4 animate-spin" />
@@ -286,10 +286,10 @@ export default function SettingsPage() {
                                 <span className="text-white">Database</span>
                             </div>
                             <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm ${systemStatus?.checks.database
-                                ? 'bg-[#0c9344]/10 text-[#0c9344]'
+                                ? 'bg-[#00a859]/10 text-[#00a859]'
                                 : 'bg-red-500/10 text-red-400'
                                 }`}>
-                                <span className={`w-2 h-2 rounded-full ${systemStatus?.checks.database ? 'bg-[#0c9344]' : 'bg-red-400'
+                                <span className={`w-2 h-2 rounded-full ${systemStatus?.checks.database ? 'bg-[#00a859]' : 'bg-red-400'
                                     }`} />
                                 {systemStatus?.checks.database ? 'Connected' : 'Disconnected'}
                             </div>
@@ -300,10 +300,10 @@ export default function SettingsPage() {
                                 <span className="text-white">API Server</span>
                             </div>
                             <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm ${systemStatus?.checks.api
-                                ? 'bg-[#0c9344]/10 text-[#0c9344]'
+                                ? 'bg-[#00a859]/10 text-[#00a859]'
                                 : 'bg-red-500/10 text-red-400'
                                 }`}>
-                                <span className={`w-2 h-2 rounded-full ${systemStatus?.checks.api ? 'bg-[#0c9344]' : 'bg-red-400'
+                                <span className={`w-2 h-2 rounded-full ${systemStatus?.checks.api ? 'bg-[#00a859]' : 'bg-red-400'
                                     }`} />
                                 {systemStatus?.checks.api ? 'Running' : 'Offline'}
                             </div>
@@ -313,8 +313,8 @@ export default function SettingsPage() {
                                 <Key className="h-5 w-5 text-orange-400" />
                                 <span className="text-white">AI Service</span>
                             </div>
-                            <div className="flex items-center gap-2 px-3 py-1 rounded-full text-sm bg-[#0c9344]/10 text-[#0c9344]">
-                                <span className="w-2 h-2 rounded-full bg-[#0c9344]" />
+                            <div className="flex items-center gap-2 px-3 py-1 rounded-full text-sm bg-[#00a859]/10 text-[#00a859]">
+                                <span className="w-2 h-2 rounded-full bg-[#00a859]" />
                                 Active
                             </div>
                         </div>
@@ -464,7 +464,7 @@ export default function SettingsPage() {
                                             value={smtpSettings.smtp_host || ''}
                                             onChange={(e) => setSmtpSettings({ ...smtpSettings, smtp_host: e.target.value })}
                                             placeholder="smtp.gmail.com"
-                                            className="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-[#0c9344]/50 focus:border-[#0c9344]/50 outline-none"
+                                            className="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-[#00a859]/50 focus:border-[#00a859]/50 outline-none"
                                         />
                                     </div>
 
@@ -477,7 +477,7 @@ export default function SettingsPage() {
                                                 type="number"
                                                 value={smtpSettings.smtp_port || 587}
                                                 onChange={(e) => setSmtpSettings({ ...smtpSettings, smtp_port: parseInt(e.target.value) })}
-                                                className="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-[#0c9344]/50 focus:border-[#0c9344]/50 outline-none"
+                                                className="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-[#00a859]/50 focus:border-[#00a859]/50 outline-none"
                                             />
                                         </div>
                                         <div className="flex items-end">
@@ -499,7 +499,7 @@ export default function SettingsPage() {
                                             value={smtpSettings.smtp_user || ''}
                                             onChange={(e) => setSmtpSettings({ ...smtpSettings, smtp_user: e.target.value })}
                                             placeholder="your-email@gmail.com"
-                                            className="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-[#0c9344]/50 focus:border-[#0c9344]/50 outline-none"
+                                            className="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-[#00a859]/50 focus:border-[#00a859]/50 outline-none"
                                         />
                                     </div>
 
@@ -512,7 +512,7 @@ export default function SettingsPage() {
                                             value={smtpSettings.smtp_password || ''}
                                             onChange={(e) => setSmtpSettings({ ...smtpSettings, smtp_password: e.target.value })}
                                             placeholder={smtpSettings.smtp_password === '••••••••' ? 'Password saved - enter new to change' : 'Enter SMTP password'}
-                                            className="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-[#0c9344]/50 focus:border-[#0c9344]/50 outline-none"
+                                            className="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-[#00a859]/50 focus:border-[#00a859]/50 outline-none"
                                         />
                                         <p className="mt-1 text-xs text-gray-500">
                                             For Gmail, use an App Password, not your regular password. Leave empty to keep current password.
@@ -528,7 +528,7 @@ export default function SettingsPage() {
                                             value={smtpSettings.smtp_from_email || ''}
                                             onChange={(e) => setSmtpSettings({ ...smtpSettings, smtp_from_email: e.target.value })}
                                             placeholder="noreply@judicialgpt.com"
-                                            className="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-[#0c9344]/50 focus:border-[#0c9344]/50 outline-none"
+                                            className="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-[#00a859]/50 focus:border-[#00a859]/50 outline-none"
                                         />
                                     </div>
 
@@ -541,7 +541,7 @@ export default function SettingsPage() {
                                             value={smtpSettings.smtp_from_name || ''}
                                             onChange={(e) => setSmtpSettings({ ...smtpSettings, smtp_from_name: e.target.value })}
                                             placeholder="Judicial GPT"
-                                            className="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-[#0c9344]/50 focus:border-[#0c9344]/50 outline-none"
+                                            className="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-[#00a859]/50 focus:border-[#00a859]/50 outline-none"
                                         />
                                     </div>
 

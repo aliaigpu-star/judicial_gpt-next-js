@@ -52,9 +52,9 @@ export default function CookiesPage() {
       <section className="py-16 lg:py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn>
-            <div className="flex items-start gap-5 p-8 rounded-3xl bg-gradient-to-br from-emerald-50 to-[#0c9344]/5 border border-[#0c9344]/15 mb-14">
-              <div className="w-14 h-14 rounded-2xl bg-white border border-[#0c9344]/25 flex items-center justify-center shrink-0 shadow-sm">
-                <Cookie className="w-7 h-7 text-[#0c9344]" />
+            <div className="flex items-start gap-5 p-8 rounded-3xl bg-gradient-to-br from-emerald-50 to-[#00a859]/5 border border-[#00a859]/15 mb-14">
+              <div className="w-14 h-14 rounded-2xl bg-white border border-[#00a859]/25 flex items-center justify-center shrink-0 shadow-sm">
+                <Cookie className="w-7 h-7 text-[#00a859]" />
               </div>
               <div>
                 <h2 className="font-heading text-2xl font-semibold text-slate-900 mb-3">
@@ -81,16 +81,16 @@ export default function CookiesPage() {
               const Icon = cat.icon;
               return (
                 <FadeIn key={cat.name} delay={i * 0.06}>
-                  <div className="rounded-2xl border border-slate-200 overflow-hidden hover:border-[#0c9344]/25 transition-colors">
+                  <div className="rounded-2xl border border-slate-200 overflow-hidden hover:border-[#00a859]/25 transition-colors">
                     <div className="flex flex-wrap items-center justify-between gap-3 px-6 py-4 bg-slate-50 border-b border-slate-200">
                       <div className="flex items-center gap-3">
-                        <Icon className="w-5 h-5 text-[#0c9344]" />
+                        <Icon className="w-5 h-5 text-[#00a859]" />
                         <h3 className="font-bold text-slate-900">{cat.name}</h3>
                       </div>
                       <span
                         className={`text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full ${
                           cat.required
-                            ? 'bg-[#0c9344]/15 text-[#0c9344]'
+                            ? 'bg-[#00a859]/15 text-[#00a859]'
                             : 'bg-slate-200 text-slate-600'
                         }`}
                       >
@@ -106,7 +106,7 @@ export default function CookiesPage() {
                         {cat.examples.map((ex) => (
                           <span
                             key={ex}
-                            className="px-3 py-1 text-xs font-medium rounded-lg bg-[#0c9344]/10 text-[#0c9344] border border-[#0c9344]/15"
+                            className="px-3 py-1 text-xs font-medium rounded-lg bg-[#00a859]/10 text-[#00a859] border border-[#00a859]/15"
                           >
                             {ex}
                           </span>
@@ -153,18 +153,18 @@ export default function CookiesPage() {
           </FadeIn>
 
           <FadeIn>
-            <section className="p-8 rounded-2xl border border-[#0c9344]/25 bg-[#0c9344]/10/50 text-center">
-              <Mail className="w-8 h-8 text-[#0c9344] mx-auto mb-4" />
+            <section className="p-8 rounded-2xl border border-[#00a859]/25 bg-[#00a859]/10/50 text-center">
+              <Mail className="w-8 h-8 text-[#00a859] mx-auto mb-4" />
               <h2 className="font-heading text-xl font-semibold text-slate-900 mb-2">Contact</h2>
               <p className="text-slate-600 text-sm mb-4">
                 Questions about our use of cookies? Reach us at{' '}
-                <a href={`mailto:${SITE.email}`} className="text-[#0c9344] font-semibold hover:underline">
+                <a href={`mailto:${SITE.email}`} className="text-[#00a859] font-semibold hover:underline">
                   {SITE.email}
                 </a>
               </p>
               <Link
                 href="/privacy"
-                className="text-sm text-[#0c9344] hover:underline font-medium"
+                className="text-sm text-[#00a859] hover:underline font-medium"
               >
                 Read our Privacy Policy →
               </Link>

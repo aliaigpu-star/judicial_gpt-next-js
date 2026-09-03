@@ -91,7 +91,7 @@ export default function AdminLayout({
                     animate={{ opacity: 1, scale: 1 }}
                     className="text-center"
                 >
-                    <div className="w-16 h-16 bg-gradient-to-br from-[#0c9344] to-[#0c9344] rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <div className="w-16 h-16 bg-gradient-to-br from-[#00a859] to-[#00a859] rounded-2xl flex items-center justify-center mx-auto mb-4">
                         <Shield className="w-8 h-8 text-white" />
                     </div>
                     <div className="flex items-center justify-center gap-2 text-gray-400">
@@ -135,7 +135,7 @@ export default function AdminLayout({
                         )}
                     </button>
                     <div className="flex items-center gap-2">
-                        <Shield className="w-5 h-5 text-[#0c9344]" />
+                        <Shield className="w-5 h-5 text-[#00a859]" />
                         <span className="text-white font-semibold">Admin</span>
                     </div>
                 </div>

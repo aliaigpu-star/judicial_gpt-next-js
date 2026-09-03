@@ -286,7 +286,7 @@ export default function UsersPage() {
                     </button>
                     <button
                         onClick={handleCreate}
-                        className="flex items-center gap-2 px-4 py-2.5 bg-[#0c9344] hover:bg-[#0c9344] text-white rounded-xl transition-all"
+                        className="flex items-center gap-2 px-4 py-2.5 bg-[#00a859] hover:bg-[#00a859] text-white rounded-xl transition-all"
                     >
                         <UserPlus className="h-4 w-4" />
                         <span className="hidden sm:inline">Create User</span>
@@ -325,7 +325,7 @@ export default function UsersPage() {
                                 placeholder="Search users by name or email..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-11 pr-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 outline-none focus:ring-2 focus:ring-[#0c9344]/50 focus:border-[#0c9344]/50 transition-all"
+                                className="w-full pl-11 pr-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 outline-none focus:ring-2 focus:ring-[#00a859]/50 focus:border-[#00a859]/50 transition-all"
                             />
                         </div>
                     </div>
@@ -336,7 +336,7 @@ export default function UsersPage() {
                         <select
                             value={roleFilter}
                             onChange={(e) => setRoleFilter(e.target.value)}
-                            className="px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white outline-none focus:ring-2 focus:ring-[#0c9344]/50 focus:border-[#0c9344]/50 cursor-pointer"
+                            className="px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white outline-none focus:ring-2 focus:ring-[#00a859]/50 focus:border-[#00a859]/50 cursor-pointer"
                         >
                             <option value="all">All Roles</option>
                             <option value="admin">Admin</option>
@@ -349,7 +349,7 @@ export default function UsersPage() {
                     <select
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value)}
-                        className="px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white outline-none focus:ring-2 focus:ring-[#0c9344]/50 focus:border-[#0c9344]/50 cursor-pointer"
+                        className="px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white outline-none focus:ring-2 focus:ring-[#00a859]/50 focus:border-[#00a859]/50 cursor-pointer"
                     >
                         <option value="all">All Status</option>
                         <option value="active">Active</option>
@@ -385,12 +385,12 @@ export default function UsersPage() {
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="bg-[#0c9344]/10 border border-[#0c9344]/30 rounded-xl p-4 mb-6"
+                    className="bg-[#00a859]/10 border border-[#00a859]/30 rounded-xl p-4 mb-6"
                 >
                     <div className="flex items-center justify-between flex-wrap gap-4">
                         <div className="flex items-center gap-2">
-                            <CheckCircle className="h-5 w-5 text-[#0c9344]" />
-                            <span className="text-[#0c9344] font-medium">
+                            <CheckCircle className="h-5 w-5 text-[#00a859]" />
+                            <span className="text-[#00a859] font-medium">
                                 {selectedUsers.length} user{selectedUsers.length > 1 ? 's' : ''} selected
                             </span>
                         </div>
@@ -420,12 +420,12 @@ export default function UsersPage() {
 
                     {/* Bulk Status Update */}
                     {bulkAction === 'status' && (
-                        <div className="mt-4 pt-4 border-t border-[#0c9344]/20 flex items-center gap-4 flex-wrap">
-                            <span className="text-[#0c9344] text-sm">Update status to:</span>
+                        <div className="mt-4 pt-4 border-t border-[#00a859]/20 flex items-center gap-4 flex-wrap">
+                            <span className="text-[#00a859] text-sm">Update status to:</span>
                             <select
                                 value={bulkStatus}
                                 onChange={(e) => setBulkStatus(e.target.value)}
-                                className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white outline-none focus:ring-2 focus:ring-[#0c9344]/50"
+                                className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white outline-none focus:ring-2 focus:ring-[#00a859]/50"
                             >
                                 <option value="active">Active</option>
                                 <option value="inactive">Inactive</option>
@@ -434,7 +434,7 @@ export default function UsersPage() {
                             </select>
                             <button
                                 onClick={handleBulkStatusUpdate}
-                                className="px-4 py-2 bg-[#0c9344] hover:bg-[#0c9344] text-white rounded-lg transition-all text-sm"
+                                className="px-4 py-2 bg-[#00a859] hover:bg-[#00a859] text-white rounded-lg transition-all text-sm"
                             >
                                 Apply
                             </button>

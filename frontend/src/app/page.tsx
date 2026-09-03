@@ -8,7 +8,7 @@ import {
   Github, Mail, Brain, Clock, Target, Award, Sparkles, Lock, Globe, MessageCircle,
   FileSearch, Bot, ChevronDown, ChevronLeft, ChevronRight, Menu, X, Check, Lightbulb, Shield,
   Search, BookOpen, ShieldCheck, Zap, DollarSign, MapPin, Landmark, Briefcase,
-  ScanText, Mic
+  ScanText, Mic, Info, Plus, Code, BarChart3, Cloud
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { SiteFooter } from '@/components/site/SiteShell';
@@ -74,7 +74,7 @@ const FloatingParticles = () => {
       {particles.map((p, i) => (
         <motion.div
           key={i}
-          className="absolute w-1 h-1 rounded-full bg-[#0c9344]/35"
+          className="absolute w-1 h-1 rounded-full bg-[#00a859]/35"
           style={{ left: p.left, top: p.top }}
           animate={{ y: [0, -40, 0], opacity: [0.08, 0.4, 0.08], scale: [1, 2, 1] }}
           transition={{ duration: p.duration, repeat: Infinity, delay: p.delay, ease: 'easeInOut' }}
@@ -187,66 +187,33 @@ const HERO_RING_GEOMETRY = (() => {
 const HeroAbstractBg = () => (
   <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }} aria-hidden>
     {/* Base colour while image loads */}
-    <div className="absolute inset-0 bg-[#F4FBF8]" />
+    <div className="absolute inset-0 bg-[#a2ebd0]" />
 
-    {/* Animated image layer — constant gentle parallax float, no fade */}
-    <motion.div
-      // animate={{
-      //   scale: [1.04, 1.08, 1.04],
-      //   x: [0, 16, 0],
-      //   y: [0, -18, 0],
-      // }}
-      transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }}
-      className="absolute inset-0 w-full h-full"
-    >
+    {/* Hero AI Scale image directly provided by user */}
+    <div className="absolute inset-0 w-full h-full">
       <img
-        src="/hero-scale-ai.png"
+        src="/hero-judicial-scale.jpg"
         alt=""
-        className="w-full h-full object-cover object-center opacity-55"
-        style={{ filter: 'grayscale(1) contrast(1.0) brightness(1.0)' }}
+        className="w-full h-full object-cover object-[25%_center] sm:object-center opacity-90"
         draggable={false}
       />
-    </motion.div>
+    </div>
 
-    {/* Green colour tint (mix-blend-mode: color) */}
-    <div
-      className="absolute inset-0"
-      style={{ background: 'rgb(130,280,210)', mixBlendMode: 'color' }}
-    />
-
-    {/* White readability gradient: strong on left where text lives, fades right */}
+    {/* Subtle soft gradient wash for optimal text readability on left */}
     <div
       className="absolute inset-0"
       style={{
         background:
-          'linear-gradient(108deg, rgba(255,255,255,0.82) 0%, rgba(240,253,249,0.55) 36%, rgba(204,251,241,0.20) 60%, transparent 100%)',
+          'linear-gradient(90deg, rgba(235, 250, 242, 0.45) 0%, rgba(235, 250, 242, 0.15) 50%, transparent 100%)',
       }}
     />
 
-    {/* Soft emerald glow — upper right */}
+    {/* Clean soft fade at bottom transitioning to next section */}
     <div
-      className="absolute -top-20 -right-20 w-[55%] h-[70%] rounded-full"
+      className="absolute bottom-0 inset-x-0 h-32"
       style={{
-        background:
-          'radial-gradient(ellipse at 65% 28%, rgba(52,211,153,0.26) 0%, rgba(16,185,129,0.10) 48%, transparent 72%)',
-        filter: 'blur(36px)',
+        background: 'linear-gradient(to bottom, transparent, #F7F7F5)',
       }}
-    />
-
-    {/* Soft emerald glow — lower left */}
-    <div
-      className="absolute -bottom-10 -left-10 w-[45%] h-[55%] rounded-full"
-      style={{
-        background:
-          'radial-gradient(ellipse at 28% 72%, rgba(52,211,153,0.16) 0%, rgba(16,185,129,0.06) 58%, transparent 80%)',
-        filter: 'blur(28px)',
-      }}
-    />
-
-    {/* Bottom fade so the hero blends into the next section */}
-    <div
-      className="absolute bottom-0 inset-x-0 h-48"
-      style={{ background: 'linear-gradient(to bottom, transparent, #F8FCFB)' }}
     />
   </div>
 );
@@ -255,7 +222,7 @@ const HeroAbstractBg = () => (
 const HeroBackground = () => (
   <div className="absolute inset-0 overflow-hidden pointer-events-none">
     {/* Base page colour (visible while image loads) */}
-    <div className="absolute inset-0 bg-[#F4FBF8]" />
+    <div className="absolute inset-0 bg-[#edf5f1]" />
     {/* Abstract AI image — full-width, green & white themed */}
     <HeroAbstractBg />
   </div>
@@ -308,10 +275,10 @@ const SectionHeading = ({
     className={`mb-16 ${center ? 'text-center' : ''}`}
   >
     <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] mb-5 ${light
-      ? 'bg-[#0c9344]/15 text-[#0c9344] border border-[#0c9344]/25'
-      : 'bg-[#0c9344]/10 text-[#0c9344] border border-[#0c9344]/25'
+      ? 'bg-[#00a859]/15 text-[#00a859] border border-[#00a859]/25'
+      : 'bg-[#00a859]/10 text-[#00a859] border border-[#00a859]/25'
       }`}>
-      <span className={`w-1.5 h-1.5 rounded-full ${light ? 'bg-[#0c9344]' : 'bg-[#0c9344]'} animate-pulse`} />
+      <span className={`w-1.5 h-1.5 rounded-full ${light ? 'bg-[#00a859]' : 'bg-[#00a859]'} animate-pulse`} />
       {label}
     </div>
     <h2 className={`font-heading text-4xl md:text-5xl lg:text-[3.15rem] font-semibold leading-[1.15] tracking-tight mb-5 ${light ? 'text-white' : 'text-slate-900'
@@ -332,78 +299,78 @@ const SectionHeading = ({
 const Header = () => {
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 0);
-    handleScroll(); // set on mount in case page loads mid-scroll
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const [activeNav, setActiveNav] = useState('Features');
 
   const navItems = [
     { name: 'Features', href: '#features' },
     { name: 'How It Works', href: '#how-it-works' },
     { name: 'AI Tools', href: '#ai-tools' },
-    // { name: 'Pricing', href: '#pricing' },
     { name: 'Team', href: '#team' },
     { name: 'About', href: '#about' },
   ];
 
   return (
-    <header
-      className="fixed top-0 left-0 right-0 z-[9999]"
-      style={{
-        backgroundColor: isScrolled ? '#ffffff' : 'transparent',
-        boxShadow: isScrolled ? '0 1px 6px rgba(0,0,0,0.08)' : 'none',
-        borderBottom: isScrolled ? '1px solid rgba(226,232,240,0.7)' : '1px solid transparent',
-        transition: 'background-color 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease',
-      }}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 md:h-[4.5rem]">
+    <header className="fixed top-0 left-0 right-0 z-[9999] pt-3 sm:pt-3.5 px-3 sm:px-6">
+      <div className="max-w-5xl mx-auto">
+        <div className="bg-white/85 backdrop-blur-xl border border-white/90 shadow-[0_6px_24px_rgba(0,0,0,0.05)] rounded-[20px] sm:rounded-[22px] px-3.5 sm:px-5 py-2 sm:py-2.5 flex items-center justify-between transition-all">
           {/* Logo */}
           <motion.div
-            className="flex items-center gap-2.5 cursor-pointer flex-shrink-0"
+            className="flex items-center gap-2 sm:gap-2.5 cursor-pointer flex-shrink-0"
             whileHover={{ scale: 1.02 }}
             onClick={() => router.push('/')}
           >
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#0c9344] to-[#0c9344] flex items-center justify-center shadow-lg shadow-[#0c9344]/30">
-              <Scale className="w-[18px] h-[18px] text-white" />
+            <div className="w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-[10px] bg-[#0c7a4b] flex items-center justify-center text-white shadow-sm shrink-0">
+              <Scale className="w-4.5 h-4.5 text-white stroke-[2.2]" />
             </div>
-            <span className="text-xl font-extrabold tracking-tight text-slate-900 transition-colors duration-300">
-              Judicial<span className="text-[#0c9344]">GPT</span>
+            <span className="text-lg sm:text-[19px] font-black tracking-tight text-slate-900">
+              Judicial<span className="text-[#0c7a4b]">GPT</span>
             </span>
           </motion.div>
 
-          {/* Desktop nav */}
-          <nav className="hidden lg:flex items-center gap-1">
-            {navItems.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className="px-3.5 py-2 text-sm font-semibold rounded-lg transition-all duration-200 text-slate-800 hover:text-[#0c9344] hover:bg-white/60"
-              >
-                {item.name}
-              </a>
-            ))}
+          {/* Desktop Nav */}
+          <nav className="hidden lg:flex items-center gap-5 xl:gap-6">
+            {navItems.map((item) => {
+              const isActive = activeNav === item.name;
+              return (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  onClick={() => setActiveNav(item.name)}
+                  className="flex flex-col items-center group py-0.5"
+                >
+                  <span
+                    className={`text-[14px] transition-colors duration-200 ${
+                      isActive ? 'font-bold text-slate-900' : 'font-medium text-slate-700 hover:text-[#0c7a4b]'
+                    }`}
+                  >
+                    {item.name}
+                  </span>
+                  {isActive ? (
+                    <motion.div
+                      layoutId="activeNavIndicator"
+                      className="w-4 h-[3px] bg-[#0c7a4b] rounded-full mt-0.5"
+                    />
+                  ) : (
+                    <div className="w-4 h-[3px] bg-transparent rounded-full mt-0.5 group-hover:bg-[#0c7a4b]/30 transition-colors" />
+                  )}
+                </a>
+              );
+            })}
           </nav>
 
-          {/* Desktop CTAs */}
+          {/* Desktop Actions */}
           <div className="hidden lg:flex items-center gap-3">
-            <motion.button
+            <button
               onClick={() => router.push('/login')}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="px-4 py-2.5 text-sm font-semibold rounded-lg transition-all text-slate-700 hover:bg-[#0c9344]/10"
+              className="text-[14px] font-semibold text-slate-700 hover:text-slate-900 px-2.5 py-1.5 transition-colors cursor-pointer"
             >
               Sign In
-            </motion.button>
+            </button>
             <motion.button
               onClick={() => router.push('/signup')}
-              whileHover={{ scale: 1.03, boxShadow: '0 8px 28px rgba(16,185,129,0.4)' }}
-              whileTap={{ scale: 0.97 }}
-              className="px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-[#0c9344] to-[#0c9344] rounded-lg shadow-md shadow-[#0c9344]/25 transition-all"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="px-4.5 sm:px-5 py-2 text-[13.5px] font-bold text-white bg-[#0c7a4b] hover:bg-[#09633c] rounded-xl shadow-sm transition-all cursor-pointer"
             >
               Get Started Free
             </motion.button>
@@ -412,57 +379,67 @@ const Header = () => {
           {/* Mobile toggle */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-2 rounded-lg transition-colors text-slate-900 hover:bg-[#0c9344]/10"
+            className="lg:hidden p-1.5 rounded-lg text-slate-800 hover:bg-slate-100 transition-colors"
+            aria-label="Toggle menu"
           >
             {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
-      </div>
 
-      {/* Mobile menu */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-white/98 backdrop-blur-2xl border-b border-slate-200"
-          >
-            <div className="px-4 py-6 space-y-1">
+        {/* Mobile menu dropdown */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -8, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -8, scale: 0.98 }}
+              transition={{ duration: 0.2 }}
+              className="lg:hidden mt-2 bg-white/95 backdrop-blur-2xl border border-white/90 shadow-xl rounded-2xl p-4 space-y-2"
+            >
               {navItems.map((item) => (
                 <a
                   key={item.name}
                   href={item.href}
-                  className="block px-4 py-3 text-slate-700 font-medium rounded-xl hover:bg-[#0c9344]/10 hover:text-[#0c9344] transition-colors"
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block px-3.5 py-2.5 text-slate-700 font-semibold rounded-xl hover:bg-[#0c7a4b]/10 hover:text-[#0c7a4b] transition-colors"
+                  onClick={() => {
+                    setActiveNav(item.name);
+                    setIsMobileMenuOpen(false);
+                  }}
                 >
                   {item.name}
                 </a>
               ))}
-              <div className="pt-4 space-y-2.5 border-t border-slate-100 mt-4">
+              <div className="pt-3 border-t border-slate-100 space-y-2">
                 <button
-                  onClick={() => { router.push('/login'); setIsMobileMenuOpen(false); }}
-                  className="w-full py-3 text-sm font-semibold text-center text-slate-700 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors"
+                  onClick={() => {
+                    router.push('/login');
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="w-full py-2.5 text-sm font-semibold text-center text-slate-700 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors"
                 >
                   Sign In
                 </button>
                 <button
-                  onClick={() => { router.push('/signup'); setIsMobileMenuOpen(false); }}
-                  className="w-full py-3 text-sm font-bold text-center text-white bg-gradient-to-r from-[#0c9344] to-[#0c9344] rounded-xl"
+                  onClick={() => {
+                    router.push('/signup');
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="w-full py-2.5 text-sm font-bold text-center text-white bg-[#0c7a4b] rounded-xl shadow-sm"
                 >
                   Get Started Free
                 </button>
               </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </header>
   );
 };
 
 // ============================================================================
-// ANIMATED CHAT WIDGET — multilingual (EN → UR → AR → ZH → SD), cycling
+// ============================================================================
+// 3D TILTED HERO SURFACE CARD — matches the reference image
 // ============================================================================
 const LEGAL_QA_LANGUAGES = [
   {
@@ -473,37 +450,37 @@ const LEGAL_QA_LANGUAGES = [
     question:
       'What are the legal consequences of breaching a contract in Pakistan, and can a court order specific performance?',
     answer:
-      'Under Pakistani law, breaching a contract exposes the defaulting party to two primary remedies: compensatory damages under Section 73 of the Contract Act 1872, or a decree of specific performance under the Specific Relief Act 1877. Damages are awarded when the loss is a natural consequence of the breach or was foreseeable at the time the contract was formed. Specific performance, which compels the breaching party to fulfil their exact obligations, is granted when monetary compensation is inadequate, such as in contracts for immovable property or unique goods. ',
+      'Under Pakistani law, breaching a contract exposes the defaulting party to two primary remedies: compensatory damages under Section 73 of the Contract Act 1872, or a decree of specific performance under the Specific Relief Act 1877. Damages are awarded when the loss is a natural consequence of the breach or was foreseeable at the time the contract was formed. Specific performance, which compels the breaching party to fulfil their exact obligations, is granted when monetary compensation is inadequate, such as in contracts for immovable property or unique goods.',
   },
   {
     lang: 'اردو',
     code: 'ur',
     dir: 'rtl' as const,
-    flag: '🇵🇰',
+    flag: 'PK',
     question:
       'پاکستان میں معاہدے کی خلاف ورزی کے قانونی نتائج کیا ہیں، اور کیا عدالت مخصوص کارکردگی کا حکم دے سکتی ہے؟',
     answer:
-      'پاکستانی قانون کے تحت، معاہدے کی خلاف ورزی پر دو بنیادی تدارکات دستیاب ہیں: معاہدہ ایکٹ 1872 کی دفعہ 73 کے تحت معاوضاتی نقصانات، یا اسپیسیفک ریلیف ایکٹ 1877 کے تحت مخصوص کارکردگی کا ڈگری۔ نقصانات اس وقت دیے جاتے ہیں جب نقصان خلاف ورزی کا فطری نتیجہ ہو یا معاہدے کے وقت قابل پیش بینی تھا۔ مخصوص کارکردگی، جس میں عدالت خلاف ورزی کرنے والے کو معاہدہ پورا کرنے پر مجبور کرتی ہے، اس وقت دی جاتی ہے جب مالی معاوضہ ناکافی ہو، جیسے غیر منقولہ جائیداد کے معاملات میں۔ سپریم کورٹ آف پاکستان نے PLD 2023 SC 145 میں واضح کیا کہ یہ اختیار احتیاط سے استعمال کیا جائے۔',
+      'پاکستانی قانون کے تحت، معاہدے کی خلاف ورزی پر دو بنیادی تدارکات دستیاب ہیں: معاہدہ ایکٹ 1872 کی دفعہ 73 کے تحت معاوضاتی نقصانات، یا اسپیسیفک ریلیف ایکٹ 1877 کے تحت مخصوص کارکردگی کا ڈگری۔ نقصانات اس وقت دیے جاتے ہیں جب نقصان خلاف ورزی کا فطری نتیجہ ہو یا معاہدے کے وقت قابل پیش بینی تھا۔ مخصوص کارکردگی، جس میں عدالت خلاف ورزی کرنے والے کو معاہدہ پورا کرنے پر مجبور کرتی ہے، اس وقت دی جاتی ہے جب مالی معاوضہ ناکافی ہو، جیسے غیر منقولہ جائیداد کے معاملات میں۔',
   },
   {
     lang: 'بلوچی',
     code: 'bal',
     dir: 'rtl' as const,
-    flag: '🇵🇰',
+    flag: 'PK',
     question:
       'پاکستان ءَ معاہدے شکستی چے قانونی نتیجہ انت، و آیا عدالت خاص اجرا ءِ حکم دئے سکیت؟',
     answer:
-      'پاکستانی قانون طبق، معاہدے شکست ءَ دو اصلی علاج دست انت: معاہدہ ایکٹ 1872 ءِ دفعہ 73 طبق نقصانی تاوان، یا اسپیسیفک ریلیف ایکٹ 1877 طبق خاص اجرا ءِ ڈگری۔ تاوان هما وختا دئیگ بیت کہ نقصان شکست ءِ طبیعی نتیجہ بوت یا معاہدے وختا پیش بینی بوتگ بیت۔ خاص اجرا، کہ عدالت شکست کننگ ءِ جانبا معاہدہ پورا کرنا مجبور کنت، هما وختا دئیگ بیت کہ مالی تاوان کم بیت، جیئن غیر منقولہ جائیداد ءِ معاملات ءَ۔ سپریم کورٹ آف پاکستان PLD 2023 SC 145 ءَ واضح کرت کہ این اختیار احتیاط سرا استعمال بیت۔',
+      'پاکستانی قانون طبق، معاہدے شکست ءَ دو اصلی علاج دست انت: معاہدہ ایکٹ 1872 ءِ دفعہ 73 طبق نقصانی تاوان، یا اسپیسیفک ریلیف ایکٹ 1877 طبق خاص اجرا ءِ ڈگری۔ تاوان هما وختا دئیگ بیت کہ نقصان شکست ءِ طبیعی نتیجہ بوت یا معاہدے وختا پیش بینی بوتگ بیت۔ خاص اجرا، کہ عدالت شکست کننگ ءِ جانبا معاہدہ پورا کرنا مجبور کنت، هما وختا دئیگ بیت کہ مالی تاوان کم بیت، جیئن غیر منقولہ جائیداد ءِ معاملات ءَ۔',
   },
   {
     lang: 'پنجابی',
     code: 'pa',
     dir: 'rtl' as const,
-    flag: '🇵🇰',
+    flag: 'PK',
     question:
       'پاکستان وچ معاہدے دی خلاف ورزی دے کیہ قانونی نتیجے ہوندے نیں، تے کیہ عدالت خاص کارکردگی دا حکم دے سکدی اے؟',
     answer:
-      'پاکستانی قانون دے مطابق، معاہدے دی خلاف ورزی اُتے دو مُکھ اپائے ملدے نیں: کنٹریکٹ ایکٹ 1872 دی دفعہ 73 تحت ہرجانہ، یا اسپیسیفک ریلیف ایکٹ 1877 تحت خاص کارکردگی دا ڈگری۔ ہرجانہ اودوں دتا جاندا اے جدوں نقصان خلاف ورزی دا قدرتی نتیجہ ہووے یا معاہدے ویلے پیشگی اندازہ لایا جا سکدا ہووے۔ خاص کارکردگی، جس وچ عدالت خلاف ورزی کرن والے نوں معاہدہ پورا کرن اُتے مجبور کردی اے، اودوں دتی جاندی اے جدوں مالی ہرجانہ ناکافی ہووے، جویں غیر منقولہ جائیداد دے معاملیاں وچ۔ سپریم کورٹ آف پاکستان نے PLD 2023 SC 145 وچ واضح کیتا کہ ایہ اختیار سوچ سمجھ کے ورتیا جاوے۔',
+      'پاکستانی قانون دے مطابق، معاہدے دی خلاف ورزی اُتے دو مُکھ اپائے ملدے نیں: کنٹریکٹ ایکٹ 1872 دی دفعہ 73 تحت ہرجانہ، یا اسپیسیفک ریلیف ایکٹ 1877 تحت خاص کارکردگی دا ڈگری۔ ہرجانہ اودوں دتا جاندا اے جدوں نقصان خلاف ورزی دا قدرتی نتیجہ ہووے یا معاہدے ویلے پیشگی اندازہ لایا جا سکدا ہووے۔ خاص کارکردگی، جس وچ عدالت خلاف ورزی کرن والے نوں معاہدہ پورا کرن اُتے مجبور کردی اے، اودوں دتی جاندی اے جدوں مالی ہرجانہ ناکافی ہووے، جویں غیر منقولہ جائیداد دے معاملیاں وچ۔',
   },
   {
     lang: 'سنڌي',
@@ -513,25 +490,42 @@ const LEGAL_QA_LANGUAGES = [
     question:
       'پاڪستان ۾ معاهدي جي ڀڃڪڙي جا قانوني نتيجا ڇا آهن، ۽ ڇا عدالت مخصوص ڪارگذاري جو حڪم ڏئي سگهي ٿي؟',
     answer:
-      'پاڪستاني قانون موجب، معاهدي جي ڀڃڪڙي تي ٻه بنيادي اپاءَ موجود آهن: معاهدو ايڪٽ 1872 جي دفعي 73 تحت هاڃي جو تاوان، يا اسپيسفڪ ريلف ايڪٽ 1877 تحت مخصوص ڪارگذاري جو حڪمنامو. هاڃي جو تاوان تڏهن ملندو آهي جڏهن نقصان ڀڃڪڙي جو قدرتي نتيجو هجي يا معاهدي جي وقت اڳ ۾ ئي سمجهي سگهجي. مخصوص ڪارگذاري، جنهن ۾ عدالت ڀڃڻ واري کي معاهدو پورو ڪرڻ تي مجبور ڪري ٿي، اها تڏهن ڏني ويندي آهي جڏهن مالي تاوان ناڪافي هجي، جيئن غير منقوله ملڪيت جي معاملن ۾. سپريم ڪورٽ آف پاڪستان PLD 2023 SC 145 ۾ چيو ته هي اختيار سوچ سمجهه سان استعمال ٿيڻ گهرجي.',
+      'پاڪستاني قانون موجب، معاهدي جي ڀڃڪڙي تي ٻه بنيادي اپاءَ موجود آهن: معاهدو ايڪٽ 1872 جي دفعي 73 تحت هاڃي جو تاوان، يا اسپيسفڪ ريلف ايڪٽ 1877 تحت مخصوص ڪارگذاري جو حڪمنامو. هاڃي جو تاوان تڏهن ملندو آهي جڏهن نقصان ڀڃڪڙي جو قدرتي نتيجو هجي يا معاهدي جي وقت اڳ ۾ ئي سمجهي سگهجي. مخصوص ڪارگذاري، جنهن ۾ عدالت ڀڃڻ واري کي معاهدو پورو ڪرڻ تي مجبور ڪري ٿي، اها تڏهن ڏني ويندي آهي جڏهن مالي تاوان ناڪافي هجي، جيئن غير منقوله ملڪيت جي معاملن ۾.',
   },
 ];
 
-const AnimatedChatWidget = () => {
-  const [langIndex, setLangIndex] = useState(0);
+const CASE_DOC_SNIPPETS = [
+  'Suit No. 412/2024: Agreement breach under Sec 73 Contract Act 1872.',
+  'Civil Appeal 89/23: Petition for specific performance of sale contract.',
+  'Certified Plaint: High Court of Sindh Appellate Record 2024.',
+];
+
+const AI_ANALYSIS_SNIPPETS = [
+  'Analysis: Breach substantiated. High likelihood of decree under S.12.',
+  'Precedents matched: PLD 2023 SC 145 with 99.4% confidence score.',
+  'Recommended: File compensatory damages & specific performance plea.',
+];
+
+const TiltedHeroSurfaceCard = () => {
+  const [langIndex, setLangIndex] = useState(2);
   const [typedText, setTypedText] = useState('');
   const [showCursor, setShowCursor] = useState(false);
-  const [buttonClicked, setButtonClicked] = useState(false);
   const [showResponse, setShowResponse] = useState(false);
   const [responseStream, setResponseStream] = useState('');
   const isRunning = useRef(false);
 
+  // Micro-typing animations for bottom floating cards
+  const [docSnippetIndex, setDocSnippetIndex] = useState(0);
+  const [typedDocText, setTypedDocText] = useState('');
+  const [analysisSnippetIndex, setAnalysisSnippetIndex] = useState(0);
+  const [typedAnalysisText, setTypedAnalysisText] = useState('');
+
   const current = LEGAL_QA_LANGUAGES[langIndex];
   const isRtl = current.dir === 'rtl';
-  // Nastaliq script: Urdu, Sindhi, Punjabi (Shahmukhi), Balochi
   const NASTALIQ_CODES = new Set(['ur', 'sd', 'pa', 'bal']);
   const isNastaliq = NASTALIQ_CODES.has(current.code);
 
+  // Main tablet Q&A loop
   useEffect(() => {
     let cancelled = false;
 
@@ -539,47 +533,36 @@ const AnimatedChatWidget = () => {
       if (isRunning.current) return;
       isRunning.current = true;
 
-      // Reset
       setTypedText('');
       setShowResponse(false);
       setResponseStream('');
-      setButtonClicked(false);
       setShowCursor(false);
 
-      await new Promise((r) => setTimeout(r, 700));
+      await new Promise((r) => setTimeout(r, 600));
       if (cancelled) return;
 
-      // Type the question
       const q = LEGAL_QA_LANGUAGES[langIndex].question;
       for (let i = 0; i <= q.length; i++) {
         if (cancelled) return;
         setTypedText(q.slice(0, i));
-        await new Promise((r) => setTimeout(r, 22 + Math.random() * 28));
+        await new Promise((r) => setTimeout(r, 20 + Math.random() * 24));
       }
 
       if (cancelled) return;
-      await new Promise((r) => setTimeout(r, 350));
+      await new Promise((r) => setTimeout(r, 400));
       setShowCursor(true);
-      await new Promise((r) => setTimeout(r, 600));
-      setButtonClicked(true);
-      await new Promise((r) => setTimeout(r, 140));
-      setButtonClicked(false);
+      await new Promise((r) => setTimeout(r, 400));
       setShowCursor(false);
-
-      await new Promise((r) => setTimeout(r, 280));
-      if (cancelled) return;
       setShowResponse(true);
 
-      // Stream the answer
       const a = LEGAL_QA_LANGUAGES[langIndex].answer;
       for (let i = 0; i <= a.length; i++) {
         if (cancelled) return;
         setResponseStream(a.slice(0, i));
-        await new Promise((r) => setTimeout(r, 12 + Math.random() * 16));
+        await new Promise((r) => setTimeout(r, 10 + Math.random() * 14));
       }
 
-      // Pause before next language
-      await new Promise((r) => setTimeout(r, 4200));
+      await new Promise((r) => setTimeout(r, 5000));
       if (cancelled) return;
 
       isRunning.current = false;
@@ -587,136 +570,259 @@ const AnimatedChatWidget = () => {
     };
 
     run();
-    return () => { cancelled = true; isRunning.current = false; };
+    return () => {
+      cancelled = true;
+      isRunning.current = false;
+    };
   }, [langIndex]);
 
+  // Case Document typing animation loop
+  useEffect(() => {
+    let cancelled = false;
+    const runDoc = async () => {
+      setTypedDocText('');
+      await new Promise((r) => setTimeout(r, 350));
+      if (cancelled) return;
+      const text = CASE_DOC_SNIPPETS[docSnippetIndex];
+      for (let i = 0; i <= text.length; i++) {
+        if (cancelled) return;
+        setTypedDocText(text.slice(0, i));
+        await new Promise((r) => setTimeout(r, 24 + Math.random() * 18));
+      }
+      await new Promise((r) => setTimeout(r, 4000));
+      if (cancelled) return;
+      setDocSnippetIndex((prev) => (prev + 1) % CASE_DOC_SNIPPETS.length);
+    };
+    runDoc();
+    return () => { cancelled = true; };
+  }, [docSnippetIndex]);
+
+  // AI Analysis Result typing animation loop
+  useEffect(() => {
+    let cancelled = false;
+    const runAnalysis = async () => {
+      setTypedAnalysisText('');
+      await new Promise((r) => setTimeout(r, 700));
+      if (cancelled) return;
+      const text = AI_ANALYSIS_SNIPPETS[analysisSnippetIndex];
+      for (let i = 0; i <= text.length; i++) {
+        if (cancelled) return;
+        setTypedAnalysisText(text.slice(0, i));
+        await new Promise((r) => setTimeout(r, 20 + Math.random() * 16));
+      }
+      await new Promise((r) => setTimeout(r, 4500));
+      if (cancelled) return;
+      setAnalysisSnippetIndex((prev) => (prev + 1) % AI_ANALYSIS_SNIPPETS.length);
+    };
+    runAnalysis();
+    return () => { cancelled = true; };
+  }, [analysisSnippetIndex]);
+
   return (
-    <div className="relative w-full max-w-xl xl:max-w-2xl mx-auto bg-white/80 backdrop-blur-xl border border-[#0c9344]/15 rounded-3xl shadow-xl shadow-[#0c9344]/5 text-left overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(#05966914_1px,transparent_1px)] [background-size:20px_20px] rounded-3xl opacity-60 pointer-events-none" />
+    <div className="relative w-full max-w-2xl mx-auto hero-3d-scene select-none py-6 sm:py-10">
+      {/* Contact shadow on desk surface */}
+      <div
+        className="absolute -bottom-6 sm:-bottom-8 left-1/2 -translate-x-1/2 w-[88%] h-14 bg-[#00a859]/25 rounded-[100%] filter blur-2xl pointer-events-none"
+        style={{ transform: 'rotateX(65deg) scale(1.15)' }}
+      />
 
-      {/* Language indicator pills */}
-      <div className="relative z-10 flex items-center gap-1.5 px-5 pt-4 pb-3 border-b border-[#0c9344]/15/60">
-        {LEGAL_QA_LANGUAGES.map((l, i) => (
-          <motion.div
-            key={l.code}
-            animate={{
-              backgroundColor: i === langIndex ? '#10b981' : '#f0fdf4',
-              color: i === langIndex ? '#ffffff' : '#6b7280',
-              borderColor: i === langIndex ? '#10b981' : '#d1fae5',
-              scale: i === langIndex ? 1 : 0.92,
-            }}
-            transition={{ duration: 0.3 }}
-            className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold border select-none"
-          >
-            {l.flag} {l.lang}
-          </motion.div>
-        ))}
-        <div className="ml-auto flex items-center gap-1 shrink-0">
-          <Scale className="w-3 h-3 text-[#0c9344]" />
-          <span className="text-[10px] font-bold uppercase tracking-widest text-[#0c9344]">JudicialGPT</span>
-        </div>
-      </div>
+      {/* 3D Tilted Board */}
+      <motion.div
+        className="relative hero-tilted-stage cursor-default"
+        initial={{ opacity: 0, y: 30, rotateY: -16, rotateX: 12 }}
+        animate={{ opacity: 1, y: 0, rotateY: -13, rotateX: 8 }}
+        transition={{ duration: 0.9, ease: 'easeOut' }}
+      >
+        {/* Main White Tablet Chassis */}
+        <div className="relative rounded-[28px] sm:rounded-[36px] bg-white/95 backdrop-blur-2xl border border-white/90 shadow-[0_25px_60px_-15px_rgba(6,57,35,0.22),0_12px_28px_-8px_rgba(0,0,0,0.12),inset_0_1px_2px_rgba(255,255,255,1)] p-4 sm:p-7 text-left transition-all h-[360px] sm:h-[400px] flex flex-col justify-between">
+          
+          {/* Top Window Chrome Bar */}
+          <div className="flex items-center justify-between gap-2 pb-3.5 sm:pb-4 border-b border-slate-100 shrink-0">
+            {/* JudicialGPT brand on top left */}
+            <div className="flex items-center gap-1.5 shrink-0">
+              <div className="w-6 h-6 rounded-lg bg-[#0c7a4b] flex items-center justify-center shadow-sm">
+                <Scale className="w-3.5 h-3.5 text-white" />
+              </div>
+              <span className="text-xs sm:text-sm font-bold tracking-tight text-slate-900">
+                Judicial<span className="text-[#0c7a4b]">GPT</span>
+              </span>
+            </div>
 
-      <div className="relative z-10 flex flex-col gap-5 p-5 md:p-6">
-        {/* Search / Question Input */}
-        <div
-          className="relative flex items-start bg-white rounded-2xl shadow-lg border border-slate-100 px-4 py-3.5 shrink-0"
-          dir={isRtl ? 'rtl' : 'ltr'}
-        >
-          <Search className={`w-5 h-5 text-slate-400 mt-0.5 shrink-0 ${isRtl ? 'ml-3' : 'mr-3'}`} />
-          <div
-            className={`flex-1 text-slate-800 font-medium flex items-start pt-0.5 ${isNastaliq
-              ? 'nastaliq-question'
-              : 'text-[13px] md:text-sm leading-snug'
-              }`}
-            style={{
-              minHeight: '5.5rem',
-              ...(!isNastaliq && isRtl ? { direction: 'rtl', textAlign: 'right' } : {}),
-            }}
-          >
-            <span className="whitespace-pre-wrap w-full">
-              {typedText}
-              {!showResponse && (
-                <span className={`w-0.5 h-4 bg-[#0c9344] animate-pulse inline-block align-middle ${isRtl ? 'mr-0.5' : 'ml-0.5'}`} />
-              )}
-            </span>
-          </div>
-
-          {/* Send button */}
-          <div
-            className={`shrink-0 ${isRtl ? 'mr-3' : 'ml-3'} mt-0.5 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${buttonClicked ? 'bg-[#0c9344]/15' : 'bg-slate-50'
-              }`}
-          >
-            <ArrowRight className="w-4 h-4 text-slate-400" />
-          </div>
-
-          {/* Animated cursor */}
-          <AnimatePresence>
-            {showCursor && (
-              <motion.div
-                initial={{ x: isRtl ? 80 : -80, y: 100, opacity: 0 }}
-                animate={{ x: 0, y: 0, opacity: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.55, ease: 'easeOut' }}
-                className={`absolute bottom-0 z-50 pointer-events-none ${isRtl ? 'left-3' : 'right-3'}`}
-                style={{ originX: 0, originY: 0 }}
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="drop-shadow-md">
-                  <path d="M5.5 3.21V20.8c0 .45.54.67.85.35l4.86-4.86a.5.5 0 01.35-.15h6.43c.45 0 .67-.54.35-.85L6.35 3.35a.5.5 0 00-.85.35z" fill="black" stroke="white" strokeWidth="1.5" />
-                </svg>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* Answer area — fixed height so card never resizes between languages */}
-        <div className="overflow-hidden h-[15rem]">
-          <AnimatePresence mode="wait">
-            {showResponse && (
-              <motion.div
-                key={langIndex}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.35 }}
-                className="flex items-start gap-3"
-                dir={isRtl ? 'rtl' : 'ltr'}
-              >
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#0c9344] to-[#0c9344] flex items-center justify-center shadow-md shadow-[#0c9344]/30 shrink-0 mt-0.5">
-                  <Scale className="w-[16px] h-[16px] text-white" />
-                </div>
-                <div
-                  className={`flex-1 bg-[#0c9344]/10/90 border border-[#0c9344]/15 text-slate-700 px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm ${isNastaliq
-                    ? 'nastaliq-text'
-                    : 'text-[13px] leading-relaxed'
+            {/* Language Pills */}
+            <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto [scrollbar-width:none]">
+              {LEGAL_QA_LANGUAGES.map((l, i) => {
+                const isActive = i === langIndex;
+                return (
+                  <button
+                    key={l.code}
+                    onClick={() => {
+                      isRunning.current = false;
+                      setLangIndex(i);
+                    }}
+                    className={`px-2.5 sm:px-3 py-1 rounded-full text-[10.5px] sm:text-[11.5px] font-semibold transition-all duration-200 border flex items-center gap-1 shrink-0 ${
+                      isActive
+                        ? 'bg-[#0c7a4b] border-[#0c7a4b] text-white shadow-sm'
+                        : 'bg-white/80 border-slate-200/80 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                     }`}
-                  style={!isNastaliq && isRtl ? { direction: 'rtl', textAlign: 'right', lineHeight: '1.85' } : {}}
-                >
+                  >
+                    <span className="text-[10px] opacity-80">{l.flag}</span>
+                    <span>{l.lang}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Search / Query Pill - Fixed Height */}
+          <div className="my-3 sm:my-3.5 shrink-0">
+            <div
+              className="relative flex items-center bg-white rounded-full border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.04)] px-3.5 sm:px-4 h-10 sm:h-11 gap-2 sm:gap-3 overflow-hidden"
+              dir={isRtl ? 'rtl' : 'ltr'}
+            >
+              {/* Circular Action Button on the edge */}
+              <button className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-slate-100/90 hover:bg-[#0c7a4b]/10 text-slate-500 hover:text-[#0c7a4b] flex items-center justify-center shrink-0 transition-colors">
+                <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 transform rotate-180 rtl:rotate-0" />
+              </button>
+
+              {/* Typed Question Query - Strictly single-line truncated */}
+              <div
+                className={`flex-1 text-slate-800 font-medium truncate whitespace-nowrap overflow-hidden ${
+                  isNastaliq ? 'nastaliq-question text-right text-xs sm:text-sm' : 'text-xs sm:text-sm'
+                }`}
+                style={{
+                  ...(!isNastaliq && isRtl ? { direction: 'rtl', textAlign: 'right' } : {}),
+                }}
+              >
+                <span>
+                  {typedText}
+                  {!showResponse && (
+                    <span className="w-0.5 h-3.5 bg-[#0c7a4b] animate-pulse inline-block align-middle ml-0.5 rtl:mr-0.5" />
+                  )}
+                </span>
+              </div>
+
+              {/* Search Icon */}
+              <Search className="w-4 h-4 text-slate-400 shrink-0" />
+            </div>
+          </div>
+
+          {/* Main Legal Answer Box - Fixed Height & Non-Expanding */}
+          <div className="relative rounded-2xl bg-white/70 border border-slate-100 p-3.5 sm:p-4 shadow-inner h-[175px] sm:h-[195px] overflow-hidden flex-1">
+            <div className="flex items-start gap-3 sm:gap-3.5 h-full overflow-hidden" dir={isRtl ? 'rtl' : 'ltr'}>
+              {/* Green Scale of Justice Floating Icon Badge */}
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl sm:rounded-2xl bg-[#0c7a4b] text-white flex items-center justify-center shadow-md shadow-emerald-900/15 shrink-0 mt-0.5">
+                <Scale className="w-4 h-4 sm:w-5 sm:h-5" />
+              </div>
+
+              {/* Answer Content - Fixed bounding container */}
+              <div
+                className={`flex-1 text-slate-700 h-full overflow-hidden ${
+                  isNastaliq ? 'nastaliq-text' : 'text-xs sm:text-sm leading-relaxed'
+                }`}
+                style={!isNastaliq && isRtl ? { direction: 'rtl', textAlign: 'right', lineHeight: '1.7' } : {}}
+              >
+                <div className="overflow-hidden h-full">
                   {responseStream}
                   {responseStream.length < current.answer.length && (
-                    <span className={`w-1 h-3.5 bg-[#0c9344] animate-pulse inline-block align-middle ${isRtl ? 'mr-0.5' : 'ml-0.5'}`} />
+                    <span className="w-1 h-3.5 bg-[#0c7a4b] animate-pulse inline-block align-middle ml-0.5 rtl:mr-0.5" />
                   )}
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Progress dots */}
-        <div className="flex items-center gap-1.5 justify-center pt-1">
-          {LEGAL_QA_LANGUAGES.map((_, i) => (
-            <motion.div
-              key={i}
-              animate={{
-                width: i === langIndex ? 22 : 6,
-                backgroundColor: i === langIndex ? '#10b981' : '#d1fae5',
-              }}
-              transition={{ duration: 0.35 }}
-              className="h-1.5 rounded-full"
-            />
-          ))}
+        {/* Floating Emerald Side Tool Dock on the Right */}
+        <div className="absolute -right-3.5 sm:-right-6 top-10 sm:top-14 z-30">
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+            className="bg-gradient-to-b from-[#0c7a4b] to-[#0a663e] p-2 sm:p-2.5 rounded-2xl sm:rounded-3xl shadow-[0_15px_35px_rgba(6,57,35,0.35)] border border-emerald-400/30 flex flex-col items-center gap-3 sm:gap-4 text-white"
+          >
+            <button className="p-1.5 sm:p-2 rounded-xl hover:bg-white/20 transition-colors" title="Legal Scales">
+              <Scale className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+            </button>
+            <button className="p-1.5 sm:p-2 rounded-xl hover:bg-white/20 transition-colors" title="Documents">
+              <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+            </button>
+            <button className="p-1.5 sm:p-2 rounded-xl hover:bg-white/20 transition-colors" title="Library">
+              <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+            </button>
+            <button className="p-1.5 sm:p-2 rounded-xl hover:bg-white/20 transition-colors" title="Judicial Shield">
+              <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+            </button>
+            <button className="p-1.5 sm:p-2 rounded-xl hover:bg-white/20 transition-colors" title="AI Chat">
+              <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+            </button>
+          </motion.div>
         </div>
-      </div>
+
+        {/* Floating Card 1: "Case Document" (Bottom Left Stacked) */}
+        <div className="absolute -bottom-6 sm:-bottom-8 -left-3 sm:-left-6 z-20">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.6 }}
+            className="relative"
+          >
+            {/* Stacked background card layers */}
+            <div className="absolute -inset-1 bg-white/60 rounded-2xl sm:rounded-3xl border border-slate-200/60 transform rotate-[-3deg] -z-10 shadow-sm" />
+            <div className="absolute -inset-0.5 bg-white/80 rounded-2xl sm:rounded-3xl border border-slate-200/70 transform rotate-[-1.5deg] -z-10 shadow-sm" />
+
+            {/* Foreground Card */}
+            <div className="bg-white/95 backdrop-blur-md rounded-2xl sm:rounded-3xl border border-white/90 shadow-[0_15px_30px_rgba(0,0,0,0.08)] p-3 sm:p-4 w-48 sm:w-56 h-[95px] sm:h-[105px] overflow-hidden flex flex-col justify-between">
+              <div className="flex items-center gap-1.5 text-slate-800 font-bold text-xs sm:text-sm shrink-0">
+                <Scale className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#0c7a4b] shrink-0" />
+                <span className="truncate">Case Document</span>
+              </div>
+              
+              {/* Small Proportionate Animated Text - Fixed Height */}
+              <div className="h-[32px] sm:h-[36px] text-[10px] sm:text-[11px] text-slate-600 font-medium leading-snug overflow-hidden line-clamp-2">
+                <span>{typedDocText}</span>
+                <span className="w-0.5 h-3 bg-[#0c7a4b] animate-pulse inline-block align-middle ml-0.5" />
+              </div>
+
+              {/* Micro skeleton accent line */}
+              <div className="flex items-center gap-1.5 pt-1 border-t border-slate-100 opacity-60 shrink-0">
+                <div className="h-1 bg-slate-200 rounded-full w-2/3" />
+                <div className="h-1 bg-slate-200 rounded-full w-1/3" />
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Floating Card 2: "AI Analysis Result" (Bottom Right) */}
+        <div className="absolute -bottom-5 sm:-bottom-7 right-3 sm:right-6 z-20">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.6 }}
+            className="bg-white/95 backdrop-blur-md rounded-2xl sm:rounded-3xl border border-white/90 shadow-[0_15px_30px_rgba(0,0,0,0.08)] p-3 sm:p-4 w-52 sm:w-64 h-[95px] sm:h-[105px] overflow-hidden flex flex-col justify-between"
+          >
+            <div className="flex items-center justify-between gap-2 shrink-0">
+              <div className="flex items-center gap-1.5 text-slate-800 font-bold text-xs sm:text-sm truncate">
+                <Scale className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#0c7a4b] shrink-0" />
+                <span className="truncate">AI Analysis Result</span>
+              </div>
+              <div className="w-5 h-5 sm:w-5.5 sm:h-5.5 rounded-full bg-[#0c7a4b] text-white flex items-center justify-center shrink-0 shadow-sm">
+                <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5 stroke-[3]" />
+              </div>
+            </div>
+
+            {/* Mint / Emerald animated progress indicator */}
+            <div className="w-full bg-slate-100 rounded-full h-1.5 sm:h-2 overflow-hidden shrink-0 my-0.5">
+              <div className="h-full bg-gradient-to-r from-[#0c7a4b] to-[#34d399] rounded-full w-[88%] transition-all duration-700" />
+            </div>
+
+            {/* Small Proportionate Animated Text - Fixed Height */}
+            <div className="h-[32px] sm:h-[36px] text-[10px] sm:text-[11px] text-slate-700 font-medium leading-snug overflow-hidden line-clamp-2">
+              <span>{typedAnalysisText}</span>
+              <span className="w-0.5 h-3 bg-[#0c7a4b] animate-pulse inline-block align-middle ml-0.5" />
+            </div>
+          </motion.div>
+        </div>
+      </motion.div>
     </div>
   );
 };
@@ -726,186 +832,79 @@ const AnimatedChatWidget = () => {
 // ============================================================================
 const HeroSection = () => {
   const router = useRouter();
-  const [currentTopic, setCurrentTopic] = useState(0);
-  const statsRef = useRef<HTMLDivElement>(null);
-  const hasMounted = useHasMounted();
-  const statsInView = useInView(statsRef, { once: true, amount: 0.45 });
-  const statsActive = hasMounted && statsInView;
-
-  // Count-up targets (formatted for display)
-  const docsCount = useCountUp(statsActive, 24, 2600);   // → 2.4M
-  const usersCount = useCountUp(statsActive, 10, 2400);  // → 10K
-  const availCount = useCountUp(statsActive, 24, 2500);  // → 24/7
-
-  const heroTopics = [
-    { title: 'Legal Research', description: 'Search case law, statutes, and precedents in seconds. Our AI surfaces relevant authorities from millions of legal documents with precision.' },
-    { title: 'Case Analysis', description: 'Break down complex cases with AI-driven insights. Identify key facts, precedents, and arguments to strengthen your legal strategy faster.' },
-    { title: 'Document Review', description: 'Review contracts and legal documents in minutes, not hours. AI highlights risks, critical clauses, and compliance gaps with remarkable accuracy.' },
-    { title: 'Legal Analysis', description: 'Turn intricate legal questions into clear, structured analysis. Get issue breakdowns, applicable law, and actionable guidance instantly.' },
-  ];
-
-  useEffect(() => {
-    const interval = setInterval(() => setCurrentTopic((p) => (p + 1) % heroTopics.length), 3000);
-    return () => clearInterval(interval);
-  }, [heroTopics.length]);
-
-  const heroStats = [
-    {
-      value: statsActive ? `${(docsCount / 10).toFixed(1)}M` : '0M',
-      label: 'Legal Documents',
-    },
-    {
-      value: statsActive ? `${usersCount}K` : '0K',
-      label: 'Active Users',
-    },
-    {
-      value: 'Highest',
-      label: 'Benchmark Accuracy',
-      small: true,
-      static: true,
-    },
-    {
-      value: statsActive ? `${availCount}/7` : '0/7',
-      label: 'AI Availability',
-    },
-  ];
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden pt-20 sm:pt-24 pb-12 sm:pb-16">
       <HeroBackground />
 
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 md:pt-24 lg:pt-20 pb-8 lg:pb-10 grid lg:grid-cols-2 gap-6 lg:gap-4 items-center text-center lg:text-left">
-        {/* Left Column: Content */}
-        <div className="flex flex-col items-center lg:items-start">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-8 lg:gap-8 items-center">
+        {/* Left Column: Content (Centered) */}
+        <div className="flex flex-col items-center text-center max-w-xl mx-auto">
           {/* Badge */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, duration: 0.6 }}
-            className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-[#0c9344]/25 bg-white/70 backdrop-blur-sm mb-3 lg:mb-4 shadow-sm shadow-[#0c9344]/5"
+            transition={{ delay: 0.1, duration: 0.5 }}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#0c7a4b]/20 bg-white/85 backdrop-blur-md mb-5 shadow-sm text-xs font-semibold text-[#0c7a4b] mx-auto"
           >
-            <Sparkles className="w-3.5 h-3.5 text-[#0c9344]" />
-            <span className="text-[#0c9344] text-sm font-medium">AI-Powered Judicial Intelligence Platform</span>
-            <span className="w-2 h-2 rounded-full bg-[#0c9344] animate-pulse" />
+            <Sparkles className="w-3.5 h-3.5 text-[#0c7a4b]" />
+            <span>AI-Powered Judicial Intelligence Platform</span>
+            <span className="w-2 h-2 rounded-full bg-[#0c7a4b] animate-pulse" />
           </motion.div>
 
-          {/* Headline */}
+          {/* Headline with matched serif typography */}
           <motion.h1
-            initial={{ opacity: 0, y: 32 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.7 }}
-            className="w-full flex flex-col items-center text-center font-heading text-4xl sm:text-5xl md:text-6xl lg:text-5xl xl:text-[3.75rem] font-semibold text-slate-900 leading-[1.12] tracking-tight mb-2 lg:mb-3"
+            transition={{ delay: 0.2, duration: 0.6 }}
+            className="font-hero-serif text-4xl sm:text-5xl md:text-6xl lg:text-[3.8rem] xl:text-[4.2rem] font-bold text-slate-900 leading-[1.1] tracking-tight mb-5 text-center"
           >
-            <span>JudicialGPT</span>
-            <span className="text-3xl sm:text-4xl font-normal tracking-wide my-0.5">for</span>
-            <span className="relative w-full flex justify-center mt-2 min-h-[1.2em]">
-              <AnimatePresence mode="wait">
-                <motion.span
-                  key={currentTopic}
-                  initial={{ opacity: 0, y: 28 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -28 }}
-                  transition={{ duration: 0.45 }}
-                  className="absolute bg-gradient-to-r from-[#0c9344] via-[#0c9344] to-[#0c9344] bg-clip-text text-transparent whitespace-nowrap"
-                >
-                  {heroTopics[currentTopic].title}
-                </motion.span>
-              </AnimatePresence>
+            <span className="block font-hero-serif font-bold text-slate-900">
+              JudicialGPT
+            </span>
+            <span className="block font-normal text-2xl sm:text-3xl lg:text-[2.25rem] text-slate-700 my-1 font-hero-serif italic">
+              for
+            </span>
+            <span className="block font-hero-serif font-bold text-[#0c7a4b]">
+              Legal Analysis
             </span>
           </motion.h1>
 
-          {/* Description */}
-          <motion.div
+          {/* Subtitle description */}
+          <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.35, duration: 0.6 }}
-            className="w-full max-w-2xl mx-auto mb-4 lg:mb-6 min-h-[4rem] md:min-h-[3rem] flex items-center justify-center text-center"
+            transition={{ delay: 0.3, duration: 0.6 }}
+            className="font-hero-body text-base sm:text-lg text-slate-600 leading-relaxed max-w-lg mx-auto mb-7 text-center font-medium"
           >
-            <AnimatePresence mode="wait">
-              <motion.p
-                key={currentTopic}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.4 }}
-                className="font-body text-lg md:text-xl text-slate-600 leading-relaxed text-center"
-              >
-                {heroTopics[currentTopic].description}
-              </motion.p>
-            </AnimatePresence>
-          </motion.div>
+            Turn intricate legal questions into clear, structured analysis. Get issue breakdowns, applicable law, and actionable guidance instantly.
+          </motion.p>
 
-          {/* CTAs */}
+          {/* CTA Button Centered Directly Underneath */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.45, duration: 0.6 }}
-            className="w-full flex flex-col sm:flex-row items-center justify-center gap-4 mb-6 lg:mb-8"
+            transition={{ delay: 0.4, duration: 0.5 }}
+            className="flex justify-center w-full"
           >
             <motion.button
               onClick={() => router.push('/chat')}
-              whileHover={{ scale: 1.04, boxShadow: '0 20px 48px rgba(16,185,129,0.35)' }}
-              whileTap={{ scale: 0.96 }}
-              className="px-8 py-4 bg-gradient-to-r from-[#0c9344] to-[#0c9344] text-white font-bold rounded-xl text-base flex items-center gap-3 shadow-xl shadow-[#0c9344]/25"
+              whileHover={{ scale: 1.03, boxShadow: '0 12px 28px rgba(12,122,75,0.35)' }}
+              whileTap={{ scale: 0.97 }}
+              className="px-7 py-3.5 bg-[#0c7a4b] hover:bg-[#09633c] text-white font-bold rounded-2xl text-base inline-flex items-center gap-3 shadow-lg shadow-[#0c7a4b]/25 transition-all cursor-pointer"
             >
-              <Bot className="w-5 h-5" />
-              Try AI Assistant Free
-              <ArrowRight className="w-4 h-4" />
+              <Scale className="w-5 h-5 text-white" />
+              <span>Try AI Assistant Free</span>
+              <ArrowRight className="w-4 h-4 text-white/90" />
             </motion.button>
           </motion.div>
-
-          {/* Stats */}
-          <motion.div
-            ref={statsRef}
-            initial={{ opacity: 0, y: 32 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.6 }}
-            className="grid grid-cols-2 md:grid-cols-4 w-full max-w-3xl mx-auto lg:mx-0 rounded-2xl overflow-hidden border border-[#0c9344]/15 divide-x divide-y md:divide-y-0 divide-emerald-100 bg-white/70 shadow-sm shadow-[#0c9344]/5"
-          >
-            {heroStats.map((stat, i) => (
-              <div key={i} className="backdrop-blur-sm px-3 py-4 md:py-3.5 text-center flex flex-col items-center justify-center relative">
-                <div className={`font-extrabold text-slate-900 mb-0.5 tabular-nums ${stat.small ? 'text-lg md:text-xl leading-snug' : 'text-2xl md:text-3xl'}`}>
-                  {stat.value}
-                </div>
-                <div className="text-[10px] md:text-[11px] text-slate-500 font-medium uppercase tracking-wider">{stat.label}</div>
-                {(stat as any).badge && (
-                  <div className="mt-1.5 px-2 py-0.5 rounded-full bg-[#0c9344]/15 border border-[#0c9344]/25 text-[#0c9344] text-[9px] font-bold uppercase tracking-wider shadow-sm">
-                    {(stat as any).badge}
-                  </div>
-                )}
-              </div>
-            ))}
-          </motion.div>
         </div>
 
-        {/* Right Column: Multilingual Legal Q&A Card */}
-        <div className="hidden lg:block w-full relative z-10">
-          <motion.div
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-          >
-            <AnimatedChatWidget />
-          </motion.div>
+        {/* Right Column: 3D Tilted Card on Surface */}
+        <div className="w-full relative z-10 mt-6 lg:mt-0">
+          <TiltedHeroSurfaceCard />
         </div>
       </div>
-
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.4 }}
-        className="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-slate-400"
-      >
-        <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="flex flex-col items-center gap-1"
-        >
-          <span className="text-[9px] uppercase tracking-[0.25em] font-semibold">Scroll to explore</span>
-          <ChevronDown className="w-4 h-4" />
-        </motion.div>
-      </motion.div>
     </section>
   );
 };
@@ -915,29 +914,29 @@ const HeroSection = () => {
 // ============================================================================
 const TrustBarSection = () => {
   const trustItems = [
-    { icon: Shield, title: 'Open to All', subtitle: 'Ask Legal Questions', color: 'bg-[#0c9344]' },
-    { icon: Scale, title: 'All-in-One', subtitle: 'Judicial AI Platform', color: 'bg-[#0c9344]' },
-    { icon: Globe, title: 'Multi-language', subtitle: 'Coverage', color: 'bg-[#0c9344]' },
-    { icon: ShieldCheck, title: 'Safe & Secure', subtitle: 'Ad-Free', color: 'bg-[#0c9344]' },
-    { icon: Zap, title: 'Learn Smarter,', subtitle: 'Not Harder', color: 'bg-[#0c9344]' },
-    { icon: DollarSign, title: 'Affordable', subtitle: 'Premium Access', color: 'bg-[#0c9344]' },
+    { icon: Shield, title: 'Open to All', subtitle: 'Ask Legal Questions', color: 'bg-[#00a859]' },
+    { icon: Scale, title: 'All-in-One', subtitle: 'Judicial AI Platform', color: 'bg-[#00a859]' },
+    { icon: Globe, title: 'Multi-language', subtitle: 'Coverage', color: 'bg-[#00a859]' },
+    { icon: ShieldCheck, title: 'Safe & Secure', subtitle: 'Ad-Free', color: 'bg-[#00a859]' },
+    { icon: Zap, title: 'Learn Smarter,', subtitle: 'Not Harder', color: 'bg-[#00a859]' },
+    { icon: DollarSign, title: 'Affordable', subtitle: 'Premium Access', color: 'bg-[#00a859]' },
   ];
 
   const audiences = [
     { label: 'General Public / Citizens', star: 'text-orange-500' },
-    { label: 'Judges', star: 'text-[#0c9344]' },
+    { label: 'Judges', star: 'text-[#00a859]' },
     { label: 'Justice Sector Institutions', star: 'text-violet-500' },
     { label: 'Police Investigation Officers (IO)', star: 'text-sky-500' },
     { label: 'Prosecution', star: 'text-rose-500' },
     { label: 'Prisons & Correctional Facilities', star: 'text-amber-500' },
     { label: 'Lawyers', star: 'text-orange-500' },
-    { label: 'Revenue & Land Records', star: 'text-[#0c9344]' },
+    { label: 'Revenue & Land Records', star: 'text-[#00a859]' },
     { label: 'Tax & Revenue Authorities', star: 'text-violet-500' },
     { label: 'Banking & Financial Institutions', star: 'text-sky-500' },
     { label: 'District Judiciary', star: 'text-rose-500' },
     { label: "Prosecutor General's Office", star: 'text-amber-500' },
     { label: 'Corporate & Commercial Sector', star: 'text-orange-500' },
-    { label: 'E-Governance & Public Administration', star: 'text-[#0c9344]' },
+    { label: 'E-Governance & Public Administration', star: 'text-[#00a859]' },
   ];
 
   const marqueeItems = [...audiences, ...audiences];
@@ -983,6 +982,97 @@ const TrustBarSection = () => {
         </div>
       </ScrollReveal>
       */}
+    </section>
+  );
+};
+
+// ============================================================================
+// SHADCN MINI STATS CARDS (Right above Features)
+// ============================================================================
+const MiniStatsSection = () => {
+  const stats = [
+    {
+      value: '2.4M',
+      label: 'Legal Documents',
+      subtext: 'Indexed precedents & case law',
+      icon: FileText,
+      badge: 'Live Index',
+    },
+    {
+      value: '10K+',
+      label: 'Active Users',
+      subtext: 'Judges, lawyers & researchers',
+      icon: Users,
+      badge: 'Growing',
+    },
+    {
+      value: 'Highest',
+      label: 'Benchmark Accuracy',
+      subtext: 'Verified judicial citation rate',
+      icon: Target,
+      badge: 'Top Tier',
+    },
+    {
+      value: '24/7',
+      label: 'AI Availability',
+      subtext: 'Round-the-clock intelligence',
+      icon: Clock,
+      badge: 'Always On',
+    },
+  ];
+
+  return (
+    <section className="relative py-6 sm:py-8 bg-[#F7F7F5]/50 border-b border-slate-200/60 overflow-hidden">
+      {/* Subtle green ambient background glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[160px] bg-[#0c7a4b]/5 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <ScrollReveal>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            {stats.map((item, idx) => {
+              const Icon = item.icon;
+              return (
+                <motion.div
+                  key={item.label}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={{ delay: idx * 0.06, duration: 0.4 }}
+                  whileHover={{ y: -3, transition: { duration: 0.2 } }}
+                  className="group relative rounded-xl sm:rounded-2xl bg-white/90 backdrop-blur-xl border border-slate-200/90 p-3.5 sm:p-4 shadow-sm hover:shadow-lg hover:shadow-[#0c7a4b]/10 hover:border-[#0c7a4b]/60 transition-all duration-300 overflow-hidden"
+                >
+                  {/* Top green gradient border accent (Shadcn effect) */}
+                  <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#0c7a4b]/40 to-transparent group-hover:via-[#0c7a4b] transition-all duration-500" />
+                  
+                  {/* Subtle inner radial glow on hover */}
+                  <div className="absolute -top-8 -right-8 w-16 h-16 bg-[#0c7a4b]/10 rounded-full blur-xl group-hover:bg-[#0c7a4b]/20 transition-all duration-500 pointer-events-none" />
+
+                  <div className="flex items-center justify-between mb-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-[#0c7a4b]/10 border border-[#0c7a4b]/20 flex items-center justify-center text-[#0c7a4b] group-hover:bg-[#0c7a4b] group-hover:text-white group-hover:border-[#0c7a4b] transition-all duration-300 shadow-sm">
+                      <Icon className="w-4 h-4 stroke-[2.2]" />
+                    </div>
+                    <span className="inline-flex items-center text-[9.5px] sm:text-[10px] font-bold text-[#0c7a4b] bg-[#0c7a4b]/10 px-2 py-0.5 rounded-full border border-[#0c7a4b]/20 tracking-wide uppercase">
+                      {item.badge}
+                    </span>
+                  </div>
+
+                  <div>
+                    <div className="text-xl sm:text-2xl lg:text-[1.65rem] font-black text-slate-900 tracking-tight group-hover:text-[#0c7a4b] transition-colors duration-200 leading-tight">
+                      {item.value}
+                    </div>
+                    <div className="text-[12.5px] sm:text-[13px] font-bold text-slate-800 mt-0.5">
+                      {item.label}
+                    </div>
+                    <div className="text-[10.5px] sm:text-[11px] text-slate-500 mt-0.5 leading-snug">
+                      {item.subtext}
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </ScrollReveal>
+      </div>
     </section>
   );
 };
@@ -1034,12 +1124,12 @@ const FeatureCard = ({ icon: Icon, title, description, delay, gradient, glow }: 
 
 const FeaturesSection = () => {
   const features = [
-    { icon: Brain, title: 'AI Legal Assistant', description: 'Get instant answers to complex legal questions. Our AI breaks down legal jargon into simple, actionable advice.', gradient: 'from-[#0c9344] to-[#0c9344]', glow: 'rgba(16, 185, 129, 0.18)' },
-    { icon: FileSearch, title: 'Case Research Tool', description: 'Access millions of case precedents and legal documents instantly. Find relevant cases in seconds, not hours.', gradient: 'from-[#0c9344] to-[#0c9344]', glow: 'rgba(15, 23, 42, 0.18)' },
-    { icon: MessageCircle, title: 'Virtual Consultation', description: '24/7 AI-powered consultation to understand your case, predict outcomes, and provide strategic guidance.', gradient: 'from-[#0c9344] to-[#0c9344]', glow: 'rgba(148, 163, 184, 0.18)' },
-    { icon: FileText, title: 'Document Analysis', description: 'Upload contracts and legal documents for instant AI analysis. Identify risks, obligations, and key clauses.', gradient: 'from-[#0c9344] to-[#0c9344]', glow: 'rgba(16, 185, 129, 0.18)' },
-    { icon: Shield, title: 'Privacy Protected', description: 'All conversations are encrypted and private. Option for temporary chats that are never stored.', gradient: 'from-[#0c9344] to-[#0c9344]', glow: 'rgba(15, 23, 42, 0.18)' },
-    { icon: Globe, title: 'Multi-Platform Access', description: 'Access from any device — web, mobile, or desktop. Seamless experience across all platforms.', gradient: 'from-[#0c9344] to-[#0c9344]', glow: 'rgba(148, 163, 184, 0.18)' },
+    { icon: Brain, title: 'AI Legal Assistant', description: 'Get instant answers to complex legal questions. Our AI breaks down legal jargon into simple, actionable advice.', gradient: 'from-[#00a859] to-[#00a859]', glow: 'rgba(16, 185, 129, 0.18)' },
+    { icon: FileSearch, title: 'Case Research Tool', description: 'Access millions of case precedents and legal documents instantly. Find relevant cases in seconds, not hours.', gradient: 'from-[#00a859] to-[#00a859]', glow: 'rgba(15, 23, 42, 0.18)' },
+    { icon: MessageCircle, title: 'Virtual Consultation', description: '24/7 AI-powered consultation to understand your case, predict outcomes, and provide strategic guidance.', gradient: 'from-[#00a859] to-[#00a859]', glow: 'rgba(148, 163, 184, 0.18)' },
+    { icon: FileText, title: 'Document Analysis', description: 'Upload contracts and legal documents for instant AI analysis. Identify risks, obligations, and key clauses.', gradient: 'from-[#00a859] to-[#00a859]', glow: 'rgba(16, 185, 129, 0.18)' },
+    { icon: Shield, title: 'Privacy Protected', description: 'All conversations are encrypted and private. Option for temporary chats that are never stored.', gradient: 'from-[#00a859] to-[#00a859]', glow: 'rgba(15, 23, 42, 0.18)' },
+    { icon: Globe, title: 'Multi-Platform Access', description: 'Access from any device — web, mobile, or desktop. Seamless experience across all platforms.', gradient: 'from-[#00a859] to-[#00a859]', glow: 'rgba(148, 163, 184, 0.18)' },
   ];
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -1095,14 +1185,14 @@ const FeaturesSection = () => {
   };
 
   const arrowBtnClass =
-    'absolute top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white border border-slate-200 text-slate-600 shadow-md shadow-slate-900/8 flex items-center justify-center transition-all duration-300 hover:border-[#0c9344]/25 hover:text-[#0c9344] hover:shadow-lg hover:shadow-[#0c9344]/15 disabled:opacity-35 disabled:pointer-events-none disabled:shadow-none';
+    'absolute top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white border border-slate-200 text-slate-600 shadow-md shadow-slate-900/8 flex items-center justify-center transition-all duration-300 hover:border-[#00a859]/25 hover:text-[#00a859] hover:shadow-lg hover:shadow-[#00a859]/15 disabled:opacity-35 disabled:pointer-events-none disabled:shadow-none';
 
   return (
     <section id="features" className="py-6 lg:py-8 bg-slate-50/60">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           label="Features"
-          title={<>Innovative Features That<br /><span className="text-[#0c9344]">Redefine Legal Assistance</span></>}
+          title={<>Innovative Features That<br /><span className="text-[#00a859]">Redefine Legal Assistance</span></>}
           subtitle="Powered by advanced AI technology trained on millions of legal documents, delivering accurate and reliable legal intelligence."
         />
       </div>
@@ -1185,14 +1275,14 @@ const AIToolsSection = () => {
         'Ownership Detection',
         'Legal Summaries',
       ],
-      gradient: 'from-[#0c9344] to-[#0c9344]',
-      accent: 'bg-[#0c9344]',
-      accentSoft: 'bg-[#0c9344]/10',
-      accentText: 'text-[#0c9344]',
-      accentBorder: 'border-[#0c9344]/25',
+      gradient: 'from-[#00a859] to-[#00a859]',
+      accent: 'bg-[#00a859]',
+      accentSoft: 'bg-[#00a859]/10',
+      accentText: 'text-[#00a859]',
+      accentBorder: 'border-[#00a859]/25',
       glow: 'rgba(16, 185, 129, 0.45)',
       glowSoft: 'rgba(16, 185, 129, 0.12)',
-      ring: '#10b981',
+      ring: '#00a859',
       badge: 'Analysis',
     },
     {
@@ -1200,14 +1290,14 @@ const AIToolsSection = () => {
       title: 'Handwritten Text Extraction',
       description: 'Convert handwritten notes and legal documents into editable digital text with high accuracy. It supports Urdu, English, and mixed-language content while preserving the original document structure for easy reading and processing.',
       features: ['Handwriting Recognition', 'Urdu & English', 'Structure Preservation', 'Faster Transcription'],
-      gradient: 'from-[#0c9344] to-[#0c9344]',
-      accent: 'bg-[#0c9344]',
-      accentSoft: 'bg-[#0c9344]/10',
-      accentText: 'text-[#0c9344]',
-      accentBorder: 'border-[#0c9344]/25',
+      gradient: 'from-[#00a859] to-[#00a859]',
+      accent: 'bg-[#00a859]',
+      accentSoft: 'bg-[#00a859]/10',
+      accentText: 'text-[#00a859]',
+      accentBorder: 'border-[#00a859]/25',
       glow: 'rgba(16, 185, 129, 0.45)',
       glowSoft: 'rgba(16, 185, 129, 0.12)',
-      ring: '#10b981',
+      ring: '#00a859',
       badge: 'Extraction',
     },
     {
@@ -1215,14 +1305,14 @@ const AIToolsSection = () => {
       title: 'Voice Command Processing',
       description: 'Transform spoken instructions into accurate text and interact with JudicialGPT hands-free. The system understands legal terminology and local accents to provide a smooth and efficient user experience.',
       features: ['Speech-to-Text', 'Hands-Free Control', 'Legal Terminology', 'Accent Recognition'],
-      gradient: 'from-[#0c9344] to-[#0c9344]',
-      accent: 'bg-[#0c9344]',
-      accentSoft: 'bg-[#0c9344]/10',
-      accentText: 'text-[#0c9344]',
-      accentBorder: 'border-[#0c9344]/25',
+      gradient: 'from-[#00a859] to-[#00a859]',
+      accent: 'bg-[#00a859]',
+      accentSoft: 'bg-[#00a859]/10',
+      accentText: 'text-[#00a859]',
+      accentBorder: 'border-[#00a859]/25',
       glow: 'rgba(16, 185, 129, 0.45)',
       glowSoft: 'rgba(16, 185, 129, 0.12)',
-      ring: '#10b981',
+      ring: '#00a859',
       badge: 'Transcription',
     },
   ];
@@ -1235,14 +1325,14 @@ const AIToolsSection = () => {
       title: 'Smart Citation Search',
       description: 'Quickly find relevant case laws, legal precedents, and statutory references. Get accurate citations and applicable legal provisions while saving valuable research time.',
       features: ['Case Law Search', 'Citation Matching', 'Legal References', 'Faster Research'],
-      gradient: 'from-[#0c9344] to-[#0c9344]',
-      accent: 'bg-[#0c9344]',
-      accentSoft: 'bg-[#0c9344]/10',
-      accentText: 'text-[#0c9344]',
-      accentBorder: 'border-[#0c9344]/25',
+      gradient: 'from-[#00a859] to-[#00a859]',
+      accent: 'bg-[#00a859]',
+      accentSoft: 'bg-[#00a859]/10',
+      accentText: 'text-[#00a859]',
+      accentBorder: 'border-[#00a859]/25',
       glow: 'rgba(16, 185, 129, 0.45)',
       glowSoft: 'rgba(16, 185, 129, 0.12)',
-      ring: '#10b981',
+      ring: '#00a859',
       badge: 'References',
     },
     {
@@ -1250,35 +1340,35 @@ const AIToolsSection = () => {
       title: 'Pakistan Law Intelligence',
       description: 'Access AI-driven insights from Pakistan’s laws, precedents, and judicial trends. Get contextual analysis for faster, evidence-based legal research and decision-making.',
       features: ['Legal Insights', 'Law Analysis', 'Judicial Trends', 'Reasoning Support'],
-      gradient: 'from-[#0c9344] to-[#0c9344]',
-      accent: 'bg-[#0c9344]',
-      accentSoft: 'bg-[#0c9344]/10',
-      accentText: 'text-[#0c9344]',
-      accentBorder: 'border-[#0c9344]/25',
+      gradient: 'from-[#00a859] to-[#00a859]',
+      accent: 'bg-[#00a859]',
+      accentSoft: 'bg-[#00a859]/10',
+      accentText: 'text-[#00a859]',
+      accentBorder: 'border-[#00a859]/25',
       glow: 'rgba(16, 185, 129, 0.45)',
       glowSoft: 'rgba(16, 185, 129, 0.12)',
-      ring: '#10b981',
+      ring: '#00a859',
       badge: 'Intelligence',
     },
   ];
 
   const marqueeChips = [
-    { label: 'JudicialGPT AI Chatbot', star: 'text-[#0c9344]' },
+    { label: 'JudicialGPT AI Chatbot', star: 'text-[#00a859]' },
     { label: 'Case Prism — Research Tool', star: 'text-blue-500' },
     { label: 'Virtual Legal Consultant', star: 'text-violet-500' },
-    { label: 'Real-time Legal Updates', star: 'text-[#0c9344]' },
+    { label: 'Real-time Legal Updates', star: 'text-[#00a859]' },
     { label: 'Case Law Database', star: 'text-sky-500' },
     { label: 'NLP', star: 'text-amber-500' },
     { label: 'Contextual Understanding', star: 'text-rose-500' },
     { label: 'Advanced Search Filters', star: 'text-indigo-500' },
     { label: 'Citation Analysis', star: 'text-cyan-500' },
-    { label: 'Precedent Mapping', star: 'text-[#0c9344]' },
+    { label: 'Precedent Mapping', star: 'text-[#00a859]' },
     { label: 'Export Capabilities', star: 'text-orange-500' },
     { label: 'Outcome Prediction', star: 'text-violet-500' },
     { label: 'Strategy Suggestions', star: 'text-blue-600' },
     { label: 'Risk Assessment', star: 'text-rose-500' },
-    { label: 'Available 24/7', star: 'text-[#0c9344]' },
-    { label: 'PLG', star: 'text-[#0c9344]' },
+    { label: 'Available 24/7', star: 'text-[#00a859]' },
+    { label: 'PLG', star: 'text-[#00a859]' },
   ];
   const marqueeItems = [...marqueeChips, ...marqueeChips];
 
@@ -1300,13 +1390,13 @@ const AIToolsSection = () => {
           transition={{ duration: 0.6, ease: 'easeOut' }}
           className="max-w-3xl mb-10 lg:mb-12"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] mb-5 bg-[#0c9344]/10 text-[#0c9344] border border-[#0c9344]/25">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#0c9344] animate-pulse" />
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] mb-5 bg-[#00a859]/10 text-[#00a859] border border-[#00a859]/25">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00a859] animate-pulse" />
             AI Tools
           </div>
           <h2 className="font-heading text-4xl md:text-5xl lg:text-[3.15rem] font-semibold leading-[1.12] tracking-tight text-slate-900 mb-4">
             Integrated AI-Powered<br />
-            <span className="text-[#0c9344]">Legal Solutions</span>
+            <span className="text-[#00a859]">Legal Solutions</span>
           </h2>
           <p className="text-lg md:text-xl leading-[1.8] text-slate-500">
             Experience the power of AI tools designed specifically for legal professionals and individuals seeking legal guidance.
@@ -1322,18 +1412,18 @@ const AIToolsSection = () => {
             viewport={SCROLL_VIEWPORT}
             transition={{ duration: 0.5 }}
             whileHover={hasMounted ? cardHover(core.glow) : undefined}
-            className="lg:col-span-2 relative rounded-[1.75rem] border border-[#0c9344]/15 bg-white p-6 md:p-8 h-full"
+            className="lg:col-span-2 relative rounded-[1.75rem] border border-[#00a859]/15 bg-white p-6 md:p-8 h-full"
             style={{ boxShadow: `0 10px 40px ${core.glowSoft}` }}
           >
             <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[1.75rem]" aria-hidden>
-              <div className="absolute top-0 right-0 w-72 h-72 rounded-full bg-[#0c9344]/10 blur-3xl" />
+              <div className="absolute top-0 right-0 w-72 h-72 rounded-full bg-[#00a859]/10 blur-3xl" />
             </div>
             <div className="relative flex flex-col h-full min-h-[320px]">
               {/* Top: copy aligned to top */}
               <div className="flex flex-col gap-6 md:gap-8 items-start">
                 <div>
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0c9344]/10 border border-[#0c9344]/15 text-[#0c9344] text-[11px] font-bold uppercase tracking-wider mb-4 w-fit">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#0c9344]" />
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#00a859]/10 border border-[#00a859]/15 text-[#00a859] text-[11px] font-bold uppercase tracking-wider mb-4 w-fit">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#00a859]" />
                     {core.badge}
                   </div>
                   <h3 className="font-heading text-2xl md:text-3xl font-semibold text-slate-900 tracking-tight mb-3">
@@ -1373,7 +1463,7 @@ const AIToolsSection = () => {
                 style={{ boxShadow: `0 4px 20px ${tool.glowSoft}` }}
               >
                 <div className="flex items-start justify-between mb-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0c9344] to-[#0c9344] flex items-center justify-center shadow-md">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00a859] to-[#00a859] flex items-center justify-center shadow-md">
                     <tool.icon className="w-5 h-5 text-white" />
                   </div>
                   <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${tool.accentSoft} ${tool.accentText}`}>
@@ -1397,17 +1487,17 @@ const AIToolsSection = () => {
               viewport={SCROLL_VIEWPORT}
               transition={{ duration: 0.5, delay: i * 0.1 }}
               whileHover={hasMounted ? cardHover(tool.glow) : undefined}
-              className="group relative grid grid-rows-[auto_1fr_auto] h-full rounded-[1.5rem] border border-slate-200 hover:border-[#0c9344] bg-white px-5 py-6 overflow-hidden transition-colors duration-300"
+              className="group relative grid grid-rows-[auto_1fr_auto] h-full rounded-[1.5rem] border border-slate-200 hover:border-[#00a859] bg-white px-5 py-6 overflow-hidden transition-colors duration-300"
               style={{ boxShadow: `0 6px 22px rgba(16, 185, 129, 0.10)` }}
             >
               {/* Animated green bottom line */}
-              <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#0c9344] to-[#0c9344] scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left rounded-b-[1.5rem]" />
+              <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#00a859] to-[#00a859] scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left rounded-b-[1.5rem]" />
 
               <div className={`absolute left-0 top-4 bottom-4 w-1 rounded-full ${tool.accent}`} />
 
               {/* Row 1: header */}
               <div className="flex items-center gap-3 pb-4 min-h-[3rem]">
-                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#0c9344] to-[#0c9344] flex items-center justify-center shadow-md shrink-0">
+                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#00a859] to-[#00a859] flex items-center justify-center shadow-md shrink-0">
                   <tool.icon className="w-5 h-5 text-white" />
                 </div>
                 <div className="min-w-0">
@@ -1482,7 +1572,7 @@ const HowItWorksSection = () => {
 
         <div className="relative max-w-3xl mx-auto mt-20">
           {/* Vertical Line */}
-          <div className="absolute left-6 md:left-1/2 top-4 bottom-4 w-0.5 bg-[#0c9344]/25 -translate-x-1/2" />
+          <div className="absolute left-6 md:left-1/2 top-4 bottom-4 w-0.5 bg-[#00a859]/25 -translate-x-1/2" />
 
           <div className="space-y-16">
             {steps.map((step, i) => {
@@ -1505,7 +1595,7 @@ const HowItWorksSection = () => {
                   {/* Center Marker */}
                   <div className="absolute left-6 md:left-1/2 -translate-x-1/2 flex items-center justify-center">
                     <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-sm font-bold shadow-md transition-colors duration-300 ${isEven
-                      ? 'bg-[#0c9344] text-white shadow-[#0c9344]/25'
+                      ? 'bg-[#00a859] text-white shadow-[#00a859]/25'
                       : 'bg-slate-900 text-white shadow-slate-900/25'
                       }`}>
                       {step.number}
@@ -1547,7 +1637,7 @@ const PricingSection = () => {
       features: ['Unlimited AI queries', 'Advanced case research', 'Priority response time', 'Document analysis (50/mo)', 'Priority support', 'Multi-platform access', 'Export capabilities'],
       cta: 'Start Free Trial',
       popular: true,
-      accentGradient: 'from-[#0c9344] to-[#0c9344]',
+      accentGradient: 'from-[#00a859] to-[#00a859]',
     },
     {
       name: 'Enterprise',
@@ -1566,7 +1656,7 @@ const PricingSection = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           label="Pricing"
-          title={<>Simple, Transparent<br /><span className="text-[#0c9344]">Pricing Plans</span></>}
+          title={<>Simple, Transparent<br /><span className="text-[#00a859]">Pricing Plans</span></>}
           subtitle="Choose the plan that fits your needs. All plans include access to our core AI features with no hidden fees."
         />
 
@@ -1582,13 +1672,13 @@ const PricingSection = () => {
             >
               {plan.popular && (
                 <div className="absolute -top-4 inset-x-0 flex justify-center z-10">
-                  <span className="px-4 py-1.5 bg-gradient-to-r from-[#0c9344] to-[#0c9344] text-white text-xs font-bold rounded-full shadow-lg shadow-[#0c9344]/30 uppercase tracking-wide">
+                  <span className="px-4 py-1.5 bg-gradient-to-r from-[#00a859] to-[#00a859] text-white text-xs font-bold rounded-full shadow-lg shadow-[#00a859]/30 uppercase tracking-wide">
                     Most Popular
                   </span>
                 </div>
               )}
               <div className={`h-full rounded-3xl border overflow-hidden shadow-sm transition-all duration-300 ${plan.popular
-                ? 'border-[#0c9344] shadow-xl shadow-[#0c9344]/12 hover:shadow-[#0c9344]/20'
+                ? 'border-[#00a859] shadow-xl shadow-[#00a859]/12 hover:shadow-[#00a859]/20'
                 : 'border-slate-200 hover:border-slate-300 hover:shadow-md'
                 }`}>
                 <div className={`h-1.5 bg-gradient-to-r ${plan.accentGradient}`} />
@@ -1604,15 +1694,15 @@ const PricingSection = () => {
                   <ul className="space-y-3 mb-8 flex-1">
                     {plan.features.map((feat, fi) => (
                       <li key={fi} className="flex items-center gap-3 text-sm text-slate-600">
-                        <div className="w-5 h-5 rounded-full bg-[#0c9344]/15 flex items-center justify-center flex-shrink-0">
-                          <Check className="w-3 h-3 text-[#0c9344]" />
+                        <div className="w-5 h-5 rounded-full bg-[#00a859]/15 flex items-center justify-center flex-shrink-0">
+                          <Check className="w-3 h-3 text-[#00a859]" />
                         </div>
                         {feat}
                       </li>
                     ))}
                   </ul>
                   <button className={`w-full py-3.5 rounded-xl text-sm font-bold transition-all duration-300 ${plan.popular
-                    ? 'bg-gradient-to-r from-[#0c9344] to-[#0c9344] text-white shadow-md shadow-[#0c9344]/20 hover:shadow-[#0c9344]/40 hover:from-[#0c9344] hover:to-[#0c9344]'
+                    ? 'bg-gradient-to-r from-[#00a859] to-[#00a859] text-white shadow-md shadow-[#00a859]/20 hover:shadow-[#00a859]/40 hover:from-[#00a859] hover:to-[#00a859]'
                     : 'bg-slate-100 text-slate-900 hover:bg-slate-200'
                     }`}>
                     {plan.cta}
@@ -1638,7 +1728,7 @@ const StarRating = ({ rating, size = 'w-4 h-4' }: { rating: number; size?: strin
         <span key={i} className={`relative inline-block ${size}`}>
           <Star className={`${size} text-slate-200 fill-slate-200`} />
           <span className="absolute inset-y-0 left-0 overflow-hidden" style={{ width: `${fill * 100}%` }}>
-            <Star className={`${size} text-[#0c9344] fill-emerald-500`} />
+            <Star className={`${size} text-[#00a859] fill-emerald-500`} />
           </span>
         </span>
       );
@@ -1667,8 +1757,8 @@ const TestimonialsSection = () => {
 
   return (
     <section id="testimonials" className="relative py-6 lg:py-8 bg-[#F7FAF8] overflow-hidden">
-      <div className="absolute top-0 left-1/3 w-[420px] h-[420px] rounded-full bg-[#0c9344]/10 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 w-[360px] h-[360px] rounded-full bg-[#0c9344]/10 blur-3xl pointer-events-none" />
+      <div className="absolute top-0 left-1/3 w-[420px] h-[420px] rounded-full bg-[#00a859]/10 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-[360px] h-[360px] rounded-full bg-[#00a859]/10 blur-3xl pointer-events-none" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
@@ -1679,13 +1769,13 @@ const TestimonialsSection = () => {
           transition={{ duration: 0.6, ease: 'easeOut' }}
           className="text-center max-w-3xl mx-auto mb-12 lg:mb-16"
         >
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.16em] mb-6 bg-white text-[#0c9344] border border-[#0c9344]/25 shadow-sm">
-            <Sparkles className="w-3.5 h-3.5 text-[#0c9344]" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.16em] mb-6 bg-white text-[#00a859] border border-[#00a859]/25 shadow-sm">
+            <Sparkles className="w-3.5 h-3.5 text-[#00a859]" />
             Peer-Validated Intelligence
           </div>
           <h2 className="font-heading text-4xl sm:text-5xl md:text-[3.35rem] font-semibold text-slate-900 leading-[1.15] tracking-tight mb-5">
             Trusted by the{' '}
-            <span className="italic font-medium bg-gradient-to-r from-[#0c9344] via-[#0c9344] to-[#0c9344] bg-clip-text text-transparent">
+            <span className="italic font-medium bg-gradient-to-r from-[#00a859] via-[#00a859] to-[#00a859] bg-clip-text text-transparent">
               Highest Offices
             </span>
           </h2>
@@ -1708,14 +1798,14 @@ const TestimonialsSection = () => {
                 boxShadow: '0 16px 36px rgba(16, 185, 129, 0.20), 0 6px 16px rgba(16, 185, 129, 0.10)',
                 transition: { duration: 0.38, ease: [0.22, 1, 0.36, 1] },
               }}
-              className="group relative flex flex-col rounded-[1.25rem] border border-slate-100 hover:border-[#0c9344]/25 bg-white p-8 md:p-10 gap-6 h-full overflow-hidden"
+              className="group relative flex flex-col rounded-[1.25rem] border border-slate-100 hover:border-[#00a859]/25 bg-white p-8 md:p-10 gap-6 h-full overflow-hidden"
               style={{
                 boxShadow: '0 4px 18px rgba(16, 185, 129, 0.07)',
                 transition: 'box-shadow 0.38s ease, transform 0.38s ease',
               }}
             >
               {/* Animated green bottom line */}
-              <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#0c9344] to-[#0c9344] scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+              <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#00a859] to-[#00a859] scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
 
               <div className="flex items-center gap-1 shrink-0">
                 <StarRating rating={5} size="w-5 h-5" />
@@ -1724,7 +1814,7 @@ const TestimonialsSection = () => {
                 "{t.quote}"
               </p>
               <div className="flex items-center gap-4 mt-2 shrink-0">
-                <div className="w-11 h-11 rounded-full bg-[#10b981] flex items-center justify-center text-white font-bold text-[13px] shrink-0">
+                <div className="w-11 h-11 rounded-full bg-[#00a859] flex items-center justify-center text-white font-bold text-[13px] shrink-0">
                   {t.initials}
                 </div>
                 <p className="font-heading font-semibold text-slate-800 text-sm">{t.name}</p>
@@ -1809,7 +1899,7 @@ const AnimatedMissionChatWidget = () => {
   }, [convoIndex]);
 
   return (
-    <div className="relative w-full max-w-2xl xl:max-w-3xl mx-auto bg-slate-900 backdrop-blur-xl border border-slate-800 rounded-[2rem] p-8 md:p-10 shadow-2xl shadow-[#0c9344]/15 text-left">
+    <div className="relative w-full max-w-2xl xl:max-w-3xl mx-auto bg-slate-900 backdrop-blur-xl border border-slate-800 rounded-[2rem] p-8 md:p-10 shadow-2xl shadow-[#00a859]/15 text-left">
       <div className="absolute inset-0 bg-[radial-gradient(#ffffff1a_1px,transparent_1px)] [background-size:24px_24px] rounded-[2rem] opacity-20" />
 
       <div className="relative z-10 flex flex-col gap-8 min-h-[440px] overflow-hidden">
@@ -1820,7 +1910,7 @@ const AnimatedMissionChatWidget = () => {
           <div className="flex-1 text-slate-800 font-medium text-lg md:text-xl min-h-[2rem] flex items-center">
             <span className="whitespace-pre-wrap leading-snug">
               {typedText}
-              {!showResponse && <span className="w-0.5 h-6 bg-[#0c9344] animate-pulse ml-0.5 inline-block align-middle" />}
+              {!showResponse && <span className="w-0.5 h-6 bg-[#00a859] animate-pulse ml-0.5 inline-block align-middle" />}
             </span>
           </div>
 
@@ -1857,13 +1947,13 @@ const AnimatedMissionChatWidget = () => {
                 className="flex flex-col gap-5"
               >
                 <div className="flex items-start gap-5">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0c9344] to-[#0c9344] flex items-center justify-center shrink-0 shadow-lg shadow-[#0c9344]/30">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#00a859] to-[#00a859] flex items-center justify-center shrink-0 shadow-lg shadow-[#00a859]/30">
                     <Scale className="w-6 h-6 text-white" />
                   </div>
                   <div className="bg-white/10 backdrop-blur-md border border-white/10 text-white text-lg md:text-xl leading-relaxed p-6 md:p-8 rounded-2xl rounded-tl-sm shadow-inner min-h-[6rem]">
                     {responseStream}
                     {responseStream.length < conversations[convoIndex].response.length && (
-                      <span className="w-2 h-5 bg-[#0c9344] animate-pulse ml-1 inline-block align-middle" />
+                      <span className="w-2 h-5 bg-[#00a859] animate-pulse ml-1 inline-block align-middle" />
                     )}
                   </div>
                 </div>
@@ -1890,13 +1980,13 @@ const AboutSection = () => (
           viewport={SCROLL_VIEWPORT}
           transition={{ duration: 0.6, ease: 'easeOut' }}
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] bg-[#0c9344]/10 text-[#0c9344] border border-[#0c9344]/25 mb-5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#0c9344]" />
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] bg-[#00a859]/10 text-[#00a859] border border-[#00a859]/25 mb-5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00a859]" />
             Our Mission
           </div>
           <h2 className="font-heading text-4xl md:text-5xl lg:text-[3.15rem] font-semibold text-slate-900 leading-[1.12] mb-6">
             Making Legal Help<br />
-            <span className="text-[#0c9344]">Accessible to All</span>
+            <span className="text-[#00a859]">Accessible to All</span>
           </h2>
           <p className="text-slate-500 text-lg leading-relaxed mb-4">
             We believe that everyone deserves access to quality legal assistance. Our mission is to democratize legal knowledge by leveraging cutting-edge AI technology to make legal research, consultation, and document analysis accessible and affordable for everyone.
@@ -1911,9 +2001,9 @@ const AboutSection = () => (
               { icon: Target, label: 'Highest Benchmark' },
               { icon: Users, label: 'Expert Support' },
             ].map((item, i) => (
-              <div key={i} className="flex items-center gap-3 p-3.5 bg-slate-50 rounded-xl border border-slate-100 hover:border-[#0c9344]/25 hover:bg-[#0c9344]/10/40 transition-all duration-200">
-                <div className="w-9 h-9 rounded-lg bg-[#0c9344]/15 flex items-center justify-center flex-shrink-0">
-                  <item.icon className="w-4 h-4 text-[#0c9344]" />
+              <div key={i} className="flex items-center gap-3 p-3.5 bg-slate-50 rounded-xl border border-slate-100 hover:border-[#00a859]/25 hover:bg-[#00a859]/10/40 transition-all duration-200">
+                <div className="w-9 h-9 rounded-lg bg-[#00a859]/15 flex items-center justify-center flex-shrink-0">
+                  <item.icon className="w-4 h-4 text-[#00a859]" />
                 </div>
                 <span className="text-slate-800 font-semibold text-sm">{item.label}</span>
               </div>
@@ -1929,7 +2019,7 @@ const AboutSection = () => (
           transition={{ duration: 0.6, delay: 0.1, ease: 'easeOut' }}
           className="relative lg:pl-10"
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-[#0c9344]/20 to-[#0c9344]/10 rounded-3xl blur-3xl" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#00a859]/20 to-[#00a859]/10 rounded-3xl blur-3xl" />
           <div className="relative">
             <AnimatedMissionChatWidget />
           </div>
@@ -1949,8 +2039,8 @@ const IntelligenceDashboardSection = () => {
   const isInView = hasMounted && inView;
 
   const integrity = [
-    { label: 'Highest Benchmark', value: 96, color: 'from-[#0c9344] to-[#0c9344]' },
-    { label: 'Privacy First', value: 98, color: 'from-[#0c9344] to-cyan-500' },
+    { label: 'Highest Benchmark', value: 96, color: 'from-[#00a859] to-[#00a859]' },
+    { label: 'Privacy First', value: 98, color: 'from-[#00a859] to-cyan-500' },
     { label: 'Expert Support', value: 92, color: 'from-blue-500 to-indigo-500' },
     { label: '24/7 Available', value: 99, color: 'from-violet-500 to-purple-500' },
   ];
@@ -1962,7 +2052,7 @@ const IntelligenceDashboardSection = () => {
   const integrityValues = [i0, i1, i2, i3];
 
   const distribution = [
-    { label: 'Legal Research', pct: 36, color: '#10b981' },
+    { label: 'Legal Research', pct: 36, color: '#00a859' },
     { label: 'Case Analysis', pct: 30, color: '#14b8a6' },
     { label: 'Document Review', pct: 20, color: '#3b82f6' },
     { label: 'Legal Analysis', pct: 14, color: '#8b5cf6' },
@@ -1973,8 +2063,8 @@ const IntelligenceDashboardSection = () => {
       title: 'JudicialGPT AI Chatbot',
       badge: 'Core Tool',
       status: 'Active',
-      statusColor: 'bg-[#0c9344]/10 text-[#0c9344] border-[#0c9344]/25',
-      accent: 'bg-[#0c9344]',
+      statusColor: 'bg-[#00a859]/10 text-[#00a859] border-[#00a859]/25',
+      accent: 'bg-[#00a859]',
       text: 'Our AI chatbot is trained on an extensive database of legal cases and can fetch real-time updates including new judgments and amendments.',
     },
     {
@@ -2049,8 +2139,8 @@ const IntelligenceDashboardSection = () => {
       id="intelligence"
       className="py-6 lg:py-8 bg-[#F7FAF8] relative overflow-hidden"
     >
-      <div className="absolute top-0 right-0 w-[420px] h-[420px] rounded-full bg-[#0c9344]/10 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[360px] h-[360px] rounded-full bg-[#0c9344]/10 blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-0 w-[420px] h-[420px] rounded-full bg-[#00a859]/10 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[360px] h-[360px] rounded-full bg-[#00a859]/10 blur-3xl pointer-events-none" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
@@ -2061,13 +2151,13 @@ const IntelligenceDashboardSection = () => {
           transition={{ duration: 0.6, ease: 'easeOut' }}
           className="max-w-2xl mb-10 lg:mb-12"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] mb-5 bg-[#0c9344]/10 text-[#0c9344] border border-[#0c9344]/25">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#0c9344] animate-pulse" />
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] mb-5 bg-[#00a859]/10 text-[#00a859] border border-[#00a859]/25">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00a859] animate-pulse" />
             AI-Powered Legal Intelligence Platform
           </div>
           <h2 className="font-heading text-4xl md:text-5xl lg:text-[3.15rem] font-semibold leading-[1.12] tracking-tight text-slate-900 mb-4">
             Legal Intelligence<br />
-            <span className="text-[#0c9344]">Dashboard</span>
+            <span className="text-[#00a859]">Dashboard</span>
           </h2>
           <p className="text-lg leading-relaxed text-slate-500">
             Experience the power of AI tools designed specifically for legal professionals and individuals seeking legal guidance.
@@ -2083,7 +2173,7 @@ const IntelligenceDashboardSection = () => {
             viewport={SCROLL_VIEWPORT}
             transition={{ duration: 0.5 }}
             whileHover={cardHover('rgba(16, 185, 129, 0.28)')}
-            className="lg:col-span-2 relative rounded-[1.75rem] border border-[#0c9344]/15 bg-white p-6 md:p-8 overflow-hidden"
+            className="lg:col-span-2 relative rounded-[1.75rem] border border-[#00a859]/15 bg-white p-6 md:p-8 overflow-hidden"
             style={{ boxShadow: '0 10px 36px rgba(16, 185, 129, 0.08)' }}
           >
             <div className="flex flex-wrap items-start justify-between gap-4 mb-5">
@@ -2091,15 +2181,15 @@ const IntelligenceDashboardSection = () => {
                 <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400 mb-2">Documents Analyzed</p>
                 <div className="flex items-end gap-3">
                   <span className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">2.4M</span>
-                  <span className="text-sm font-semibold text-[#0c9344] mb-1.5">Legal Documents</span>
+                  <span className="text-sm font-semibold text-[#00a859] mb-1.5">Legal Documents</span>
                 </div>
               </div>
               <div className="flex items-center gap-4 text-xs font-medium text-slate-500">
                 <span className="inline-flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-[#0c9344]" /> Legal Research
+                  <span className="w-2 h-2 rounded-full bg-[#00a859]" /> Legal Research
                 </span>
                 <span className="inline-flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-[#0c9344]" /> Case Analysis
+                  <span className="w-2 h-2 rounded-full bg-[#00a859]" /> Case Analysis
                 </span>
               </div>
             </div>
@@ -2114,8 +2204,8 @@ const IntelligenceDashboardSection = () => {
               >
                 <defs>
                   <linearGradient id="intelArea" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#10b981" stopOpacity="0.22" />
-                    <stop offset="100%" stopColor="#10b981" stopOpacity="0" />
+                    <stop offset="0%" stopColor="#00a859" stopOpacity="0.22" />
+                    <stop offset="100%" stopColor="#00a859" stopOpacity="0" />
                   </linearGradient>
                   <clipPath id="intelClip">
                     <motion.rect
@@ -2173,7 +2263,7 @@ const IntelligenceDashboardSection = () => {
                   <path
                     d={researchPath}
                     fill="none"
-                    stroke="#10b981"
+                    stroke="#00a859"
                     strokeWidth="3"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -2198,7 +2288,7 @@ const IntelligenceDashboardSection = () => {
                       cy={c.y}
                       r="4.5"
                       fill="#fff"
-                      stroke="#10b981"
+                      stroke="#00a859"
                       strokeWidth="2.5"
                     />
                   ))}
@@ -2259,7 +2349,7 @@ const IntelligenceDashboardSection = () => {
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-extrabold text-slate-900">System Integrity</h3>
-                <Target className="w-4 h-4 text-[#0c9344]" />
+                <Target className="w-4 h-4 text-[#00a859]" />
               </div>
               <div className="space-y-3.5">
                 {integrity.map((item, i) => (
@@ -2290,7 +2380,7 @@ const IntelligenceDashboardSection = () => {
               viewport={SCROLL_VIEWPORT}
               transition={{ duration: 0.5, delay: 0.14 }}
               whileHover={cardHover('rgba(16, 185, 129, 0.28)')}
-              className="rounded-[1.5rem] border border-[#0c9344]/15 bg-white p-5 md:p-6"
+              className="rounded-[1.5rem] border border-[#00a859]/15 bg-white p-5 md:p-6"
               style={{ boxShadow: '0 8px 24px rgba(16, 185, 129, 0.10)' }}
             >
               <div className="flex items-start justify-between mb-3">
@@ -2298,15 +2388,15 @@ const IntelligenceDashboardSection = () => {
                   <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">Platform Status</p>
                   <h3 className="text-2xl font-black text-slate-900">Operational</h3>
                 </div>
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0c9344] to-[#0c9344] flex items-center justify-center shadow-md">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00a859] to-[#00a859] flex items-center justify-center shadow-md">
                   <ShieldCheck className="w-5 h-5 text-white" />
                 </div>
               </div>
               <p className="text-sm text-slate-500 leading-relaxed mb-4">
                 24/7 AI Availability — secure and confidential assistance for every legal query.
               </p>
-              <div className="flex items-center gap-2 text-xs font-semibold text-[#0c9344]">
-                <span className="w-2 h-2 rounded-full bg-[#0c9344] animate-pulse" />
+              <div className="flex items-center gap-2 text-xs font-semibold text-[#00a859]">
+                <span className="w-2 h-2 rounded-full bg-[#00a859] animate-pulse" />
                 Highest Accuracy Rate
               </div>
             </motion.div>
@@ -2384,7 +2474,7 @@ const IntelligenceDashboardSection = () => {
           >
             <div className="flex items-center justify-between mb-5">
               <h3 className="text-base font-extrabold text-slate-900">Critical AI Insights</h3>
-              <Sparkles className="w-4 h-4 text-[#0c9344]" />
+              <Sparkles className="w-4 h-4 text-[#00a859]" />
             </div>
             <div className="space-y-4">
               {insights.map((item) => (
@@ -2414,98 +2504,326 @@ const IntelligenceDashboardSection = () => {
 };
 
 
-// TEAM SECTION
 // ============================================================================
-const TeamSection = () => {
-  const teamMembers = [
-    { name: 'Prof. Dr. M. Usman Ghani Khan', role: 'Founder', badge: 'Founder', bio: 'Founded JudicialGPT to make quality legal assistance accessible through AI. Sets company strategy, product vision, and partnerships while guiding the team to build trustworthy legal technology.', photoUrl: '/DR_Usman.jpeg', gradient: 'from-[#0c9344] to-[#0c9344]', initials: 'UG' },
-    { name: 'Ayesha Azam', role: 'Team Lead', badge: 'Leadership', bio: 'Coordinates engineering delivery, sprint planning, and cross-functional collaboration to ship reliable AI-powered legal features on time and at scale.', photoUrl: '/Ayesha.png', gradient: 'from-[#0c9344] to-[#0c9344]', initials: 'AA' },
-    { name: 'Syed Ali Hassan', role: 'Lead Developer / AI Engineer', badge: 'Engineering & AI', bio: 'Architects the full-stack platform and fine-tunes AI models for legal document analysis, case summarization, and intelligent query responses.', photoUrl: '/ali.jpg', gradient: 'from-blue-500 to-indigo-600', initials: 'AH' },
-    { name: 'Laiba Saleem', role: 'Data Analyst', badge: 'Data & Analytics', bio: 'Analyzes user engagement metrics, legal dataset patterns, and AI model performance to drive data-informed product decisions and improvements.', photoUrl: '/laiba.png', gradient: 'from-rose-500 to-pink-600', initials: 'LS' },
-    { name: 'Zubaid Rasool', role: 'Full-Stack & DevOps Engineer', badge: 'Dev & DevOps', bio: 'Builds and maintains frontend and backend features while managing CI/CD pipelines, server infrastructure, and deployment workflows on the cloud.', photoUrl: '/Zubaid.png', gradient: 'from-purple-500 to-violet-600', initials: 'ZR' },
-    { name: 'Dr. Abdul Nasir', role: 'Legal Domain Expert', badge: 'Domain Expert', bio: "A legal practitioner for providing judicial domain expertise to validate legal accuracy, guide court-relevant content, and ensure JudicialGPT meets professional standards.", photoUrl: '/dr_abdul_nasir.jpg', icon: Scale, gradient: 'from-amber-500 to-orange-600', initials: 'AN' },
-  ];
+// TEAM SECTION — Matches Reference Design with Interactive Spotlight Card
+// ============================================================================
+const CornerFiligree = ({ position }: { position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' }) => {
+  const rotation = {
+    'top-left': '',
+    'top-right': 'rotate-90',
+    'bottom-left': '-rotate-90',
+    'bottom-right': 'rotate-180',
+  }[position];
+
+  const posClass = {
+    'top-left': 'top-2.5 left-2.5',
+    'top-right': 'top-2.5 right-2.5',
+    'bottom-left': 'bottom-2.5 left-2.5',
+    'bottom-right': 'bottom-2.5 right-2.5',
+  }[position];
 
   return (
-    <section id="team" className="relative py-6 lg:py-8 bg-slate-50 border-t border-slate-200">
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center mb-6 lg:mb-8 flex flex-col items-center">
+    <div className={`absolute ${posClass} ${rotation} pointer-events-none text-[#d4af37]`}>
+      <svg className="w-5 h-5 opacity-80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <path d="M4 12V4h8" />
+        <path d="M4 4l6 6" />
+        <circle cx="8" cy="8" r="1.5" fill="currentColor" />
+      </svg>
+    </div>
+  );
+};
+
+const FOUNDER_MEMBER = {
+  id: 'usman',
+  name: 'Prof. Dr. M. Usman Ghani Khan',
+  role: 'Founder',
+  badge: 'FOUNDER',
+  tag: 'Founder & Vision',
+  icon: Landmark,
+  bio: 'Founded JudicialGPT to make quality legal assistance accessible through AI. Sets company strategy, product vision, and partnerships while guiding the team to build trustworthy and impactful solutions.',
+  photoUrl: '/DR_Usman.jpeg',
+};
+
+const OTHER_MEMBERS = [
+  {
+    id: 'ayesha',
+    name: 'Ayesha Azam',
+    role: 'Team Lead',
+    badge: 'TEAM LEAD',
+    tag: 'Leadership & Strategy',
+    icon: Users,
+    bio: 'Coordinates engineering delivery, sprint planning, and cross-functional collaboration to ship reliable AI-powered legal features on time and at scale.',
+    photoUrl: '/Ayesha.png',
+  },
+  {
+    id: 'ali',
+    name: 'Syed Ali Hassan',
+    role: 'Lead Developer / AI Engineer',
+    badge: 'LEAD DEVELOPER / AI ENGINEER',
+    tag: 'AI Engineering & Development',
+    icon: Code,
+    bio: 'Architects the full-stack platform and fine-tunes AI models for legal document analysis, case summarization, and intelligent query responses.',
+    photoUrl: '/ali.jpg',
+  },
+  {
+    id: 'laiba',
+    name: 'Laiba Saleem',
+    role: 'Data Analyst',
+    badge: 'DATA ANALYST',
+    tag: 'Data Analysis & Insights',
+    icon: BarChart3,
+    bio: 'Analyzes user engagement metrics, legal dataset patterns, and AI model performance to drive data-informed product decisions and improvements.',
+    photoUrl: '/laiba.png',
+  },
+  {
+    id: 'zubaid',
+    name: 'Zubaid Rasool',
+    role: 'Full-Stack & DevOps Engineer',
+    badge: 'FULL-STACK & DEVOPS',
+    tag: 'Full-Stack & DevOps',
+    icon: Cloud,
+    bio: 'Builds and maintains frontend and backend features while managing CI/CD pipelines, server infrastructure, and deployment workflows on the cloud.',
+    photoUrl: '/Zubaid.png',
+  },
+  {
+    id: 'nasir',
+    name: 'Dr. Abdul Nasir',
+    role: 'Legal Domain Expert',
+    badge: 'LEGAL DOMAIN EXPERT',
+    tag: 'Legal Research & Domain Expertise',
+    icon: Scale,
+    bio: 'A legal practitioner providing judicial domain expertise to validate legal accuracy, guide court-relevant content, and ensure JudicialGPT meets professional standards.',
+    photoUrl: '/dr_abdul_nasir.jpg',
+  },
+];
+
+const TeamSection = () => {
+  const [expandedMemberId, setExpandedMemberId] = useState<string | null>(null);
+
+  const toggleExpand = (id: string) => {
+    setExpandedMemberId((prev) => (prev === id ? null : id));
+  };
+
+  return (
+    <section id="team" className="relative py-12 sm:py-16 bg-[#FBFBFA] border-t border-slate-200/80 overflow-hidden">
+      {/* Background laurel subtle watermark */}
+      <div className="absolute top-6 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-gradient-to-b from-[#0c7a4b]/5 to-transparent rounded-full blur-3xl pointer-events-none" />
+
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header matching reference */}
+        <div className="text-center mb-10 sm:mb-12 flex flex-col items-center">
           <motion.div
-            initial={{ opacity: 0, y: 32 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={SCROLL_VIEWPORT}
+            transition={{ duration: 0.5 }}
             className="flex flex-col items-center"
           >
-            <div className="mb-4 bg-white p-3 rounded-2xl shadow-sm border border-slate-200 inline-flex items-center justify-center">
-              <Users className="w-8 h-8 text-slate-700" />
+            {/* Top gold scales icon */}
+            <div className="text-[#b89548] mb-1.5 flex items-center justify-center">
+              <Scale className="w-5 h-5 stroke-[2]" />
             </div>
-            <h2 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight">
+
+            {/* Eyebrow with gold bars and dots */}
+            <div className="flex items-center justify-center gap-2 sm:gap-2.5 text-[9.5px] sm:text-[10.5px] font-bold uppercase tracking-[0.2em] text-[#054332] mb-2">
+              <span className="w-6 sm:w-10 h-[1.5px] bg-[#b89548]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#b89548]" />
+              <span>THE PEOPLE BEHIND JUDICIALGPT</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#b89548]" />
+              <span className="w-6 sm:w-10 h-[1.5px] bg-[#b89548]" />
+            </div>
+
+            {/* Main title */}
+            <h2 className="font-hero-serif text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 tracking-tight">
               Meet Our Team
             </h2>
+
+            {/* Gold ornate flourish */}
+            <div className="flex items-center justify-center gap-2 text-[#b89548] mt-2.5">
+              <span className="w-10 h-[1px] bg-[#b89548]/50" />
+              <span className="text-[10px]">❖</span>
+              <span className="w-10 h-[1px] bg-[#b89548]/50" />
+            </div>
           </motion.div>
         </div>
 
-        {/* Responsive Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 justify-items-center">
-          {teamMembers.map((member, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={SCROLL_VIEWPORT}
-              transition={{ delay: idx * 0.1, duration: 0.5 }}
-              className="group relative w-full max-w-[420px] h-[164px] shrink-0 rounded-[4rem] bg-white shadow-sm hover:shadow-md border border-slate-200 overflow-hidden cursor-pointer flex items-center p-3 transition-shadow duration-300"
-            >
-              {/* Default State - Image & Basic Info */}
-              <div className="flex items-center gap-4 w-full h-full relative z-10">
-                {/* Circular Avatar */}
-                <div className="w-[116px] h-[116px] shrink-0 rounded-full overflow-hidden border border-slate-100 shadow-sm bg-slate-100">
-                  {member.photoUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={member.photoUrl} alt={member.name} className="w-full h-full object-cover object-top" />
-                  ) : (
-                    <div className={`w-full h-full flex items-center justify-center bg-gradient-to-br ${member.gradient}`}>
-                      <span className="text-3xl font-black text-white">{member.initials}</span>
-                    </div>
-                  )}
-                </div>
-                {/* Basic Info */}
-                <div className="flex flex-col min-w-0 pr-4">
-                  <h3 className="text-[17px] md:text-lg font-bold text-slate-900 leading-tight mb-1 text-balance">{member.name}</h3>
-                  <p className="text-slate-500 text-[13px] md:text-sm font-medium leading-snug">{member.role}</p>
-                </div>
-              </div>
+        {/* Main Content Layout: Left Founder Card + Right 5-Card Grid */}
+        <div className="flex flex-col lg:flex-row gap-4 sm:gap-5 items-stretch justify-center">
+          
+          {/* Left Column: Fixed Founder Green Card (Proportional & Spans Full Height) */}
+          <div className="w-full lg:w-[270px] xl:w-[285px] shrink-0 flex">
+            <div className="relative rounded-[22px] bg-gradient-to-b from-[#054332] via-[#043d2d] to-[#02281e] p-2.5 shadow-[0_16px_40px_rgba(4,61,45,0.22)] border-2 border-[#b89548]/40 w-full flex flex-col justify-between overflow-hidden">
+              {/* Gold Corner Filigrees */}
+              <CornerFiligree position="top-left" />
+              <CornerFiligree position="top-right" />
+              <CornerFiligree position="bottom-left" />
+              <CornerFiligree position="bottom-right" />
 
-              {/* Hover Overlay (Slides from left) */}
-              <div className="absolute inset-0 bg-[#0c9344]/90 backdrop-blur-sm transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out z-20 pointer-events-none rounded-[4rem]" />
-
-              {/* Hover Content (Fades in) — starts from left with the avatar visible */}
-              <div className="absolute inset-0 z-30 flex items-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-[50ms] pl-4 pr-5 py-4 pointer-events-auto gap-4">
-                {/* Avatar stays visible on hover */}
-                <div className="w-[108px] h-[108px] shrink-0 rounded-full overflow-hidden border-2 border-white/40 shadow-md bg-slate-100">
-                  {member.photoUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={member.photoUrl} alt={member.name} className="w-full h-full object-cover object-top" />
-                  ) : (
-                    <div className={`w-full h-full flex items-center justify-center bg-gradient-to-br ${member.gradient}`}>
-                      <span className="text-2xl font-black text-white">{member.initials}</span>
+              {/* Inner container */}
+              <div className="border border-[#b89548]/35 rounded-[18px] p-4 sm:p-5 flex flex-col items-center text-center relative z-10 h-full justify-between">
+                <div className="flex flex-col items-center w-full my-auto">
+                  {/* Founder avatar photo */}
+                  <div className="relative mb-3">
+                    <div className="w-28 h-28 sm:w-30 sm:h-30 rounded-full overflow-hidden border-2 border-[#b89548]/70 shadow-xl bg-slate-900 p-0.5">
+                      <img
+                        src={FOUNDER_MEMBER.photoUrl}
+                        alt={FOUNDER_MEMBER.name}
+                        className="w-full h-full object-cover object-top rounded-full"
+                      />
                     </div>
-                  )}
-                </div>
-                {/* Text content */}
-                <div className="flex flex-col h-full justify-center min-w-0 flex-1">
-                  <p className="text-white font-bold text-[14px] leading-tight mb-0.5">{member.name}</p>
-                  <p className="text-white/80 text-[12px] font-semibold mb-2 leading-snug">{member.role}</p>
-                  <div className="overflow-y-auto flex-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                    <p className="text-white/90 text-[12px] leading-relaxed text-pretty pb-1">
-                      {member.bio}
-                    </p>
                   </div>
+
+                  {/* Emblem */}
+                  <div className="flex items-center justify-center text-[#d4af37] mb-1.5">
+                    <div className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#b89548]/15 border border-[#b89548]/30">
+                      <Landmark className="w-3.5 h-3.5 text-[#d4af37]" />
+                    </div>
+                  </div>
+
+                  {/* Founder Name */}
+                  <h3 className="font-hero-serif text-lg sm:text-[19px] font-bold text-white tracking-tight leading-snug mb-0.5">
+                    {FOUNDER_MEMBER.name}
+                  </h3>
+
+                  {/* Role / Badge */}
+                  <div className="text-[#d4af37] text-[10px] font-bold tracking-[0.2em] uppercase mb-2 flex items-center gap-1.5">
+                    <span className="w-2.5 h-[1px] bg-[#d4af37]/60" />
+                    <span>{FOUNDER_MEMBER.badge}</span>
+                    <span className="w-2.5 h-[1px] bg-[#d4af37]/60" />
+                  </div>
+
+                  {/* Divider */}
+                  <div className="w-12 h-[1px] bg-[#b89548]/40 mb-2.5 mx-auto" />
+
+                  {/* Founder Bio Description */}
+                  <p className="text-white/85 text-[11px] sm:text-[11.5px] leading-relaxed font-sans text-center">
+                    {FOUNDER_MEMBER.bio}
+                  </p>
                 </div>
               </div>
-            </motion.div>
-          ))}
+            </div>
+          </div>
+
+          {/* Right Column: 5 Member Cards Grid (Exact 3-Col Layout: Row 1 has 3 cards, Row 2 has 2 cards) */}
+          <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {OTHER_MEMBERS.map((member) => {
+              const IconComponent = member.icon;
+              const isExpanded = expandedMemberId === member.id;
+
+              return (
+                <motion.div
+                  key={member.id}
+                  whileHover={{ y: -3 }}
+                  className="group relative rounded-[20px] bg-white border border-slate-100/90 p-4 sm:p-4.5 flex flex-col items-center text-center transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-lg overflow-hidden min-h-[235px] max-h-[245px] justify-between cursor-pointer"
+                  onClick={() => toggleExpand(member.id)}
+                >
+                  {/* ── DEFAULT STATE (Exact Match to Reference Picture) ── */}
+                  <div className="flex flex-col items-center w-full h-full justify-between">
+                    {/* Plus (+) Action Button on Top Right */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleExpand(member.id);
+                      }}
+                      aria-label={`View details of ${member.name}`}
+                      className={`absolute top-2.5 right-2.5 w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200 shadow-sm z-10 ${
+                        isExpanded
+                          ? 'bg-[#0c7a4b] text-white'
+                          : 'bg-[#0c7a4b]/10 text-[#0c7a4b] hover:bg-[#0c7a4b] hover:text-white'
+                      }`}
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                    </button>
+
+                    {/* Avatar with circular ring */}
+                    <div className="relative mb-2">
+                      <div className="w-20 h-20 sm:w-[84px] sm:h-[84px] rounded-full overflow-hidden border border-[#0c7a4b]/25 shadow-sm bg-slate-50 p-0.5">
+                        <img
+                          src={member.photoUrl}
+                          alt={member.name}
+                          className="w-full h-full object-cover object-top rounded-full"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Name */}
+                    <h3 className="font-hero-serif text-[14.5px] sm:text-[15px] font-bold text-slate-900 leading-snug group-hover:text-[#0c7a4b] transition-colors">
+                      {member.name}
+                    </h3>
+
+                    {/* Role */}
+                    <p className="text-[11px] sm:text-[11.5px] text-slate-500 font-medium mt-0.5 mb-2">
+                      {member.role}
+                    </p>
+
+                    {/* Tag pill at bottom */}
+                    <div className="mt-auto px-2.5 py-0.5 rounded-full bg-[#0c7a4b]/8 border border-[#0c7a4b]/15 text-[#0c7a4b] text-[10px] sm:text-[10.5px] font-semibold flex items-center gap-1">
+                      <IconComponent className="w-3 h-3 shrink-0" />
+                      <span>{member.tag}</span>
+                    </div>
+                  </div>
+
+                  {/* ── EXPANDED / HOVER GREEN OVERLAY ── */}
+                  <div
+                    className={`absolute inset-0 bg-gradient-to-b from-[#054332] via-[#043d2d] to-[#02281e] p-3.5 flex flex-col items-center justify-between text-center z-20 transition-all duration-300 ease-out border-2 border-[#b89548]/40 ${
+                      isExpanded
+                        ? 'opacity-100 translate-y-0 pointer-events-auto'
+                        : 'opacity-0 translate-y-full group-hover:translate-y-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto'
+                    }`}
+                  >
+                    {/* Corner filigrees */}
+                    <CornerFiligree position="top-left" />
+                    <CornerFiligree position="top-right" />
+                    <CornerFiligree position="bottom-left" />
+                    <CornerFiligree position="bottom-right" />
+
+                    {/* Close button */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setExpandedMemberId(null);
+                      }}
+                      className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-white/15 text-[#d4af37] hover:bg-white/25 flex items-center justify-center transition-colors z-30"
+                      title="Close"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+
+                    {/* Compact Member Header */}
+                    <div className="flex items-center gap-2 w-full pr-5 pt-0.5">
+                      <div className="w-9 h-9 rounded-full overflow-hidden border border-[#b89548]/60 shrink-0 shadow-md">
+                        <img src={member.photoUrl} alt={member.name} className="w-full h-full object-cover object-top" />
+                      </div>
+                      <div className="text-left min-w-0">
+                        <h4 className="font-hero-serif text-xs sm:text-[13px] font-bold text-white truncate leading-tight">
+                          {member.name}
+                        </h4>
+                        <p className="text-[#d4af37] text-[9.5px] font-bold uppercase tracking-wider truncate">
+                          {member.role}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Bio Description */}
+                    <div className="my-auto py-1 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden max-h-[110px]">
+                      <p className="text-white/90 text-[10px] sm:text-[10.5px] leading-snug font-sans text-left">
+                        {member.bio}
+                      </p>
+                    </div>
+
+                    {/* Bottom Tag */}
+                    <div className="px-2.5 py-0.5 rounded-full bg-[#b89548]/15 border border-[#b89548]/30 text-[#d4af37] text-[9.5px] font-semibold flex items-center gap-1 shrink-0">
+                      <IconComponent className="w-2.5 h-2.5" />
+                      <span>{member.tag}</span>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+
         </div>
       </div>
     </section>
@@ -2528,7 +2846,7 @@ const CTASection = () => {
           className="relative rounded-3xl overflow-hidden"
         >
           {/* Background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-[#0c9344] via-[#0c9344] to-[#0c9344]" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#00a859] via-[#00a859] to-[#00a859]" />
           <div className="absolute inset-0"
             style={{
               backgroundImage: `radial-gradient(circle at 2px 2px, rgba(255,255,255,0.07) 1px, transparent 0)`,
@@ -2565,7 +2883,7 @@ const CTASection = () => {
                 onClick={() => router.push('/signup')}
                 whileHover={{ scale: 1.04, boxShadow: '0 20px 48px rgba(16, 185, 129, 0.35)' }}
                 whileTap={{ scale: 0.96 }}
-                className="px-8 py-4 bg-white text-[#0c9344] font-extrabold rounded-xl text-base flex items-center gap-3 shadow-xl"
+                className="px-8 py-4 bg-white text-[#00a859] font-extrabold rounded-xl text-base flex items-center gap-3 shadow-xl"
               >
                 Get Started Free
                 <ArrowRight className="w-4 h-4" />
@@ -2610,7 +2928,7 @@ const VideoSection = () => {
             className="relative"
           >
             {/* Decorative background glows behind video */}
-            <div className="absolute -inset-4 bg-gradient-to-tr from-[#0c9344]/20 to-[#0c9344]/20 blur-2xl rounded-[2.5rem]" />
+            <div className="absolute -inset-4 bg-gradient-to-tr from-[#00a859]/20 to-[#00a859]/20 blur-2xl rounded-[2.5rem]" />
 
             <div className="relative rounded-3xl overflow-hidden border border-white/60 shadow-2xl shadow-slate-900/10 bg-white/50 backdrop-blur-md">
               <div className="relative w-full pb-[56.25%]"> {/* 16:9 Aspect Ratio */}
@@ -2623,7 +2941,7 @@ const VideoSection = () => {
                   src="https://assets.mixkit.co/videos/preview/mixkit-abstract-technology-network-connection-background-24624-large.mp4"
                 />
                 {/* Glassmorphism overlay gradient on video to make it premium */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-[#0c9344]/20 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-tr from-[#00a859]/20 to-transparent pointer-events-none" />
               </div>
             </div>
           </motion.div>
@@ -2635,13 +2953,13 @@ const VideoSection = () => {
             viewport={SCROLL_VIEWPORT}
             transition={{ duration: 0.6, delay: 0.15, ease: 'easeOut' }}
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0c9344]/10 border border-[#0c9344]/15 text-[#0c9344] text-[11px] font-bold uppercase tracking-[0.15em] mb-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#00a859]/10 border border-[#00a859]/15 text-[#00a859] text-[11px] font-bold uppercase tracking-[0.15em] mb-6">
               <Sparkles className="w-3.5 h-3.5" />
               See JudicialGPT in Action
             </div>
 
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-slate-900 mb-6 leading-tight tracking-tight">
-              Experience the Future of <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0c9344] to-[#0c9344]">AI-Powered Legal Assistance</span>
+              Experience the Future of <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00a859] to-[#00a859]">AI-Powered Legal Assistance</span>
             </h2>
 
             <p className="text-slate-600 text-lg leading-relaxed mb-8">
@@ -2651,8 +2969,8 @@ const VideoSection = () => {
             <ul className="space-y-4">
               {features.map((feature, idx) => (
                 <li key={idx} className="flex items-center gap-4">
-                  <div className="w-8 h-8 rounded-full bg-[#0c9344]/15 flex items-center justify-center shrink-0">
-                    <Check className="w-4 h-4 text-[#0c9344]" />
+                  <div className="w-8 h-8 rounded-full bg-[#00a859]/15 flex items-center justify-center shrink-0">
+                    <Check className="w-4 h-4 text-[#00a859]" />
                   </div>
                   <span className="text-slate-700 font-medium text-base">{feature}</span>
                 </li>
@@ -2681,8 +2999,8 @@ export default function HomePage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#080E1C]">
         <div className="relative">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0c9344]" />
-          <Scale className="absolute inset-0 m-auto w-5 h-5 text-[#0c9344]" />
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#00a859]" />
+          <Scale className="absolute inset-0 m-auto w-5 h-5 text-[#00a859]" />
         </div>
       </div>
     );
@@ -2693,6 +3011,7 @@ export default function HomePage() {
       <Header />
       <HeroSection />
       <TrustBarSection />
+      <MiniStatsSection />
       <FeaturesSection />
       <AIToolsSection />
       <HowItWorksSection />

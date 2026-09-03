@@ -40,7 +40,7 @@ export default function ForgotPasswordPage() {
                 <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-8">
                     {/* Header */}
                     <div className="text-center mb-8">
-                        <div className="w-16 h-16 bg-gradient-to-br from-[#0c9344] to-[#0c9344] rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <div className="w-16 h-16 bg-gradient-to-br from-[#00a859] to-[#00a859] rounded-2xl flex items-center justify-center mx-auto mb-4">
                             <Mail className="w-8 h-8 text-white" />
                         </div>
                         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
@@ -57,8 +57,8 @@ export default function ForgotPasswordPage() {
                             animate={{ opacity: 1, scale: 1 }}
                             className="text-center py-8"
                         >
-                            <div className="w-16 h-16 bg-[#0c9344]/15 dark:bg-[#0c9344]/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <CheckCircle className="w-8 h-8 text-[#0c9344] dark:text-[#0c9344]" />
+                            <div className="w-16 h-16 bg-[#00a859]/15 dark:bg-[#00a859]/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <CheckCircle className="w-8 h-8 text-[#00a859] dark:text-[#00a859]" />
                             </div>
                             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                                 Check Your Email
@@ -68,7 +68,7 @@ export default function ForgotPasswordPage() {
                             </p>
                             <Link
                                 href="/login"
-                                className="inline-flex items-center gap-2 px-6 py-3 bg-[#0c9344] hover:bg-[#0c9344] text-white rounded-lg transition-colors"
+                                className="inline-flex items-center gap-2 px-6 py-3 bg-[#00a859] hover:bg-[#00a859] text-white rounded-lg transition-colors"
                             >
                                 <ArrowLeft className="w-4 h-4" />
                                 Back to Login
@@ -93,7 +93,7 @@ export default function ForgotPasswordPage() {
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         required
-                                        className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0c9344] focus:border-transparent outline-none"
+                                        className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#00a859] focus:border-transparent outline-none"
                                         placeholder="your-email@example.com"
                                     />
                                 </div>
@@ -102,7 +102,7 @@ export default function ForgotPasswordPage() {
                             <button
                                 type="submit"
                                 disabled={loading || !email}
-                                className="w-full px-6 py-3 bg-[#0c9344] hover:bg-[#0c9344] text-white rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                                className="w-full px-6 py-3 bg-[#00a859] hover:bg-[#00a859] text-white rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                             >
                                 {loading ? (
                                     <>
@@ -120,7 +120,7 @@ export default function ForgotPasswordPage() {
                             <div className="text-center">
                                 <Link
                                     href="/login"
-                                    className="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-[#0c9344] dark:hover:text-[#0c9344] transition-colors"
+                                    className="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-[#00a859] dark:hover:text-[#00a859] transition-colors"
                                 >
                                     <ArrowLeft className="w-4 h-4" />
                                     Back to Login

@@ -33,7 +33,7 @@ interface AnalyticsCardProps {
 function AnalyticsCard({ title, value, change, icon: Icon, color, delay = 0 }: AnalyticsCardProps) {
     const isPositive = change && change > 0;
     const colorClasses: Record<string, { bg: string; icon: string; border: string }> = {
-        emerald: { bg: 'bg-[#0c9344]/10', icon: 'text-[#0c9344]', border: 'border-[#0c9344]/20' },
+        emerald: { bg: 'bg-[#00a859]/10', icon: 'text-[#00a859]', border: 'border-[#00a859]/20' },
         blue: { bg: 'bg-blue-500/10', icon: 'text-blue-400', border: 'border-blue-500/20' },
         purple: { bg: 'bg-purple-500/10', icon: 'text-purple-400', border: 'border-purple-500/20' },
         orange: { bg: 'bg-orange-500/10', icon: 'text-orange-400', border: 'border-orange-500/20' }
@@ -56,7 +56,7 @@ function AnalyticsCard({ title, value, change, icon: Icon, color, delay = 0 }: A
                     </h3>
                     {change !== undefined && (
                         <div className={`flex items-center gap-1 mt-2 text-sm ${
-                            isPositive ? 'text-[#0c9344]' : 'text-red-400'
+                            isPositive ? 'text-[#00a859]' : 'text-red-400'
                         }`}>
                             {isPositive ? (
                                 <ArrowUpRight className="h-4 w-4" />
@@ -240,8 +240,8 @@ export default function AnalyticsPage() {
 
                 <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-6">
                     <div className="flex items-center gap-3 mb-4">
-                        <div className="p-2 bg-[#0c9344]/10 rounded-lg">
-                            <MessageSquare className="h-5 w-5 text-[#0c9344]" />
+                        <div className="p-2 bg-[#00a859]/10 rounded-lg">
+                            <MessageSquare className="h-5 w-5 text-[#00a859]" />
                         </div>
                         <h3 className="text-lg font-semibold text-white">Avg. Conversations/User</h3>
                     </div>
@@ -288,7 +288,7 @@ export default function AnalyticsPage() {
                             </p>
                             {stats?.activeUsersToday !== undefined && stats?.activeUsersYesterday !== undefined && (
                                 <div className={`flex items-center gap-1 mt-1 text-xs ${
-                                    stats.activeUsersToday >= stats.activeUsersYesterday ? 'text-[#0c9344]' : 'text-red-400'
+                                    stats.activeUsersToday >= stats.activeUsersYesterday ? 'text-[#00a859]' : 'text-red-400'
                                 }`}>
                                     {stats.activeUsersToday >= stats.activeUsersYesterday ? '+' : ''}
                                     {stats.activeUsersYesterday > 0 
@@ -344,7 +344,7 @@ export default function AnalyticsPage() {
                             </p>
                             {stats?.messagesToday !== undefined && stats?.messagesYesterday !== undefined && (
                                 <div className={`flex items-center gap-1 mt-1 text-xs ${
-                                    stats.messagesToday >= stats.messagesYesterday ? 'text-[#0c9344]' : 'text-red-400'
+                                    stats.messagesToday >= stats.messagesYesterday ? 'text-[#00a859]' : 'text-red-400'
                                 }`}>
                                     {stats.messagesToday >= stats.messagesYesterday ? '+' : ''}
                                     {stats.messagesYesterday > 0 
@@ -421,7 +421,7 @@ export default function AnalyticsPage() {
                                 <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-700 text-gray-300 font-bold text-sm">
                                     {index + 1}
                                 </div>
-                                <div className="w-10 h-10 bg-gradient-to-br from-[#0c9344] to-[#0c9344] rounded-full flex items-center justify-center text-white font-semibold">
+                                <div className="w-10 h-10 bg-gradient-to-br from-[#00a859] to-[#00a859] rounded-full flex items-center justify-center text-white font-semibold">
                                     {(user.name || user.email || 'U')[0].toUpperCase()}
                                 </div>
                                 <div className="flex-1 min-w-0">

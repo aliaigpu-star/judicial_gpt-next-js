@@ -39,7 +39,7 @@ const ARTICLE_BODY: Record<string, string[]> = {
 
 const CATEGORY_COLORS: Record<string, string> = {
   Insight: 'bg-violet-50 text-violet-700 border-violet-200',
-  Product: 'bg-[#0c9344]/10 text-[#0c9344] border-[#0c9344]/25',
+  Product: 'bg-[#00a859]/10 text-[#00a859] border-[#00a859]/25',
   Engineering: 'bg-blue-50 text-blue-700 border-blue-200',
   Impact: 'bg-amber-50 text-amber-700 border-amber-200',
   Security: 'bg-rose-50 text-rose-700 border-rose-200',
@@ -57,7 +57,7 @@ export default function BlogPage() {
       >
         <a
           href="#why-judicialgpt"
-          className="inline-flex items-center gap-2 text-sm font-semibold text-[#0c9344] hover:text-[#0c9344] transition-colors"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-[#00a859] hover:text-[#00a859] transition-colors"
         >
           Read latest <ArrowDown className="w-4 h-4" />
         </a>
@@ -77,7 +77,7 @@ export default function BlogPage() {
               <FadeIn key={post.slug} delay={i * 0.05}>
                 <a
                   href={`#${post.slug}`}
-                  className="group block h-full rounded-2xl border border-slate-200 bg-white p-6 hover:border-[#0c9344] hover:shadow-xl hover:shadow-[#0c9344]/8 transition-all duration-300"
+                  className="group block h-full rounded-2xl border border-slate-200 bg-white p-6 hover:border-[#00a859] hover:shadow-xl hover:shadow-[#00a859]/8 transition-all duration-300"
                 >
                   <div className="flex items-center gap-2 mb-4">
                     <span
@@ -93,11 +93,11 @@ export default function BlogPage() {
                       {post.date}
                     </span>
                   </div>
-                  <h3 className="font-extrabold text-slate-900 mb-2 group-hover:text-[#0c9344] transition-colors leading-snug">
+                  <h3 className="font-extrabold text-slate-900 mb-2 group-hover:text-[#00a859] transition-colors leading-snug">
                     {post.title}
                   </h3>
                   <p className="text-slate-500 text-sm leading-relaxed line-clamp-3">{post.excerpt}</p>
-                  <span className="mt-4 inline-block text-sm font-semibold text-[#0c9344] group-hover:underline">
+                  <span className="mt-4 inline-block text-sm font-semibold text-[#00a859] group-hover:underline">
                     Read article →
                   </span>
                 </a>
@@ -111,7 +111,7 @@ export default function BlogPage() {
       <section className="py-16 lg:py-24 bg-[#F7FAF8] border-t border-slate-100">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="flex items-center gap-3 mb-12">
-            <BookOpen className="w-6 h-6 text-[#0c9344]" />
+            <BookOpen className="w-6 h-6 text-[#00a859]" />
             <h2 className="font-heading text-2xl md:text-3xl font-semibold text-slate-900">
               Full articles
             </h2>
@@ -122,12 +122,12 @@ export default function BlogPage() {
               const paragraphs = ARTICLE_BODY[post.slug] ?? [post.excerpt];
               const borderColor =
                 i % 3 === 0
-                  ? 'border-[#0c9344]'
+                  ? 'border-[#00a859]'
                   : i % 3 === 1
-                    ? 'border-[#0c9344]'
-                    : 'border-[#0c9344]';
+                    ? 'border-[#00a859]'
+                    : 'border-[#00a859]';
               const bgTint =
-                i % 2 === 0 ? 'bg-white' : 'bg-[#0c9344]/10/40';
+                i % 2 === 0 ? 'bg-white' : 'bg-[#00a859]/10/40';
 
               return (
                 <FadeIn key={post.slug} delay={0.04}>

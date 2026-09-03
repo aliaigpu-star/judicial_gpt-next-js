@@ -63,7 +63,7 @@ export function SimpleChart({ data, height = 200, type = 'bar', showGrid = true 
                             const barHeight = (point.value / maxValue) * chartHeight;
                             const x = (index * (chartWidth / data.length)) + spacing / 2;
                             const y = padding + chartHeight - barHeight;
-                            const color = point.color || '#10b981';
+                            const color = point.color || '#00a859';
 
                             return (
                                 <g key={index}>
@@ -113,7 +113,7 @@ export function SimpleChart({ data, height = 200, type = 'bar', showGrid = true 
                                 return `${x},${y}`;
                             }).join(' ')}
                             fill="none"
-                            stroke={data[0]?.color || '#10b981'}
+                            stroke={data[0]?.color || '#00a859'}
                             strokeWidth="1.5"
                             opacity="0.8"
                         />
@@ -126,7 +126,7 @@ export function SimpleChart({ data, height = 200, type = 'bar', showGrid = true 
                                         cx={x}
                                         cy={y}
                                         r="1.5"
-                                        fill={point.color || '#10b981'}
+                                        fill={point.color || '#00a859'}
                                     />
                                     <text
                                         x={x}

@@ -21,10 +21,10 @@ export default function FeaturesPage() {
         crumbs={[{ label: 'Product', href: '/features' }, { label: 'Features' }]}
       >
         <div className="flex flex-wrap gap-3">
-          <Link href="/signup" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#0c9344] text-white font-bold shadow-md shadow-[#0c9344]/25 hover:bg-[#0c9344] transition-colors">
+          <Link href="/signup" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#00a859] text-white font-bold shadow-md shadow-[#00a859]/25 hover:bg-[#00a859] transition-colors">
             Try JudicialGPT <ArrowRight className="w-4 h-4" />
           </Link>
-          <Link href="/docs" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-slate-200 bg-white text-slate-700 font-semibold hover:border-[#0c9344]/25 hover:bg-[#0c9344]/10/50 transition-colors">
+          <Link href="/docs" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-slate-200 bg-white text-slate-700 font-semibold hover:border-[#00a859]/25 hover:bg-[#00a859]/10/50 transition-colors">
             Read Documentation
           </Link>
         </div>
@@ -44,8 +44,8 @@ export default function FeaturesPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {PROBLEM.points.map((point, i) => (
               <FadeIn key={i} delay={i * 0.05}>
-                <div className="h-full p-5 rounded-2xl border border-slate-200 bg-slate-50/80 hover:border-[#0c9344]/25 hover:bg-[#0c9344]/10/30 transition-all">
-                  <div className="w-8 h-8 rounded-lg bg-[#0c9344]/15 text-[#0c9344] font-bold text-sm flex items-center justify-center mb-3">
+                <div className="h-full p-5 rounded-2xl border border-slate-200 bg-slate-50/80 hover:border-[#00a859]/25 hover:bg-[#00a859]/10/30 transition-all">
+                  <div className="w-8 h-8 rounded-lg bg-[#00a859]/15 text-[#00a859] font-bold text-sm flex items-center justify-center mb-3">
                     {String(i + 1).padStart(2, '0')}
                   </div>
                   <p className="text-slate-600 text-sm leading-relaxed">{point}</p>
@@ -72,8 +72,8 @@ export default function FeaturesPage() {
               const Icon = icons[i];
               return (
                 <FadeIn key={feat.title} delay={i * 0.06}>
-                  <div className="group h-full rounded-2xl border border-slate-200 bg-white p-6 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#0c9344]/10 hover:border-[#0c9344]/25 transition-all duration-300">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0c9344] to-[#0c9344] flex items-center justify-center shadow-md mb-5">
+                  <div className="group h-full rounded-2xl border border-slate-200 bg-white p-6 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#00a859]/10 hover:border-[#00a859]/25 transition-all duration-300">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#00a859] to-[#00a859] flex items-center justify-center shadow-md mb-5">
                       <Icon className="w-5 h-5 text-white" />
                     </div>
                     <h3 className="text-lg font-extrabold text-slate-900 mb-2">{feat.title}</h3>
@@ -90,7 +90,7 @@ export default function FeaturesPage() {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-12 items-start">
           <FadeIn>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] mb-4 bg-[#0c9344]/10 text-[#0c9344] border border-[#0c9344]/25">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] mb-4 bg-[#00a859]/10 text-[#00a859] border border-[#00a859]/25">
               Reliability
             </div>
             <h2 className="font-heading text-3xl md:text-4xl font-semibold text-slate-900 mb-4">
@@ -102,8 +102,8 @@ export default function FeaturesPage() {
             <ul className="space-y-3">
               {RELIABILITY.map((item) => (
                 <li key={item} className="flex items-start gap-3 text-slate-600 text-sm">
-                  <span className="mt-0.5 w-5 h-5 rounded-full bg-[#0c9344]/15 flex items-center justify-center shrink-0">
-                    <Check className="w-3 h-3 text-[#0c9344]" strokeWidth={3} />
+                  <span className="mt-0.5 w-5 h-5 rounded-full bg-[#00a859]/15 flex items-center justify-center shrink-0">
+                    <Check className="w-3 h-3 text-[#00a859]" strokeWidth={3} />
                   </span>
                   {item}
                 </li>
@@ -111,13 +111,13 @@ export default function FeaturesPage() {
             </ul>
           </FadeIn>
           <FadeIn delay={0.1}>
-            <div className="rounded-3xl border border-[#0c9344]/15 bg-gradient-to-br from-emerald-50 to-white p-8 shadow-lg shadow-[#0c9344]/5">
-              <Scale className="w-10 h-10 text-[#0c9344] mb-6" />
+            <div className="rounded-3xl border border-[#00a859]/15 bg-gradient-to-br from-emerald-50 to-white p-8 shadow-lg shadow-[#00a859]/5">
+              <Scale className="w-10 h-10 text-[#00a859] mb-6" />
               <h3 className="font-heading text-2xl font-semibold text-slate-900 mb-4">Expected impact for judges</h3>
               <ul className="space-y-4">
                 {IMPACT.judges.map((item) => (
                   <li key={item} className="flex gap-3 text-slate-600 text-sm leading-relaxed">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#0c9344] mt-2 shrink-0" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#00a859] mt-2 shrink-0" />
                     {item}
                   </li>
                 ))}

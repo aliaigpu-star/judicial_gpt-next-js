@@ -172,7 +172,7 @@ export default function ChatSidebar({
                             onClick={(e) => { e.stopPropagation(); handleRename(conv.id); }}
                             className="p-1 hover:bg-[#d9d9d9] dark:hover:bg-[#424242] rounded"
                         >
-                            <Check className="w-4 h-4 text-[#0c9344]" />
+                            <Check className="w-4 h-4 text-[#00a859]" />
                         </button>
                         <button
                             onClick={(e) => { e.stopPropagation(); setEditingId(null); }}
@@ -188,7 +188,7 @@ export default function ChatSidebar({
                         </span>
 
                         {conv.isPinned && (
-                            <Pin className="w-3 h-3 text-[#0c9344] flex-shrink-0 opacity-60" />
+                            <Pin className="w-3 h-3 text-[#00a859] flex-shrink-0 opacity-60" />
                         )}
 
                         {/* Gradient fade effect on right side */}
@@ -301,13 +301,13 @@ export default function ChatSidebar({
                     <button
                         onClick={() => router.push('/chat/judgment-search')}
                         className={`w-10 h-10 flex items-center justify-center rounded-xl transition-colors ${isJudgmentSearchActive
-                            ? 'bg-[#0c9344]/15 dark:bg-[#0c9344]/10'
+                            ? 'bg-[#00a859]/15 dark:bg-[#00a859]/10'
                             : 'hover:bg-[#ececec] dark:hover:bg-[#2f2f2f]'
                             }`}
                         title="Judgment Search"
                     >
                         <Scale className={`w-5 h-5 ${isJudgmentSearchActive
-                            ? 'text-[#0c9344]'
+                            ? 'text-[#00a859]'
                             : 'text-[#444444] dark:text-[#b4b4b4]'
                             }`} />
                     </button>
@@ -497,7 +497,7 @@ export default function ChatSidebar({
                         {user?.avatarUrl ? (
                             <img src={user.avatarUrl} alt="" className="w-6 h-6 rounded-full object-cover" />
                         ) : (
-                            <div className="w-6 h-6 rounded-full bg-[#0c9344] flex items-center justify-center text-white text-xs font-medium">
+                            <div className="w-6 h-6 rounded-full bg-[#00a859] flex items-center justify-center text-white text-xs font-medium">
                                 {user?.name?.[0] || user?.email?.[0] || 'U'}
                             </div>
                         )}
@@ -553,7 +553,7 @@ export default function ChatSidebar({
                                     {/* Admin Panel - Only show for admins */}
                                     {user?.role === 'admin' && (
                                         <Link href="/admin" onClick={() => setShowUserMenu(false)}>
-                                            <div className="w-full px-4 py-2.5 text-left text-sm hover:bg-[#f4f4f4] dark:hover:bg-[#424242] flex items-center gap-3 text-[#0c9344] transition-colors">
+                                            <div className="w-full px-4 py-2.5 text-left text-sm hover:bg-[#f4f4f4] dark:hover:bg-[#424242] flex items-center gap-3 text-[#00a859] transition-colors">
                                                 <Shield className="w-4 h-4" /> Admin Panel
                                             </div>
                                         </Link>
@@ -631,11 +631,11 @@ export default function ChatSidebar({
                 <button
                     onClick={() => router.push('/chat/judgment-search')}
                     className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-all duration-200 ${isJudgmentSearchActive
-                        ? 'bg-[#0c9344]/10 dark:bg-[#0c9344]/10 text-[#0c9344]'
+                        ? 'bg-[#00a859]/10 dark:bg-[#00a859]/10 text-[#00a859]'
                         : 'text-[#0d0d0d] dark:text-[#ececec] hover:bg-[#ececec] dark:hover:bg-[#2f2f2f]'
                         }`}
                 >
-                    <Scale className={`w-4 h-4 ${isJudgmentSearchActive ? 'text-[#0c9344]' : ''
+                    <Scale className={`w-4 h-4 ${isJudgmentSearchActive ? 'text-[#00a859]' : ''
                         }`} />
                     Judgment Search
                 </button>
@@ -866,7 +866,7 @@ export default function ChatSidebar({
                         {user?.avatarUrl ? (
                             <img src={user.avatarUrl} alt="" className="w-8 h-8 rounded-full object-cover" />
                         ) : (
-                            <div className="w-8 h-8 rounded-full bg-[#0c9344] flex items-center justify-center text-white text-sm font-medium">
+                            <div className="w-8 h-8 rounded-full bg-[#00a859] flex items-center justify-center text-white text-sm font-medium">
                                 {user?.name?.[0] || user?.email?.[0] || 'U'}
                             </div>
                         )}
@@ -925,7 +925,7 @@ export default function ChatSidebar({
                                     {/* Admin Panel - Only show for admins */}
                                     {user?.role === 'admin' && (
                                         <Link href="/admin" onClick={() => setShowUserMenu(false)}>
-                                            <div className="w-full px-4 py-2.5 text-left text-sm hover:bg-[#f4f4f4] dark:hover:bg-[#424242] flex items-center gap-3 text-[#0c9344] transition-colors">
+                                            <div className="w-full px-4 py-2.5 text-left text-sm hover:bg-[#f4f4f4] dark:hover:bg-[#424242] flex items-center gap-3 text-[#00a859] transition-colors">
                                                 <Shield className="w-4 h-4" /> Admin Panel
                                             </div>
                                         </Link>

@@ -75,10 +75,16 @@ class ApiKeyManager {
     }
 }
 
-// Initialize API key manager
-const apiKeys = config.GROQ_API_KEY ? [config.GROQ_API_KEY] : [];
-
-const keyManager = new ApiKeyManager(apiKeys);
+// Initialize API key manager lazily to access req.app.locals
+let keyManager = null;
+function getKeyManager(req) {
+    if (!keyManager) {
+        const apiKey = req.app?.locals?.secrets?.GROQ_API_KEY;
+        const apiKeys = apiKey ? [apiKey] : [];
+        keyManager = new ApiKeyManager(apiKeys);
+    }
+    return keyManager;
+}
 
 // Judicial system prompt
 const JUDICIAL_SYSTEM_PROMPT = `You are JudicialGPT, an advanced AI legal assistant designed to provide comprehensive legal research, analysis, and guidance. You specialize in:
@@ -162,7 +168,8 @@ router.post('/chat', authenticate, aiRateLimiter, asyncHandler(async (req, res) 
     const effectiveMaxTokens = Math.min(maxTokens, 4000);
 
     // Get API key
-    const selectedKey = keyManager.getKey('random');
+    const km = getKeyManager(req);
+    const selectedKey = km.getKey('random');
 
     if (!selectedKey || !selectedKey.key) {
         throw new ApiError(500, 'AI service temporarily unavailable', 'NO_API_KEY');
@@ -222,7 +229,7 @@ router.post('/chat', authenticate, aiRateLimiter, asyncHandler(async (req, res) 
             }
 
             const responseTime = Date.now() - startTime;
-            keyManager.recordSuccess(selectedKey.id, responseTime, 0);
+            km.recordSuccess(selectedKey.id, responseTime, 0);
 
             // Update log
             if (requestId) {
@@ -249,7 +256,7 @@ router.post('/chat', authenticate, aiRateLimiter, asyncHandler(async (req, res) 
             const responseTime = Date.now() - startTime;
             const tokensUsed = completion.usage?.total_tokens || 0;
 
-            keyManager.recordSuccess(selectedKey.id, responseTime, tokensUsed);
+            km.recordSuccess(selectedKey.id, responseTime, tokensUsed);
 
             // Update log
             if (requestId) {
@@ -274,7 +281,7 @@ router.post('/chat', authenticate, aiRateLimiter, asyncHandler(async (req, res) 
             });
         }
     } catch (error) {
-        keyManager.recordFailure(selectedKey.id, error);
+        km.recordFailure(selectedKey.id, error);
 
         // Update log
         if (requestId) {
@@ -398,7 +405,8 @@ router.post('/web-search', authenticate, aiRateLimiter, asyncHandler(async (req,
     }
 
     // Fallback to Groq with web search prompt
-    const selectedKey = keyManager.getKey('random');
+    const km = getKeyManager(req);
+    const selectedKey = km.getKey('random');
 
     if (!selectedKey || !selectedKey.key) {
         throw new ApiError(500, 'AI service temporarily unavailable', 'NO_API_KEY');
@@ -437,7 +445,7 @@ router.post('/web-search', authenticate, aiRateLimiter, asyncHandler(async (req,
 
         const responseTime = Date.now() - startTime;
         const tokensUsed = completion.usage?.total_tokens || 0;
-        keyManager.recordSuccess(selectedKey.id, responseTime, tokensUsed);
+        km.recordSuccess(selectedKey.id, responseTime, tokensUsed);
 
         // Update log
         if (requestId) {
@@ -458,7 +466,7 @@ router.post('/web-search', authenticate, aiRateLimiter, asyncHandler(async (req,
             responseTime
         });
     } catch (error) {
-        keyManager.recordFailure(selectedKey.id, error);
+        km.recordFailure(selectedKey.id, error);
 
         // Update log
         if (requestId) {
@@ -480,8 +488,9 @@ router.post('/web-search', authenticate, aiRateLimiter, asyncHandler(async (req,
  * Get AI service status
  */
 router.get('/status', authenticate, asyncHandler(async (req, res) => {
-    const activeKeys = keyManager.keys.filter(k => k.status === 'active').length;
-    const totalKeys = keyManager.keys.length;
+    const km = getKeyManager(req);
+    const activeKeys = km.keys.filter(k => k.status === 'active').length;
+    const totalKeys = km.keys.length;
 
     res.json({
         status: activeKeys > 0 ? 'operational' : 'degraded',
@@ -501,7 +510,8 @@ router.post('/generate-title', authenticate, asyncHandler(async (req, res) => {
         throw new ApiError(400, 'Message is required', 'MISSING_MESSAGE');
     }
 
-    const selectedKey = keyManager.getKey('random');
+    const km = getKeyManager(req);
+    const selectedKey = km.getKey('random');
 
     if (!selectedKey || !selectedKey.key) {
         // Fallback to simple title if AI unavailable
@@ -560,7 +570,7 @@ Title: Apartment Rental Contract`
             .replace(/[.!?]$/, '') // Remove trailing punctuation
             .slice(0, 60); // Max 60 chars
 
-        keyManager.recordSuccess(selectedKey.id, Date.now(), completion.usage?.total_tokens || 0);
+        km.recordSuccess(selectedKey.id, Date.now(), completion.usage?.total_tokens || 0);
 
         res.json({
             success: true,
@@ -568,7 +578,7 @@ Title: Apartment Rental Contract`
         });
     } catch (error) {
         console.error('Title generation error:', error.message);
-        keyManager.recordFailure(selectedKey.id, error);
+        km.recordFailure(selectedKey.id, error);
 
         // Fallback to simple title
         const fallbackTitle = message.slice(0, 40) + (message.length > 40 ? '...' : '');

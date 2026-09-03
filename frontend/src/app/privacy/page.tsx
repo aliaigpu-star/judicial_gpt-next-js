@@ -71,8 +71,8 @@ export default function PrivacyPage() {
                         href={`#${id}`}
                         className={`flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition-colors ${
                           activeId === id
-                            ? 'bg-[#0c9344]/10 text-[#0c9344] font-semibold border border-[#0c9344]/15'
-                            : 'text-slate-600 hover:text-[#0c9344] hover:bg-[#0c9344]/10/60'
+                            ? 'bg-[#00a859]/10 text-[#00a859] font-semibold border border-[#00a859]/15'
+                            : 'text-slate-600 hover:text-[#00a859] hover:bg-[#00a859]/10/60'
                         }`}
                       >
                         <ChevronRight
@@ -98,7 +98,7 @@ export default function PrivacyPage() {
                   <p className="text-slate-600 leading-relaxed mb-4">
                     JudicialGPT (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;) operates an AI-powered legal
                     intelligence platform at{' '}
-                    <Link href={SITE.url} className="text-[#0c9344] hover:underline">
+                    <Link href={SITE.url} className="text-[#00a859] hover:underline">
                       {SITE.url}
                     </Link>
                     . We serve judges, court staff, lawyers, law students, and affiliated institutions across
@@ -146,7 +146,7 @@ export default function PrivacyPage() {
                     ].map((item) => (
                       <div
                         key={item.title}
-                        className="p-5 rounded-xl border border-slate-200 bg-slate-50/50 hover:border-[#0c9344]/25 transition-colors"
+                        className="p-5 rounded-xl border border-slate-200 bg-slate-50/50 hover:border-[#00a859]/25 transition-colors"
                       >
                         <h3 className="font-bold text-slate-900 mb-1">{item.title}</h3>
                         <p className="text-slate-600 text-sm leading-relaxed">{item.body}</p>
@@ -170,7 +170,7 @@ export default function PrivacyPage() {
                       'Communicate service updates, security notices, and support responses you request.',
                     ].map((item) => (
                       <li key={item} className="flex gap-3 text-sm leading-relaxed">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#0c9344] mt-2 shrink-0" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#00a859] mt-2 shrink-0" />
                         {item}
                       </li>
                     ))}
@@ -184,8 +184,8 @@ export default function PrivacyPage() {
 
               <FadeIn>
                 <section id="storage-location" className="scroll-mt-28 mb-14">
-                  <div className="flex items-start gap-4 p-6 rounded-2xl bg-[#0c9344]/10 border border-[#0c9344]/25 mb-6">
-                    <MapPin className="w-6 h-6 text-[#0c9344] shrink-0 mt-0.5" />
+                  <div className="flex items-start gap-4 p-6 rounded-2xl bg-[#00a859]/10 border border-[#00a859]/25 mb-6">
+                    <MapPin className="w-6 h-6 text-[#00a859] shrink-0 mt-0.5" />
                     <div>
                       <h2 className="font-heading text-2xl md:text-3xl font-semibold text-slate-900 mb-2">
                         Storage & Location
@@ -222,7 +222,7 @@ export default function PrivacyPage() {
                       'To protect the rights, safety, and integrity of users, the platform, and the judicial system.',
                     ].map((item) => (
                       <li key={item} className="flex gap-3 leading-relaxed">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#0c9344] mt-2 shrink-0" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#00a859] mt-2 shrink-0" />
                         {item}
                       </li>
                     ))}
@@ -233,7 +233,7 @@ export default function PrivacyPage() {
               <FadeIn>
                 <section id="security" className="scroll-mt-28 mb-14">
                   <div className="flex items-center gap-3 mb-4">
-                    <Shield className="w-7 h-7 text-[#0c9344]" />
+                    <Shield className="w-7 h-7 text-[#00a859]" />
                     <h2 className="font-heading text-2xl md:text-3xl font-semibold text-slate-900">
                       Security
                     </h2>
@@ -247,7 +247,7 @@ export default function PrivacyPage() {
                         key={point}
                         className="flex gap-2.5 p-3.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-600 leading-relaxed"
                       >
-                        <span className="text-[#0c9344] font-bold shrink-0">✓</span>
+                        <span className="text-[#00a859] font-bold shrink-0">✓</span>
                         {point}
                       </li>
                     ))}
@@ -289,7 +289,7 @@ export default function PrivacyPage() {
                       'Export your data in a portable format where technically feasible.',
                     ].map((item) => (
                       <li key={item} className="flex gap-3 leading-relaxed">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#0c9344] mt-2 shrink-0" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#00a859] mt-2 shrink-0" />
                         {item}
                       </li>
                     ))}
@@ -307,18 +307,18 @@ export default function PrivacyPage() {
                   </p>
                   <a
                     href={`mailto:${SITE.email}`}
-                    className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#0c9344]/10 border border-[#0c9344]/25 text-[#0c9344] font-semibold hover:bg-[#0c9344]/15 transition-colors"
+                    className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#00a859]/10 border border-[#00a859]/25 text-[#00a859] font-semibold hover:bg-[#00a859]/15 transition-colors"
                   >
                     <Mail className="w-4 h-4" />
                     {SITE.email}
                   </a>
                   <p className="mt-6 text-sm text-slate-500">
                     See also our{' '}
-                    <Link href="/terms" className="text-[#0c9344] hover:underline">
+                    <Link href="/terms" className="text-[#00a859] hover:underline">
                       Terms of Service
                     </Link>{' '}
                     and{' '}
-                    <Link href="/cookies" className="text-[#0c9344] hover:underline">
+                    <Link href="/cookies" className="text-[#00a859] hover:underline">
                       Cookie Policy
                     </Link>
                     .

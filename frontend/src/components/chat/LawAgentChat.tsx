@@ -352,7 +352,7 @@ export default function LawAgentChat({
                                                     className="mt-3 inline-flex items-center gap-1.5 text-xs text-[#666666] dark:text-[#b4b4b4] hover:text-[#0d0d0d] dark:hover:text-[#ececec]"
                                                 >
                                                     {copiedId === item.id ? (
-                                                        <Check className="w-3.5 h-3.5 text-[#0c9344]" />
+                                                        <Check className="w-3.5 h-3.5 text-[#00a859]" />
                                                     ) : (
                                                         <Copy className="w-3.5 h-3.5" />
                                                     )}

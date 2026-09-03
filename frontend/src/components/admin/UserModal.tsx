@@ -115,8 +115,8 @@ export default function UserModal({ user, mode, onClose, onUserUpdated, onUserCr
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 border-b border-gray-800">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-[#0c9344]/10 rounded-lg">
-                            <User className="h-5 w-5 text-[#0c9344]" />
+                        <div className="p-2 bg-[#00a859]/10 rounded-lg">
+                            <User className="h-5 w-5 text-[#00a859]" />
                         </div>
                         <h2 className="text-lg font-bold text-white">{title}</h2>
                     </div>
@@ -146,7 +146,7 @@ export default function UserModal({ user, mode, onClose, onUserUpdated, onUserCr
                                     className="w-16 h-16 rounded-full object-cover"
                                 />
                             ) : (
-                                <div className="w-16 h-16 bg-gradient-to-br from-[#0c9344] to-[#0c9344] rounded-full flex items-center justify-center text-white text-xl font-bold">
+                                <div className="w-16 h-16 bg-gradient-to-br from-[#00a859] to-[#00a859] rounded-full flex items-center justify-center text-white text-xl font-bold">
                                     {(user.name || user.email || 'U')[0].toUpperCase()}
                                 </div>
                             )}
@@ -170,7 +170,7 @@ export default function UserModal({ user, mode, onClose, onUserUpdated, onUserCr
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                 disabled={isViewMode}
                                 placeholder="Enter name"
-                                className="w-full pl-11 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 outline-none focus:ring-2 focus:ring-[#0c9344]/50 focus:border-[#0c9344]/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                className="w-full pl-11 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 outline-none focus:ring-2 focus:ring-[#00a859]/50 focus:border-[#00a859]/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                             />
                         </div>
                     </div>
@@ -189,7 +189,7 @@ export default function UserModal({ user, mode, onClose, onUserUpdated, onUserCr
                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                     placeholder="Enter email"
                                     required
-                                    className="w-full pl-11 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 outline-none focus:ring-2 focus:ring-[#0c9344]/50 focus:border-[#0c9344]/50 transition-all"
+                                    className="w-full pl-11 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 outline-none focus:ring-2 focus:ring-[#00a859]/50 focus:border-[#00a859]/50 transition-all"
                                 />
                             </div>
                         </div>
@@ -209,7 +209,7 @@ export default function UserModal({ user, mode, onClose, onUserUpdated, onUserCr
                                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                     placeholder="Enter password"
                                     required
-                                    className="w-full pl-11 pr-12 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 outline-none focus:ring-2 focus:ring-[#0c9344]/50 focus:border-[#0c9344]/50 transition-all"
+                                    className="w-full pl-11 pr-12 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 outline-none focus:ring-2 focus:ring-[#00a859]/50 focus:border-[#00a859]/50 transition-all"
                                 />
                                 <button
                                     type="button"
@@ -233,7 +233,7 @@ export default function UserModal({ user, mode, onClose, onUserUpdated, onUserCr
                                 value={formData.role}
                                 onChange={(e) => setFormData({ ...formData, role: e.target.value as any })}
                                 disabled={isViewMode}
-                                className="w-full pl-11 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white outline-none focus:ring-2 focus:ring-[#0c9344]/50 focus:border-[#0c9344]/50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-all appearance-none"
+                                className="w-full pl-11 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white outline-none focus:ring-2 focus:ring-[#00a859]/50 focus:border-[#00a859]/50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-all appearance-none"
                             >
                                 <option value="user">User</option>
                                 <option value="moderator">Moderator</option>
@@ -251,7 +251,7 @@ export default function UserModal({ user, mode, onClose, onUserUpdated, onUserCr
                             value={formData.status}
                             onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
                             disabled={isViewMode}
-                            className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white outline-none focus:ring-2 focus:ring-[#0c9344]/50 focus:border-[#0c9344]/50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-all appearance-none"
+                            className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white outline-none focus:ring-2 focus:ring-[#00a859]/50 focus:border-[#00a859]/50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-all appearance-none"
                         >
                             <option value="active">Active</option>
                             <option value="inactive">Inactive</option>
@@ -282,8 +282,8 @@ export default function UserModal({ user, mode, onClose, onUserUpdated, onUserCr
                                 </div>
                             </div>
                             <div className="flex items-center gap-3">
-                                <div className="p-2 bg-[#0c9344]/10 rounded-lg">
-                                    <Calendar className="h-4 w-4 text-[#0c9344]" />
+                                <div className="p-2 bg-[#00a859]/10 rounded-lg">
+                                    <Calendar className="h-4 w-4 text-[#00a859]" />
                                 </div>
                                 <div>
                                     <p className="text-xs text-gray-500">Joined</p>
@@ -321,7 +321,7 @@ export default function UserModal({ user, mode, onClose, onUserUpdated, onUserCr
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-[#0c9344] hover:bg-[#0c9344] text-white rounded-xl transition-all disabled:opacity-50"
+                                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-[#00a859] hover:bg-[#00a859] text-white rounded-xl transition-all disabled:opacity-50"
                             >
                                 {loading ? (
                                     <Loader2 className="h-4 w-4 animate-spin" />

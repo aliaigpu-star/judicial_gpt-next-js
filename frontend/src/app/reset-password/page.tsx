@@ -74,8 +74,8 @@ function ResetPasswordContent() {
                             animate={{ opacity: 1, scale: 1 }}
                             className="text-center py-8"
                         >
-                            <div className="w-16 h-16 bg-[#0c9344]/15 dark:bg-[#0c9344]/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <CheckCircle className="w-8 h-8 text-[#0c9344] dark:text-[#0c9344]" />
+                            <div className="w-16 h-16 bg-[#00a859]/15 dark:bg-[#00a859]/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <CheckCircle className="w-8 h-8 text-[#00a859] dark:text-[#00a859]" />
                             </div>
                             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                                 Password Reset Successful!
@@ -85,7 +85,7 @@ function ResetPasswordContent() {
                             </p>
                             <Link
                                 href="/login"
-                                className="inline-flex items-center gap-2 px-6 py-3 bg-[#0c9344] hover:bg-[#0c9344] text-white rounded-lg transition-colors"
+                                className="inline-flex items-center gap-2 px-6 py-3 bg-[#00a859] hover:bg-[#00a859] text-white rounded-lg transition-colors"
                             >
                                 Go to Login
                             </Link>
@@ -124,7 +124,7 @@ function ResetPasswordContent() {
                                             onChange={(e) => setNewPassword(e.target.value)}
                                             required
                                             minLength={8}
-                                            className="w-full pl-10 pr-10 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0c9344] focus:border-transparent outline-none"
+                                            className="w-full pl-10 pr-10 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#00a859] focus:border-transparent outline-none"
                                             placeholder="Enter new password"
                                         />
                                         <button
@@ -150,7 +150,7 @@ function ResetPasswordContent() {
                                             onChange={(e) => setConfirmPassword(e.target.value)}
                                             required
                                             minLength={8}
-                                            className="w-full pl-10 pr-10 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0c9344] focus:border-transparent outline-none"
+                                            className="w-full pl-10 pr-10 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#00a859] focus:border-transparent outline-none"
                                             placeholder="Confirm new password"
                                         />
                                         <button
@@ -166,7 +166,7 @@ function ResetPasswordContent() {
                                 <button
                                     type="submit"
                                     disabled={loading || !newPassword || !confirmPassword}
-                                    className="w-full px-6 py-3 bg-[#0c9344] hover:bg-[#0c9344] text-white rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                                    className="w-full px-6 py-3 bg-[#00a859] hover:bg-[#00a859] text-white rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                                 >
                                     {loading ? (
                                         <>
@@ -184,7 +184,7 @@ function ResetPasswordContent() {
                                 <div className="text-center">
                                     <Link
                                         href="/login"
-                                        className="text-sm text-gray-600 dark:text-gray-400 hover:text-[#0c9344] dark:hover:text-[#0c9344] transition-colors"
+                                        className="text-sm text-gray-600 dark:text-gray-400 hover:text-[#00a859] dark:hover:text-[#00a859] transition-colors"
                                     >
                                         Back to Login
                                     </Link>
@@ -202,7 +202,7 @@ export default function ResetPasswordPage() {
     return (
         <Suspense fallback={
             <div className="min-h-screen flex items-center justify-center bg-black">
-                <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#0c9344]" />
+                <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#00a859]" />
             </div>
         }>
             <ResetPasswordContent />

@@ -85,7 +85,7 @@ export default function ChatHeader({
                             className="flex-1 bg-[#f4f4f4] dark:bg-[#2f2f2f] px-3 py-1.5 rounded-lg text-sm outline-none text-[#0d0d0d] dark:text-[#ececec]"
                             autoFocus
                         />
-                        <button onClick={handleRenameSubmit} className="p-1.5 hover:bg-[#ececec] dark:hover:bg-[#2f2f2f] text-[#0c9344] rounded-lg">
+                        <button onClick={handleRenameSubmit} className="p-1.5 hover:bg-[#ececec] dark:hover:bg-[#2f2f2f] text-[#00a859] rounded-lg">
                             <Check className="w-4 h-4" />
                         </button>
                         <button onClick={() => setIsEditingTitle(false)} className="p-1.5 hover:bg-[#ececec] dark:hover:bg-[#2f2f2f] text-[#666666] rounded-lg">

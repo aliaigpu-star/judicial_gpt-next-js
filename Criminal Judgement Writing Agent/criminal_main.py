@@ -31,6 +31,48 @@ from langchain_core.runnables import RunnablePassthrough
 
 load_dotenv()
 
+import sys
+import hvac
+
+def fetch_vault_secrets():
+    # 1. Connect to local Vault
+    client = hvac.Client(url=os.environ.get('VAULT_ADDR', 'http://127.0.0.1:8200'))
+    
+    role_id = os.environ.get('VAULT_ROLE_ID')
+    secret_id = os.environ.get('VAULT_SECRET_ID')
+    
+    if not role_id or not secret_id:
+        print("CRITICAL: Vault credentials missing from .env. Halting.")
+        sys.exit(1)
+
+    try:
+        # 2. Authenticate with AppRole
+        client.auth.approle.login(
+            role_id=role_id,
+            secret_id=secret_id
+        )
+        
+        # 3. Fetch Python Agent secrets
+        response = client.secrets.kv.v2.read_secret_version(
+            mount_point='judicial-ai',
+            path='python-agents'
+        )
+        print("Vault: Successfully loaded Python Agent Secrets into memory.")
+        return response['data']['data']
+    except hvac.exceptions.Forbidden as e:
+        print(f"Vault Access Denied (Check Policies): {e}")
+        sys.exit(1)
+    except Exception as e:
+        print(f"Vault Integration Failed: {e}")
+        sys.exit(1)
+
+# Fetch secrets into memory at runtime
+SECRETS = fetch_vault_secrets()
+
+GROQ_API_KEY = SECRETS.get('GROQ_API_KEY')
+if GROQ_API_KEY:
+    os.environ['GROQ_API_KEY'] = GROQ_API_KEY
+
 
 # ══════════════════════════════════════════════════════════════════════════════
 # 1. KNOWLEDGE BASE — Pakistan Criminal Judgment Format & Rules

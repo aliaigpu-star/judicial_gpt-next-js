@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo, useCallback, useEffect, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Turnstile } from '@marsidev/react-turnstile';
 import { Eye, EyeOff, FileText, X, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { api } from '@/lib/api';
@@ -186,6 +187,7 @@ function LoginContent() {
     const [agreementAccepted, setAgreementAccepted] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
     const passwordEval = useMemo(() => evaluatePassword(password, email), [password, email]);
     const { strength, rules, hasNegativeKeyword } = passwordEval;
@@ -216,10 +218,16 @@ function LoginContent() {
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
+
+        if (!captchaToken && process.env.NODE_ENV !== 'development') {
+            setError('Please complete the security check.');
+            return;
+        }
+
         setIsLoading(true);
 
         try {
-            await signIn(email.trim().toLowerCase(), password);
+            await signIn(email.trim().toLowerCase(), password, captchaToken || undefined);
             router.push('/chat');
         } catch (err: any) {
             setError(err.message || 'Login failed. Please try again.');
@@ -251,6 +259,12 @@ function LoginContent() {
     // Signup after agreement
     const handleSignup = async () => {
         setShowAgreement(false);
+
+        if (!captchaToken && process.env.NODE_ENV !== 'development') {
+            setError('Please complete the security check.');
+            return;
+        }
+
         setIsLoading(true);
 
         if (!firstName.trim() || !lastName.trim()) {
@@ -267,7 +281,8 @@ function LoginContent() {
                 firstName: firstName.trim(),
                 lastName: lastName.trim(),
                 phoneNumber: `${countryCode}${phoneNumber.trim()}`,
-                countryCode: countryCode
+                countryCode: countryCode,
+                captchaToken: captchaToken || undefined
             });
             setSuccess('Account created! Please check your email to verify your account.');
             setIsLogin(true);
@@ -321,7 +336,7 @@ function LoginContent() {
                                 </div>
                             )}
                             {success && (
-                                <div className="mb-4 p-3 bg-[#0c9344]/10 border border-[#0c9344]/25 rounded-lg text-[#0c9344] text-sm">
+                                <div className="mb-4 p-3 bg-[#00a859]/10 border border-[#00a859]/25 rounded-lg text-[#00a859] text-sm">
                                     {success}
                                 </div>
                             )}
@@ -390,10 +405,18 @@ function LoginContent() {
                                     </div>
                                 </div>
 
+                                <div className="flex justify-center my-4">
+                                    <Turnstile 
+                                        siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ''} 
+                                        onSuccess={(token) => setCaptchaToken(token)}
+                                        options={{ theme: 'light' }}
+                                    />
+                                </div>
+
                                 <button
                                     type="submit"
                                     disabled={isLoading}
-                                    className="w-full py-2.5 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 text-sm bg-[#0c9344] text-white border border-[#0c9344] hover:bg-[#0c9344] hover:border-[#0c9344] disabled:opacity-60 disabled:cursor-not-allowed"
+                                    className="w-full py-2.5 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 text-sm bg-[#00a859] text-white border border-[#00a859] hover:bg-[#00a859] hover:border-[#00a859] disabled:opacity-60 disabled:cursor-not-allowed"
                                 >
                                     {isLoading ? 'Signing in...' : 'Continue'}
                                     <span>→</span>
@@ -404,8 +427,8 @@ function LoginContent() {
                             <p className="text-xs text-center mt-4 text-gray-600">
                                 Don&apos;t have an account?{" "}
                                 <button
-                                    onClick={() => { setIsLogin(false); setError(''); setSuccess(''); }}
-                                    className="text-[#0c9344] hover:text-[#0c9344] font-semibold hover:underline"
+                                    onClick={() => { setIsLogin(false); setError(''); setSuccess(''); setCaptchaToken(null); }}
+                                    className="text-[#00a859] hover:text-[#00a859] font-semibold hover:underline"
                                 >
                                     Sign up
                                 </button>
@@ -594,10 +617,18 @@ function LoginContent() {
                                     </div>
                                 )}
 
+                                <div className="flex justify-center my-4">
+                                    <Turnstile 
+                                        siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ''} 
+                                        onSuccess={(token) => setCaptchaToken(token)}
+                                        options={{ theme: 'light' }}
+                                    />
+                                </div>
+
                                 <button
                                     type="submit"
                                     disabled={strength !== "strong" || isLoading}
-                                    className="w-full py-2.5 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 text-sm bg-[#0c9344] text-white border border-[#0c9344] hover:bg-[#0c9344] hover:border-[#0c9344] disabled:opacity-60 disabled:cursor-not-allowed"
+                                    className="w-full py-2.5 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 text-sm bg-[#00a859] text-white border border-[#00a859] hover:bg-[#00a859] hover:border-[#00a859] disabled:opacity-60 disabled:cursor-not-allowed"
                                 >
                                     {isLoading ? 'Creating account...' : 'Continue'}
                                     <span>→</span>
@@ -608,8 +639,8 @@ function LoginContent() {
                             <p className="text-xs text-center mt-3 text-gray-600">
                                 Already have an account?{" "}
                                 <button
-                                    onClick={() => { setIsLogin(true); setError(''); }}
-                                    className="text-[#0c9344] hover:text-[#0c9344] font-semibold hover:underline"
+                                    onClick={() => { setIsLogin(true); setError(''); setCaptchaToken(null); }}
+                                    className="text-[#00a859] hover:text-[#00a859] font-semibold hover:underline"
                                 >
                                     Sign in
                                 </button>

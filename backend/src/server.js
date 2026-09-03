@@ -11,6 +11,7 @@ const path = require('path');
 // Load environment config
 const config = require('./config/env');
 const { testConnection } = require('./config/database');
+const { loadBackendSecrets } = require('./vault');
 
 // Import routes
 const authRoutes = require('./routes/auth');
@@ -99,25 +100,7 @@ app.get('/health', async (req, res) => {
     });
 });
 
-// API routes
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/conversations', conversationRoutes);
-app.use('/api/messages', messageRoutes);
-app.use('/api/ai', aiRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/services', serviceRoutes);
-app.use('/api/share', shareRoutes);
-
-// ============================================================================
-// ERROR HANDLING
-// ============================================================================
-
-// 404 handler
-app.use(notFoundHandler);
-
-// Global error handler
-app.use(errorHandler);
+// API routes and Error handlers will be mounted in startServer() after fetching secrets
 
 // ============================================================================
 // START SERVER
@@ -125,6 +108,34 @@ app.use(errorHandler);
 
 const startServer = async () => {
     try {
+        // 1. Fetch secrets securely into memory BEFORE processing any routes
+        const secrets = await loadBackendSecrets();
+        
+        // 2. Attach them to the Express app.locals so your routes can access them
+        app.locals.secrets = secrets;
+
+        // Inject DATABASE_URL into process.env so database.js can pick it up
+        if (secrets.DATABASE_URL) {
+            process.env.DATABASE_URL = secrets.DATABASE_URL;
+        }
+
+        // 3. Mount routes
+        app.use('/api/auth', authRoutes);
+        app.use('/api/users', userRoutes);
+        app.use('/api/conversations', conversationRoutes);
+        app.use('/api/messages', messageRoutes);
+        app.use('/api/ai', aiRoutes);
+        app.use('/api/admin', adminRoutes);
+        app.use('/api/services', serviceRoutes);
+        app.use('/api/share', shareRoutes);
+
+        // 4. Mount error handlers (Must be after routes)
+        app.use(notFoundHandler);
+        app.use(errorHandler);
+
+        // Example: Connecting to Postgres using the vaulted URL
+        // const db = new Database(app.locals.secrets.DATABASE_URL);
+
         // Test database connection
         const dbConnected = await testConnection();
         if (!dbConnected) {

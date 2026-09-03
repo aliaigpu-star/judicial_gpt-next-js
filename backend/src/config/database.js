@@ -6,26 +6,42 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
-const pool = new Pool({
-    host: process.env.DB_HOST || 'localhost',
-    port: parseInt(process.env.DB_PORT) || 5432,
-    database: process.env.DB_NAME || 'judicial_gpt',
-    user: process.env.DB_USER || 'postgres',
-    password: process.env.DB_PASSWORD || '',
-    max: 20, // Maximum number of clients in the pool
-    idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 2000,
-});
+let poolInstance = null;
 
-// Test connection on startup
-pool.on('connect', () => {
-    console.log('✅ Connected to PostgreSQL database');
-});
+const getPool = () => {
+    if (!poolInstance) {
+        if (process.env.DATABASE_URL) {
+            poolInstance = new Pool({
+                connectionString: process.env.DATABASE_URL,
+                max: 20,
+                idleTimeoutMillis: 30000,
+                connectionTimeoutMillis: 2000,
+            });
+        } else {
+            poolInstance = new Pool({
+                host: process.env.DB_HOST || 'localhost',
+                port: parseInt(process.env.DB_PORT) || 5432,
+                database: process.env.DB_NAME || 'judicialgpt2',
+                user: process.env.DB_USER || 'postgres',
+                password: process.env.DB_PASSWORD || '',
+                max: 20,
+                idleTimeoutMillis: 30000,
+                connectionTimeoutMillis: 2000,
+            });
+        }
+        
+        // Test connection on startup
+        poolInstance.on('connect', () => {
+            console.log('✅ Connected to PostgreSQL database');
+        });
 
-pool.on('error', (err) => {
-    console.error('❌ Unexpected database error:', err);
-    process.exit(-1);
-});
+        poolInstance.on('error', (err) => {
+            console.error('❌ Unexpected database error:', err);
+            process.exit(-1);
+        });
+    }
+    return poolInstance;
+};
 
 /**
  * Execute a query with parameters
@@ -36,7 +52,7 @@ pool.on('error', (err) => {
 const query = async (text, params) => {
     const start = Date.now();
     try {
-        const result = await pool.query(text, params);
+        const result = await getPool().query(text, params);
         const duration = Date.now() - start;
         if (process.env.NODE_ENV === 'development') {
             console.log('📊 Query executed:', { text: text.substring(0, 50), duration: `${duration}ms`, rows: result.rowCount });
@@ -53,7 +69,7 @@ const query = async (text, params) => {
  * @returns {Promise<Object>} Pool client
  */
 const getClient = async () => {
-    const client = await pool.connect();
+    const client = await getPool().connect();
     const originalQuery = client.query.bind(client);
     const originalRelease = client.release.bind(client);
 
@@ -109,7 +125,7 @@ const testConnection = async () => {
 };
 
 module.exports = {
-    pool,
+    get pool() { return getPool(); },
     query,
     getClient,
     transaction,

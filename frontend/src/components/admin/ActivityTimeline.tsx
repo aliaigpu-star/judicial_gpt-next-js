@@ -58,7 +58,7 @@ function getActionIcon(action: string) {
 
 function getActionColor(action: string): string {
     if (action.toLowerCase().includes('login')) return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
-    if (action.toLowerCase().includes('create') || action.toLowerCase().includes('register')) return 'bg-[#0c9344]/10 text-[#0c9344] border-[#0c9344]/20';
+    if (action.toLowerCase().includes('create') || action.toLowerCase().includes('register')) return 'bg-[#00a859]/10 text-[#00a859] border-[#00a859]/20';
     if (action.toLowerCase().includes('delete')) return 'bg-red-500/10 text-red-400 border-red-500/20';
     if (action.toLowerCase().includes('update') || action.toLowerCase().includes('edit')) return 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20';
     return 'bg-gray-500/10 text-gray-400 border-gray-500/20';
@@ -95,8 +95,8 @@ export default function ActivityTimeline({ events, loading }: ActivityTimelinePr
     return (
         <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-6">
             <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-[#0c9344]/10 rounded-lg">
-                    <Clock className="h-5 w-5 text-[#0c9344]" />
+                <div className="p-2 bg-[#00a859]/10 rounded-lg">
+                    <Clock className="h-5 w-5 text-[#00a859]" />
                 </div>
                 <h3 className="text-lg font-semibold text-white">Activity Timeline</h3>
             </div>

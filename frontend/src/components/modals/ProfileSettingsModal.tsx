@@ -181,7 +181,7 @@ export default function ProfileSettingsModal({ isOpen, onClose }: ProfileSetting
                                             className="w-full h-full object-cover"
                                         />
                                     ) : (
-                                        <div className="w-full h-full flex items-center justify-center bg-[#0c9344] text-white text-3xl font-bold">
+                                        <div className="w-full h-full flex items-center justify-center bg-[#00a859] text-white text-3xl font-bold">
                                             {user?.name?.[0] || user?.email?.[0] || 'U'}
                                         </div>
                                     )}
@@ -223,7 +223,7 @@ export default function ProfileSettingsModal({ isOpen, onClose }: ProfileSetting
                             </div>
                         )}
                         {success && (
-                            <div className="mb-4 p-3 bg-[#0c9344]/10 dark:bg-[#0c9344]/20 border border-[#0c9344]/25 dark:border-[#0c9344] text-[#0c9344] dark:text-[#0c9344] text-sm rounded-lg flex items-center gap-2">
+                            <div className="mb-4 p-3 bg-[#00a859]/10 dark:bg-[#00a859]/20 border border-[#00a859]/25 dark:border-[#00a859] text-[#00a859] dark:text-[#00a859] text-sm rounded-lg flex items-center gap-2">
                                 <Check className="w-4 h-4" /> {success}
                             </div>
                         )}
@@ -240,7 +240,7 @@ export default function ProfileSettingsModal({ isOpen, onClose }: ProfileSetting
                                         type="text"
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
-                                        className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0c9344] focus:border-transparent outline-none"
+                                        className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#00a859] focus:border-transparent outline-none"
                                         placeholder="Your name"
                                     />
                                 </div>
@@ -302,7 +302,7 @@ export default function ProfileSettingsModal({ isOpen, onClose }: ProfileSetting
                                                     type={showCurrentPassword ? 'text' : 'password'}
                                                     value={currentPassword}
                                                     onChange={(e) => setCurrentPassword(e.target.value)}
-                                                    className="w-full pl-10 pr-10 py-2.5 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0c9344] focus:border-transparent outline-none"
+                                                    className="w-full pl-10 pr-10 py-2.5 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#00a859] focus:border-transparent outline-none"
                                                     placeholder="Enter current password"
                                                 />
                                                 <button
@@ -325,7 +325,7 @@ export default function ProfileSettingsModal({ isOpen, onClose }: ProfileSetting
                                                     type={showNewPassword ? 'text' : 'password'}
                                                     value={newPassword}
                                                     onChange={(e) => setNewPassword(e.target.value)}
-                                                    className="w-full pl-10 pr-10 py-2.5 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0c9344] focus:border-transparent outline-none"
+                                                    className="w-full pl-10 pr-10 py-2.5 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#00a859] focus:border-transparent outline-none"
                                                     placeholder="Enter new password"
                                                 />
                                                 <button
@@ -348,7 +348,7 @@ export default function ProfileSettingsModal({ isOpen, onClose }: ProfileSetting
                                                     type={showConfirmPassword ? 'text' : 'password'}
                                                     value={confirmPassword}
                                                     onChange={(e) => setConfirmPassword(e.target.value)}
-                                                    className="w-full pl-10 pr-10 py-2.5 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0c9344] focus:border-transparent outline-none"
+                                                    className="w-full pl-10 pr-10 py-2.5 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#00a859] focus:border-transparent outline-none"
                                                     placeholder="Confirm new password"
                                                 />
                                                 <button
@@ -364,7 +364,7 @@ export default function ProfileSettingsModal({ isOpen, onClose }: ProfileSetting
                                         <button
                                             onClick={handleChangePassword}
                                             disabled={isChangingPassword || !currentPassword || !newPassword || !confirmPassword}
-                                            className="w-full px-4 py-2.5 bg-[#0c9344] text-white rounded-lg hover:bg-[#0c9344] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                                            className="w-full px-4 py-2.5 bg-[#00a859] text-white rounded-lg hover:bg-[#00a859] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                                         >
                                             {isChangingPassword ? (
                                                 <>
@@ -393,7 +393,7 @@ export default function ProfileSettingsModal({ isOpen, onClose }: ProfileSetting
                         <button
                             onClick={handleSave}
                             disabled={isSaving}
-                            className="px-4 py-2 bg-[#0c9344] text-white rounded-lg hover:bg-[#0c9344] transition-colors disabled:opacity-50 flex items-center gap-2"
+                            className="px-4 py-2 bg-[#00a859] text-white rounded-lg hover:bg-[#00a859] transition-colors disabled:opacity-50 flex items-center gap-2"
                         >
                             {isSaving ? (
                                 <>

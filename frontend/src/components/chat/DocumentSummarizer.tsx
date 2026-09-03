@@ -319,8 +319,8 @@ export default function DocumentSummarizer() {
                 className="text-center w-full mb-8"
             >
                 <div className="flex justify-center mb-4">
-                    <div className="w-10 h-10 rounded-full bg-[#0c9344]/10 flex items-center justify-center">
-                        <FileText className="w-5 h-5 text-[#0c9344]" />
+                    <div className="w-10 h-10 rounded-full bg-[#00a859]/10 flex items-center justify-center">
+                        <FileText className="w-5 h-5 text-[#00a859]" />
                     </div>
                 </div>
 
@@ -345,8 +345,8 @@ export default function DocumentSummarizer() {
                     onClick={() => fileInputRef.current?.click()}
                     className={`relative cursor-pointer rounded-2xl border-2 border-dashed transition-all duration-300 p-10 text-center group ${
                         isDragging
-                            ? 'border-[#0c9344] bg-[#0c9344]/5 dark:bg-[#0c9344]/10 scale-[1.02]'
-                            : 'border-[#e5e5e5] dark:border-[#424242] hover:border-[#0c9344]/50 hover:bg-[#f9f9f9] dark:hover:bg-[#2f2f2f]/50'
+                            ? 'border-[#00a859] bg-[#00a859]/5 dark:bg-[#00a859]/10 scale-[1.02]'
+                            : 'border-[#e5e5e5] dark:border-[#424242] hover:border-[#00a859]/50 hover:bg-[#f9f9f9] dark:hover:bg-[#2f2f2f]/50'
                     }`}
                 >
                     <input
@@ -359,13 +359,13 @@ export default function DocumentSummarizer() {
 
                     <div className={`w-14 h-14 mx-auto mb-4 rounded-2xl flex items-center justify-center transition-all duration-300 ${
                         isDragging
-                            ? 'bg-[#0c9344]/15 scale-110'
-                            : 'bg-[#f4f4f4] dark:bg-[#2f2f2f] group-hover:bg-[#0c9344]/10'
+                            ? 'bg-[#00a859]/15 scale-110'
+                            : 'bg-[#f4f4f4] dark:bg-[#2f2f2f] group-hover:bg-[#00a859]/10'
                     }`}>
                         <FileUp className={`w-7 h-7 transition-colors duration-300 ${
                             isDragging
-                                ? 'text-[#0c9344]'
-                                : 'text-[#666666] dark:text-[#b4b4b4] group-hover:text-[#0c9344]'
+                                ? 'text-[#00a859]'
+                                : 'text-[#666666] dark:text-[#b4b4b4] group-hover:text-[#00a859]'
                         }`} />
                     </div>
 
@@ -389,9 +389,9 @@ export default function DocumentSummarizer() {
                 className="w-full max-w-lg text-center"
             >
                 <div className="relative w-20 h-20 mx-auto mb-6">
-                    <div className="absolute inset-0 rounded-2xl bg-[#0c9344]/10 animate-pulse" />
+                    <div className="absolute inset-0 rounded-2xl bg-[#00a859]/10 animate-pulse" />
                     <div className="absolute inset-0 flex items-center justify-center">
-                        <FileText className="w-10 h-10 text-[#0c9344]" />
+                        <FileText className="w-10 h-10 text-[#00a859]" />
                     </div>
                     <svg className="absolute inset-0 w-20 h-20 animate-spin" style={{ animationDuration: '3s' }}>
                         <circle
@@ -400,7 +400,7 @@ export default function DocumentSummarizer() {
                             stroke="currentColor"
                             strokeWidth="2"
                             strokeDasharray="60 160"
-                            className="text-[#0c9344]/40"
+                            className="text-[#00a859]/40"
                         />
                     </svg>
                 </div>
@@ -414,11 +414,11 @@ export default function DocumentSummarizer() {
 
                 <div className="flex items-center justify-center gap-2 mt-4 mb-2">
                     <div className="flex gap-1">
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#0c9344] animate-bounce" style={{ animationDelay: '0ms' }} />
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#0c9344] animate-bounce" style={{ animationDelay: '150ms' }} />
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#0c9344] animate-bounce" style={{ animationDelay: '300ms' }} />
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#00a859] animate-bounce" style={{ animationDelay: '0ms' }} />
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#00a859] animate-bounce" style={{ animationDelay: '150ms' }} />
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#00a859] animate-bounce" style={{ animationDelay: '300ms' }} />
                     </div>
-                    <span className="text-sm text-[#0c9344]">{progress}</span>
+                    <span className="text-sm text-[#00a859]">{progress}</span>
                 </div>
 
                 <div className="flex items-center justify-center gap-1.5 text-xs text-[#999999] dark:text-[#666666]">
@@ -444,17 +444,17 @@ export default function DocumentSummarizer() {
                 >
                     <div className="flex items-start gap-4 py-2">
                         <div className="flex-shrink-0 mt-0.5">
-                            <div className="w-7 h-7 rounded-sm bg-[#0c9344] flex items-center justify-center">
+                            <div className="w-7 h-7 rounded-sm bg-[#00a859] flex items-center justify-center">
                                 <FileText className="w-4 h-4 text-white" />
                             </div>
                         </div>
                         <div className="flex-1 min-w-0">
                             <div className="flex flex-wrap items-center gap-2 mb-3">
-                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#0c9344]/10 text-[#0c9344] border border-[#0c9344]/20">
+                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#00a859]/10 text-[#00a859] border border-[#00a859]/20">
                                     <CheckCircle2 className="w-3 h-3" />
                                     Summary complete
                                 </span>
-                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#0c9344]/10 text-[#0c9344] border border-[#0c9344]/20">
+                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#00a859]/10 text-[#00a859] border border-[#00a859]/20">
                                     <FileText className="w-3 h-3" />
                                     {filename}
                                 </span>
@@ -473,7 +473,7 @@ export default function DocumentSummarizer() {
                                     title="Copy summary"
                                 >
                                     {copied ? (
-                                        <Check className="w-4 h-4 text-[#0c9344]" />
+                                        <Check className="w-4 h-4 text-[#00a859]" />
                                     ) : (
                                         <Copy className="w-4 h-4 text-[#666666] dark:text-[#b4b4b4]" />
                                     )}
@@ -482,7 +482,7 @@ export default function DocumentSummarizer() {
                                     onClick={() => { setShowQA(true); setTimeout(() => qaInputRef.current?.focus(), 100); }}
                                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-colors ${
                                         showQA
-                                            ? 'bg-[#0c9344]/10 text-[#0c9344]'
+                                            ? 'bg-[#00a859]/10 text-[#00a859]'
                                             : 'hover:bg-[#f4f4f4] dark:hover:bg-[#2f2f2f] text-[#666666] dark:text-[#b4b4b4]'
                                     }`}
                                 >
@@ -511,7 +511,7 @@ export default function DocumentSummarizer() {
                         >
                             <div className="border-t border-[#e5e5e5] dark:border-[#2f2f2f] pt-6 mt-2">
                                 <h3 className="flex items-center gap-2 text-sm font-medium text-[#0d0d0d] dark:text-[#ececec] mb-4">
-                                    <BookOpen className="w-4 h-4 text-[#0c9344]" />
+                                    <BookOpen className="w-4 h-4 text-[#00a859]" />
                                     Ask Questions About This Document
                                 </h3>
 
@@ -536,7 +536,7 @@ export default function DocumentSummarizer() {
                                     <div key={item.id} className="mb-6">
                                         <div className="flex items-start gap-4 flex-row-reverse py-2">
                                             <div className="flex-shrink-0 mt-0.5">
-                                                <div className="w-7 h-7 rounded-full bg-[#0c9344] flex items-center justify-center text-xs font-medium text-white">
+                                                <div className="w-7 h-7 rounded-full bg-[#00a859] flex items-center justify-center text-xs font-medium text-white">
                                                     <MessageSquare className="w-3.5 h-3.5" />
                                                 </div>
                                             </div>
@@ -548,7 +548,7 @@ export default function DocumentSummarizer() {
                                         </div>
                                         <div className="flex items-start gap-4 py-2">
                                             <div className="flex-shrink-0 mt-0.5">
-                                                <div className="w-7 h-7 rounded-sm bg-[#0c9344] flex items-center justify-center">
+                                                <div className="w-7 h-7 rounded-sm bg-[#00a859] flex items-center justify-center">
                                                     <FileText className="w-4 h-4 text-white" />
                                                 </div>
                                             </div>
@@ -568,13 +568,13 @@ export default function DocumentSummarizer() {
                                         className="flex items-start gap-4 py-2 mb-4"
                                     >
                                         <div className="flex-shrink-0 mt-0.5">
-                                            <div className="w-7 h-7 rounded-sm bg-[#0c9344] flex items-center justify-center">
+                                            <div className="w-7 h-7 rounded-sm bg-[#00a859] flex items-center justify-center">
                                                 <FileText className="w-4 h-4 text-white animate-pulse" />
                                             </div>
                                         </div>
                                         <div className="flex-1">
                                             <div className="flex items-center gap-3">
-                                                <Loader2 className="w-4 h-4 text-[#0c9344] animate-spin" />
+                                                <Loader2 className="w-4 h-4 text-[#00a859] animate-spin" />
                                                 <span className="text-sm text-[#666666] dark:text-[#b4b4b4]">
                                                     Retrieving and reasoning...
                                                 </span>
@@ -623,9 +623,9 @@ export default function DocumentSummarizer() {
     const qaInputBar = showQA && status === 'done' && (
         <div className="px-4 pb-4 pt-2">
             <form onSubmit={(e) => { e.preventDefault(); handleAskQuestion(); }} className="max-w-3xl mx-auto">
-                <div className="relative flex items-center gap-2 rounded-3xl px-3 py-2 transition-colors shadow-sm bg-[#f4f4f4] dark:bg-[#2f2f2f] border border-[#e5e5e5] dark:border-[#424242] focus-within:border-[#0c9344]/50 dark:focus-within:border-[#0c9344]/40">
+                <div className="relative flex items-center gap-2 rounded-3xl px-3 py-2 transition-colors shadow-sm bg-[#f4f4f4] dark:bg-[#2f2f2f] border border-[#e5e5e5] dark:border-[#424242] focus-within:border-[#00a859]/50 dark:focus-within:border-[#00a859]/40">
                     <div className="p-1.5">
-                        <BookOpen className="w-5 h-5 text-[#0c9344]" />
+                        <BookOpen className="w-5 h-5 text-[#00a859]" />
                     </div>
                     <textarea
                         ref={qaInputRef}
@@ -642,7 +642,7 @@ export default function DocumentSummarizer() {
                         disabled={!qaQuestion.trim() || isAskingQuestion}
                         className={`p-2 rounded-full transition-all ${(!qaQuestion.trim() || isAskingQuestion)
                             ? 'bg-[#d9d9d9] dark:bg-[#424242] text-[#999999] dark:text-[#666666] cursor-not-allowed'
-                            : 'bg-[#0c9344] text-white hover:opacity-80'
+                            : 'bg-[#00a859] text-white hover:opacity-80'
                         }`}
                     >
                         {isAskingQuestion ? (

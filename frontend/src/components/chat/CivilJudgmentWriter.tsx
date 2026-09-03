@@ -460,7 +460,7 @@ export default function CivilJudgmentWriter() {
                                                         title="Copy judgment"
                                                     >
                                                         {copiedId === item.id ? (
-                                                            <Check className="w-4 h-4 text-[#0c9344]" />
+                                                            <Check className="w-4 h-4 text-[#00a859]" />
                                                         ) : (
                                                             <Copy className="w-4 h-4 text-[#666666] dark:text-[#b4b4b4]" />
                                                         )}

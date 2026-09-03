@@ -351,7 +351,7 @@ router.post('/transcribe', authenticate, upload.single('audio'), asyncHandler(as
     }
 
     // Fallback: Use Groq Whisper if available
-    if (config.GROQ_API_KEY) {
+    if (req.app.locals.secrets?.GROQ_API_KEY) {
         try {
             // Create new log entry for Groq Whisper
             groqRequestId = await ApiRequestLogger.log({
@@ -366,7 +366,7 @@ router.post('/transcribe', authenticate, upload.single('audio'), asyncHandler(as
             });
 
             const Groq = require('groq-sdk');
-            const groq = new Groq({ apiKey: config.GROQ_API_KEY });
+            const groq = new Groq({ apiKey: req.app.locals.secrets.GROQ_API_KEY });
 
             const transcription = await groq.audio.transcriptions.create({
                 file: new File([req.file.buffer], 'audio.webm', { type: req.file.mimetype }),
@@ -739,9 +739,9 @@ router.post('/voice-to-voice', authenticate, upload.single('audio'), asyncHandle
         let transcription = '';
         
         // Use Groq Whisper for transcription
-        if (config.GROQ_API_KEY) {
+        if (req.app.locals.secrets?.GROQ_API_KEY) {
             const Groq = require('groq-sdk');
-            const groq = new Groq({ apiKey: config.GROQ_API_KEY });
+            const groq = new Groq({ apiKey: req.app.locals.secrets.GROQ_API_KEY });
 
             const result = await groq.audio.transcriptions.create({
                 file: new File([req.file.buffer], 'audio.webm', { type: req.file.mimetype }),

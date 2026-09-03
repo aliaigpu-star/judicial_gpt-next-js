@@ -254,7 +254,7 @@ export default function ChatLayout({ children }: { children: React.ReactNode }) 
         return (
             <div className="flex items-center justify-center h-screen bg-white dark:bg-[#212121]">
                 <div className="flex flex-col items-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#0c9344]" />
+                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#00a859]" />
                     <p className="mt-3 text-[#666666] dark:text-[#b4b4b4] text-sm">Loading...</p>
                 </div>
             </div>
@@ -265,7 +265,7 @@ export default function ChatLayout({ children }: { children: React.ReactNode }) 
         return (
             <div className="flex items-center justify-center h-screen bg-white dark:bg-[#212121]">
                 <div className="flex flex-col items-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#0c9344]" />
+                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#00a859]" />
                     <p className="mt-3 text-[#666666] dark:text-[#b4b4b4] text-sm">Redirecting...</p>
                 </div>
             </div>

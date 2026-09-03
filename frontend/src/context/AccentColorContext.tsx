@@ -17,9 +17,9 @@ const AccentColorContext = createContext<AccentColorContextType | undefined>(und
 // Default is Emerald/Green
 const accentColorMap: Record<AccentColor, { bg: string; hover: string; dot: string }> = {
     default: {
-        bg: 'bg-[#0c9344]',
-        hover: 'hover:bg-[#0c9344]',
-        dot: 'bg-[#0c9344]'
+        bg: 'bg-[#00a859]',
+        hover: 'hover:bg-[#00a859]',
+        dot: 'bg-[#00a859]'
     },
     blue: {
         bg: 'bg-blue-600',

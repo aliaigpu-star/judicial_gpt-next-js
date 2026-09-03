@@ -38,86 +38,84 @@ export function FadeIn({
 export function SiteHeader({ light = true }: { light?: boolean }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [isScrolled, setIsScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 10);
-    // Set initial state immediately in case page loads mid-scroll
-    handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   const navItems = [
-    { name: 'Features', href: '/features' },
-    { name: 'AI Tools', href: '/ai-tools' },
+    { name: 'Features', href: '/#features' },
+    { name: 'How It Works', href: '/#how-it-works' },
+    { name: 'AI Tools', href: '/#ai-tools' },
+    { name: 'Team', href: '/#team' },
     { name: 'About', href: '/about' },
-    { name: 'Docs', href: '/docs' },
-    { name: 'Contact', href: '/contact' },
   ];
 
   return (
-    <header
-      className="fixed top-0 left-0 right-0 z-[9999]"
-      style={{
-        backgroundColor: (isScrolled || !light) ? '#ffffff' : 'transparent',
-        boxShadow: (isScrolled || !light) ? '0 1px 6px rgba(0,0,0,0.08)' : 'none',
-        borderBottom: (isScrolled || !light) ? '1px solid rgba(226,232,240,0.7)' : '1px solid transparent',
-        transition: 'background-color 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease',
-      }}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 md:h-[4.5rem]">
+    <header className="fixed top-0 left-0 right-0 z-[9999] pt-3 sm:pt-3.5 px-3 sm:px-6">
+      <div className="max-w-5xl mx-auto">
+        <div className="bg-white/85 backdrop-blur-xl border border-white/90 shadow-[0_6px_24px_rgba(0,0,0,0.05)] rounded-[20px] sm:rounded-[22px] px-3.5 sm:px-5 py-2 sm:py-2.5 flex items-center justify-between transition-all">
+          {/* Logo */}
           <button
             type="button"
-            className="flex items-center gap-2.5 cursor-pointer flex-shrink-0"
+            className="flex items-center gap-2 sm:gap-2.5 cursor-pointer flex-shrink-0"
             onClick={() => router.push('/')}
           >
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#0c9344] to-[#0c9344] flex items-center justify-center shadow-lg shadow-[#0c9344]/30">
-              <Scale className="w-[18px] h-[18px] text-white" />
+            <div className="w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-[10px] bg-[#0c7a4b] flex items-center justify-center text-white shadow-sm shrink-0">
+              <Scale className="w-4.5 h-4.5 text-white stroke-[2.2]" />
             </div>
-            <span className="text-xl font-extrabold tracking-tight text-slate-900">
-              Judicial<span className="text-[#0c9344]">GPT</span>
+            <span className="text-lg sm:text-[19px] font-black tracking-tight text-slate-900">
+              Judicial<span className="text-[#0c7a4b]">GPT</span>
             </span>
           </button>
 
-          <nav className="hidden lg:flex items-center gap-1">
-            {navItems.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`px-3.5 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${pathname === item.href
-                  ? 'text-[#0c9344] bg-[#0c9344]/10'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-[#0c9344]/10/80'
-                  }`}
-              >
-                {item.name}
-              </Link>
-            ))}
+          {/* Desktop Nav */}
+          <nav className="hidden lg:flex items-center gap-5 xl:gap-6">
+            {navItems.map((item) => {
+              const isActive = pathname === item.href || (item.href === '/about' && pathname === '/about');
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className="flex flex-col items-center group py-0.5"
+                >
+                  <span
+                    className={`text-[14px] transition-colors duration-200 ${
+                      isActive ? 'font-bold text-slate-900' : 'font-medium text-slate-700 hover:text-[#0c7a4b]'
+                    }`}
+                  >
+                    {item.name}
+                  </span>
+                  {isActive ? (
+                    <div className="w-4 h-[3px] bg-[#0c7a4b] rounded-full mt-0.5" />
+                  ) : (
+                    <div className="w-4 h-[3px] bg-transparent rounded-full mt-0.5 group-hover:bg-[#0c7a4b]/30 transition-colors" />
+                  )}
+                </Link>
+              );
+            })}
           </nav>
 
+          {/* Desktop Actions */}
           <div className="hidden lg:flex items-center gap-3">
             <button
               type="button"
               onClick={() => router.push('/login')}
-              className="px-4 py-2.5 text-sm font-semibold rounded-lg text-slate-700 hover:bg-[#0c9344]/10 transition-all"
+              className="text-[14px] font-semibold text-slate-700 hover:text-slate-900 px-2.5 py-1.5 transition-colors cursor-pointer"
             >
               Sign In
             </button>
             <button
               type="button"
               onClick={() => router.push('/signup')}
-              className="px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-[#0c9344] to-[#0c9344] rounded-lg shadow-md shadow-[#0c9344]/25 hover:shadow-lg hover:shadow-[#0c9344]/35 transition-all"
+              className="px-4.5 sm:px-5 py-2 text-[13.5px] font-bold text-white bg-[#0c7a4b] hover:bg-[#09633c] rounded-xl shadow-sm transition-all cursor-pointer"
             >
               Get Started Free
             </button>
           </div>
 
+          {/* Mobile toggle */}
           <button
             type="button"
             onClick={() => setOpen(!open)}
-            className="lg:hidden p-2 rounded-lg text-slate-900 hover:bg-[#0c9344]/10"
+            className="lg:hidden p-2 rounded-xl text-slate-900 hover:bg-slate-100"
             aria-label="Toggle menu"
           >
             {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -126,30 +124,30 @@ export function SiteHeader({ light = true }: { light?: boolean }) {
       </div>
 
       {open && (
-        <div className="lg:hidden bg-white/98 backdrop-blur-2xl border-b border-slate-200">
-          <div className="px-4 py-6 space-y-1">
+        <div className="lg:hidden mt-2 max-w-5xl mx-auto bg-white/95 backdrop-blur-2xl border border-slate-200/80 rounded-2xl p-4 shadow-xl">
+          <div className="space-y-1">
             {navItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className="block px-4 py-3 text-slate-700 font-medium rounded-xl hover:bg-[#0c9344]/10 hover:text-[#0c9344]"
+                className="block px-3 py-2 text-sm text-slate-700 font-medium rounded-lg hover:bg-[#0c7a4b]/10 hover:text-[#0c7a4b]"
               >
                 {item.name}
               </Link>
             ))}
-            <div className="pt-4 flex gap-2">
+            <div className="pt-3 border-t border-slate-100 flex gap-2">
               <button
                 type="button"
                 onClick={() => router.push('/login')}
-                className="flex-1 px-4 py-3 text-sm font-semibold rounded-xl border border-slate-200"
+                className="flex-1 py-2 text-xs font-semibold rounded-lg border border-slate-200 text-slate-700"
               >
                 Sign In
               </button>
               <button
                 type="button"
                 onClick={() => router.push('/signup')}
-                className="flex-1 px-4 py-3 text-sm font-bold text-white rounded-xl bg-[#0c9344]"
+                className="flex-1 py-2 text-xs font-bold text-white bg-[#0c7a4b] rounded-lg"
               >
                 Get Started
               </button>

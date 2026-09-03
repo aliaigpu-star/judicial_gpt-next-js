@@ -31,21 +31,12 @@ const googleClient = new OAuth2Client(
 // Helper for Turnstile verification
 // Helper for Turnstile verification
 const verifyTurnstile = async (token, ip) => {
-    // Force allow for all users/environments as requested
-    console.log('🔧 Turnstile Verification DISABLED: Avoiding security check failure.');
-    return true;
-
-    // Legacy logic preserved below but unreachable
-    /*
-    // In development, if we are using the test site key (which frontend does by default), 
-    // we MUST use the test secret key.
     let secretKey = config.TURNSTILE_SECRET_KEY;
 
     if (config.NODE_ENV === 'development') {
         console.log('🔧 Development Mode: Bypassing Turnstile Verification to allow login.');
         return true;
     }
-    */
 
     // If no secret key is set (and not in dev), warn and skip
     if (!secretKey) {

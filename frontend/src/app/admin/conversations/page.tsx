@@ -209,7 +209,7 @@ export default function ConversationsPage() {
                                 placeholder="Search by title, user name, or email..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-11 pr-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 outline-none focus:ring-2 focus:ring-[#0c9344]/50 focus:border-[#0c9344]/50 transition-all"
+                                className="w-full pl-11 pr-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 outline-none focus:ring-2 focus:ring-[#00a859]/50 focus:border-[#00a859]/50 transition-all"
                             />
                         </div>
                     </div>
@@ -220,7 +220,7 @@ export default function ConversationsPage() {
                         <select
                             value={statusFilter}
                             onChange={(e) => setStatusFilter(e.target.value)}
-                            className="px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white outline-none focus:ring-2 focus:ring-[#0c9344]/50 focus:border-[#0c9344]/50 cursor-pointer"
+                            className="px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white outline-none focus:ring-2 focus:ring-[#00a859]/50 focus:border-[#00a859]/50 cursor-pointer"
                         >
                             <option value="all">All Conversations</option>
                             <option value="active">Active</option>

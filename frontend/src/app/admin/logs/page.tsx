@@ -200,7 +200,7 @@ export default function LogsPage() {
     const getStatusColor = (status: string) => {
         switch (status) {
             case 'success':
-                return 'bg-[#0c9344]/10 text-[#0c9344] border-[#0c9344]/20';
+                return 'bg-[#00a859]/10 text-[#00a859] border-[#00a859]/20';
             case 'failed':
                 return 'bg-red-500/10 text-red-400 border-red-500/20';
             case 'pending':
@@ -285,7 +285,7 @@ export default function LogsPage() {
                         onClick={() => setLogType('activity')}
                         className={`flex-1 px-4 py-2.5 rounded-lg font-medium transition-all ${
                             logType === 'activity'
-                                ? 'bg-[#0c9344]/10 text-[#0c9344] border border-[#0c9344]/30'
+                                ? 'bg-[#00a859]/10 text-[#00a859] border border-[#00a859]/30'
                                 : 'text-gray-400 hover:text-gray-200'
                         }`}
                     >
@@ -299,7 +299,7 @@ export default function LogsPage() {
                         onClick={() => setLogType('api-requests')}
                         className={`flex-1 px-4 py-2.5 rounded-lg font-medium transition-all ${
                             logType === 'api-requests'
-                                ? 'bg-[#0c9344]/10 text-[#0c9344] border border-[#0c9344]/30'
+                                ? 'bg-[#00a859]/10 text-[#00a859] border border-[#00a859]/30'
                                 : 'text-gray-400 hover:text-gray-200'
                         }`}
                     >
@@ -374,7 +374,7 @@ export default function LogsPage() {
                                 placeholder="Search logs..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-11 pr-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 outline-none focus:ring-2 focus:ring-[#0c9344]/50 focus:border-[#0c9344]/50 transition-all"
+                                className="w-full pl-11 pr-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 outline-none focus:ring-2 focus:ring-[#00a859]/50 focus:border-[#00a859]/50 transition-all"
                             />
                         </div>
                     </div>
@@ -386,7 +386,7 @@ export default function LogsPage() {
                             <select
                                 value={actionFilter}
                                 onChange={(e) => setActionFilter(e.target.value)}
-                                className="px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white outline-none focus:ring-2 focus:ring-[#0c9344]/50 focus:border-[#0c9344]/50 cursor-pointer"
+                                className="px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white outline-none focus:ring-2 focus:ring-[#00a859]/50 focus:border-[#00a859]/50 cursor-pointer"
                             >
                                 <option value="all">All Actions</option>
                                 <option value="user_login">User Login</option>
@@ -406,7 +406,7 @@ export default function LogsPage() {
                         <select
                             value={statusFilter}
                             onChange={(e) => setStatusFilter(e.target.value)}
-                            className="px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white outline-none focus:ring-2 focus:ring-[#0c9344]/50 focus:border-[#0c9344]/50 cursor-pointer"
+                            className="px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white outline-none focus:ring-2 focus:ring-[#00a859]/50 focus:border-[#00a859]/50 cursor-pointer"
                         >
                             <option value="all">All Status</option>
                             <option value="success">Success</option>
@@ -515,7 +515,7 @@ export default function LogsPage() {
                                                 </td>
                                                 <td className="py-4 px-6">
                                                     <div className="flex items-center gap-2">
-                                                        <ActionIcon className="w-4 h-4 text-[#0c9344]" />
+                                                        <ActionIcon className="w-4 h-4 text-[#00a859]" />
                                                         <span className="text-white font-medium">{log.action}</span>
                                                     </div>
                                                 </td>
@@ -598,7 +598,7 @@ export default function LogsPage() {
                                             <td className="py-4 px-6">
                                                 <span className={`px-2 py-1 rounded text-xs font-mono ${
                                                     log.method === 'GET' ? 'bg-blue-500/10 text-blue-400' :
-                                                    log.method === 'POST' ? 'bg-[#0c9344]/10 text-[#0c9344]' :
+                                                    log.method === 'POST' ? 'bg-[#00a859]/10 text-[#00a859]' :
                                                     log.method === 'PUT' ? 'bg-yellow-500/10 text-yellow-400' :
                                                     log.method === 'DELETE' ? 'bg-red-500/10 text-red-400' :
                                                     'bg-gray-500/10 text-gray-400'

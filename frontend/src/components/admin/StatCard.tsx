@@ -15,10 +15,10 @@ interface StatCardProps {
 
 const colorClasses = {
     emerald: {
-        bg: 'bg-[#0c9344]/10',
-        border: 'border-[#0c9344]/20',
-        icon: 'text-[#0c9344]',
-        trend: 'text-[#0c9344]',
+        bg: 'bg-[#00a859]/10',
+        border: 'border-[#00a859]/20',
+        icon: 'text-[#00a859]',
+        trend: 'text-[#00a859]',
     },
     blue: {
         bg: 'bg-blue-500/10',

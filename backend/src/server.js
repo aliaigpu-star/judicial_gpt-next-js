@@ -109,7 +109,7 @@ app.get('/health', async (req, res) => {
 const startServer = async () => {
     try {
         // 1. Fetch secrets securely into memory BEFORE processing any routes
-        const secrets = await loadBackendSecrets();
+        const secrets = await loadBackendSecrets() || {};
         
         // 2. Attach them to the Express app.locals so your routes can access them
         app.locals.secrets = secrets;

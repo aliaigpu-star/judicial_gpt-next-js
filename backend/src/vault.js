@@ -21,8 +21,9 @@ async function loadBackendSecrets() {
     
     return response.data.data;
   } catch (err) {
-    console.error("Vault Authentication Failed:", err.message);
-    process.exit(1); // Halt server if secrets cannot be loaded securely
+    console.warn("⚠️ Vault Authentication/Connection Failed:", err.message);
+    console.warn("⚠️ Falling back to local .env variables instead of Vault.");
+    return null; // Return null instead of crashing, allowing server.js to fallback to .env
   }
 }
 

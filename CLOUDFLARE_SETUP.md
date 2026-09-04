@@ -10,3 +10,4 @@
 - Enforced "Always Use HTTPS" to automatically redirect HTTP traffic to HTTPS.
 - Enabled "Automatic HTTPS Rewrites" to fix mixed content issues.
 - Configured Minimum TLS Version to 1.2 for enhanced security.
+- Implemented Cloudflare Turnstile for bot detection on the login and signup pages.

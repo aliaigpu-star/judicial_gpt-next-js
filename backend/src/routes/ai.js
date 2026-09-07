@@ -705,4 +705,58 @@ router.post('/summarize-ask', authenticate, asyncHandler(async (req, res) => {
     }
 }));
 
+/**
+ * Generic Agent Proxy
+ * Proxies requests to Python microservices, supporting streaming responses
+ */
+const proxyToAgent = (targetBaseUrl) => {
+    return asyncHandler(async (req, res) => {
+        // Strip out the initial '/agent/name' prefix to just pass the subpath to the agent
+        const targetUrl = `${targetBaseUrl.replace(/\/$/, '')}${req.url}`;
+        
+        try {
+            const response = await axios({
+                method: req.method,
+                url: targetUrl,
+                data: req.method !== 'GET' ? req.body : undefined,
+                responseType: 'stream',
+                headers: {
+                    'Content-Type': req.headers['content-type'] || 'application/json',
+                    'Accept': req.headers['accept'] || 'application/json, text/event-stream'
+                },
+                validateStatus: () => true // Forward all status codes
+            });
+
+            // Forward headers
+            Object.entries(response.headers).forEach(([key, value]) => {
+                if (key.toLowerCase() !== 'transfer-encoding') {
+                    res.setHeader(key, value);
+                }
+            });
+            
+            res.status(response.status);
+            
+            // Pipe the response stream
+            response.data.pipe(res);
+            
+            // Handle client disconnect
+            req.on('close', () => {
+                if (!response.data.destroyed) {
+                    response.data.destroy();
+                }
+            });
+        } catch (error) {
+            console.error('Agent proxy error:', error.message);
+            throw new ApiError(502, 'Agent service unavailable', 'AGENT_ERROR');
+        }
+    });
+};
+
+// Map proxy routes to their respective agent URLs
+router.use('/agent/civil-writer', authenticate, proxyToAgent(config.CIVIL_JUDGEMENT_AGENT_URL));
+router.use('/agent/criminal-writer', authenticate, proxyToAgent(config.CRIMINAL_JUDGEMENT_AGENT_URL));
+router.use('/agent/judgment-search', authenticate, proxyToAgent(config.JUDGMENT_SEARCH_AGENT_URL));
+router.use('/agent/civil-law', authenticate, proxyToAgent(config.CIVIL_LAW_AGENT_URL));
+router.use('/agent/criminal-law', authenticate, proxyToAgent(config.CRIMINAL_LAW_AGENT_URL));
+
 module.exports = router;

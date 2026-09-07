@@ -4,8 +4,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import {
-  Scale, ArrowRight, FileText, Users, MessageSquare, Star, Twitter, Linkedin,
-  Github, Mail, Brain, Clock, Target, Award, Sparkles, Lock, Globe, MessageCircle,
+  Scale, ArrowRight, FileText, Users, MessageSquare, Star, 
+  Mail, Brain, Clock, Target, Award, Sparkles, Lock, Globe, MessageCircle,
   FileSearch, Bot, ChevronDown, ChevronLeft, ChevronRight, Menu, X, Check, Lightbulb, Shield,
   Search, BookOpen, ShieldCheck, Zap, DollarSign, MapPin, Landmark, Briefcase,
   ScanText, Mic, Info, Plus, Code, BarChart3, Cloud

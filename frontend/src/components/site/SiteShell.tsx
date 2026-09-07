@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
-  Scale, Menu, X, Twitter, Linkedin, Github, Mail, Lock, Shield, ChevronRight, ArrowRight,
+  Scale, Menu, X, Mail, Lock, Shield, ChevronRight, ArrowRight,
 } from 'lucide-react';
 import { FOOTER_LINKS, SITE } from '@/lib/site-content';
 
@@ -186,12 +186,12 @@ export function SiteFooter() {
                 </span>
               </Link>
               <p className="text-slate-600 text-sm mb-4 leading-relaxed max-w-xs">{SITE.description}</p>
-              <div className="flex gap-2">
-                {[Twitter, Linkedin, Github, Mail].map((Icon, i) => (
+              <div className="flex gap-4">
+                {[Mail].map((Icon, i) => (
                   <a
                     key={i}
                     href="#"
-                    aria-label={['Twitter', 'LinkedIn', 'GitHub', 'Email'][i]}
+                    aria-label={['Email'][i]}
                     className="w-8 h-8 rounded-full bg-[#0c9344] flex items-center justify-center text-white hover:bg-[#0a7d3a] transition-colors duration-200"
                   >
                     <Icon className="w-4 h-4" />

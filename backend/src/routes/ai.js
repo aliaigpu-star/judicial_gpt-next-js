@@ -79,7 +79,7 @@ class ApiKeyManager {
 let keyManager = null;
 function getKeyManager(req) {
     if (!keyManager) {
-        const apiKey = req.app?.locals?.secrets?.GROQ_API_KEY;
+        const apiKey = req.app?.locals?.secrets?.GROQ_API_KEY || process.env.GROQ_API_KEY;
         const apiKeys = apiKey ? [apiKey] : [];
         keyManager = new ApiKeyManager(apiKeys);
     }

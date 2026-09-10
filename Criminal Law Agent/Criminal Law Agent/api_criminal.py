@@ -1,11 +1,11 @@
 # """
 # ====================================================================
-#   JudicialGPT — FastAPI Server
-#   Civil Law RAG Agent  |  Pakistan Civil Law Knowledge Base
+#   JudicialGPT — FastAPI Server (Criminal Law)
+#   Criminal Law RAG Agent  |  Pakistan Criminal Law Knowledge Base
 # ====================================================================
 
 # Endpoints:
-#   POST  /query              — Ask a legal question (main endpoint)
+#   POST  /query              — Ask a criminal law question (main endpoint)
 #   POST  /session/clear      — Clear a session's conversation memory
 #   GET   /session/list       — List all active sessions
 #   GET   /health             — Health check
@@ -25,8 +25,9 @@
 # from fastapi.responses import JSONResponse
 # from pydantic import BaseModel, Field
 
-# from rag_agent import JudicialGPTCivilAgent
-# from config import Config
+# from rag_agent_criminal import JudicialGPTCriminalAgent
+# from config_criminal import CriminalConfig
+
 
 # # ══════════════════════════════════════════════════════════════════
 # # PYDANTIC SCHEMAS  —  Request & Response models
@@ -37,59 +38,61 @@
 #         ...,
 #         min_length=3,
 #         max_length=4000,
-#         description="The judicial query or instruction for JudicialGPT.",
+#         description="The judicial query or instruction for JudicialGPT Criminal.",
 #         examples=[
-#             "What is the limitation period for filing a suit on a written contract?",
-#             "Draft Issue No. 1 on the plaintiff's title in a property suit.",
-#             "Explain burden of proof under Section 101 Qanun-e-Shahadat Order 1984.",
+#             "What are the essential elements of murder under Section 302 PPC?",
+#             "Draft findings on the charge of robbery under Section 392 PPC.",
+#             "What are the bail principles in a narcotics case under CNSA Section 9?",
+#             "Explain the admissibility of an extra-judicial confession.",
+#             "What is the difference between Hadd and Ta'zir in Hudood cases?",
 #         ],
 #     )
 #     session_id: Optional[str] = Field(
 #         default=None,
 #         description=(
 #             "Unique session identifier. Use the same ID to maintain conversation "
-#             "continuity across multiple requests (e.g. one case = one session_id). "
+#             "continuity across multiple requests (e.g. one criminal case = one session_id). "
 #             "If omitted, a new UUID is auto-generated per request (stateless mode)."
 #         ),
-#         examples=["civil_suit_42_lahore", "judge_ali_session_1"],
+#         examples=["sessions_cr_42_lahore", "judge_khan_session_1"],
 #     )
 
 #     class Config:
 #         json_schema_extra = {
 #             "example": {
-#                 "query": "What is the limitation period for filing a suit on a written contract?",
-#                 "session_id": "civil_suit_42",
+#                 "query": "What are the essential elements of Section 302 PPC murder?",
+#                 "session_id": "criminal_case_101",
 #             }
 #         }
 
 
 # class SourceDocument(BaseModel):
-#     file:    str = Field(description="Source PDF filename")
-#     page:    str | int = Field(description="Page number within the source PDF")
-#     snippet: str = Field(description="Relevant text excerpt from the source")
+#     file:    str     = Field(description="Source PDF filename")
+#     page:    str|int = Field(description="Page number within the source PDF")
+#     snippet: str     = Field(description="Relevant text excerpt from the source")
 
 
 # class QueryResponse(BaseModel):
 #     session_id:    str                  = Field(description="Session ID used for this request")
 #     query:         str                  = Field(description="The original query submitted")
-#     answer:        str                  = Field(description="JudicialGPT's response")
+#     answer:        str                  = Field(description="JudicialGPT Criminal's response")
 #     sources:       list[SourceDocument] = Field(description="Statute pages retrieved as context")
 #     response_time: float                = Field(description="Response time in seconds")
 
 #     class Config:
 #         json_schema_extra = {
 #             "example": {
-#                 "session_id":    "civil_suit_42",
-#                 "query":         "What is the limitation period for a written contract?",
-#                 "answer":        "Under Article 37 of the Limitation Act, 1908...",
+#                 "session_id":    "criminal_case_101",
+#                 "query":         "What are the elements of Section 302 PPC?",
+#                 "answer":        "Section 302 of the Pakistan Penal Code 1860 prescribes...",
 #                 "sources": [
 #                     {
-#                         "file":    "limitation_act_1908.pdf",
-#                         "page":    "12",
-#                         "snippet": "Article 37 — Suit on a contract in writing...",
+#                         "file":    "pakistan_penal_code_1860.pdf",
+#                         "page":    "87",
+#                         "snippet": "Section 302 — Punishment of Qatl-i-Amd...",
 #                     }
 #                 ],
-#                 "response_time": 2.34,
+#                 "response_time": 2.41,
 #             }
 #         }
 
@@ -98,7 +101,7 @@
 #     session_id: str = Field(
 #         ...,
 #         description="The session ID whose conversation history should be cleared.",
-#         examples=["civil_suit_42"],
+#         examples=["criminal_case_101"],
 #     )
 
 
@@ -119,10 +122,10 @@
 
 
 # class HealthResponse(BaseModel):
-#     status:     str
+#     status:      str
 #     agent_ready: bool
-#     model:      str
-#     embeddings: str
+#     model:       str
+#     embeddings:  str
 
 
 # class InfoResponse(BaseModel):
@@ -139,22 +142,23 @@
 # # LIFESPAN  —  load agent once at startup, release at shutdown
 # # ══════════════════════════════════════════════════════════════════
 
-# agent: Optional[JudicialGPTCivilAgent] = None
+# agent: Optional[JudicialGPTCriminalAgent] = None
+
 
 # @asynccontextmanager
 # async def lifespan(app: FastAPI):
-#     """Load the JudicialGPT agent at startup."""
+#     """Load the JudicialGPT Criminal agent at startup."""
 #     global agent
-#     print("\n🚀  JudicialGPT API starting up...")
+#     print("\n🚀  JudicialGPT Criminal API starting up...")
 #     try:
-#         agent = JudicialGPTCivilAgent()
-#         print("✅  Agent loaded and ready.\n")
+#         agent = JudicialGPTCriminalAgent()
+#         print("✅  Criminal Law Agent loaded and ready.\n")
 #     except FileNotFoundError as e:
 #         print(f"\n❌  STARTUP ERROR: {e}")
-#         print("    Run  python ingest.py  first, then restart the API.\n")
+#         print("    Run  python ingest_criminal.py  first, then restart the API.\n")
 #         agent = None
 #     yield
-#     print("\n🛑  JudicialGPT API shutting down.")
+#     print("\n🛑  JudicialGPT Criminal API shutting down.")
 
 
 # # ══════════════════════════════════════════════════════════════════
@@ -162,18 +166,22 @@
 # # ══════════════════════════════════════════════════════════════════
 
 # app = FastAPI(
-#     title="JudicialGPT — Civil Law RAG API",
+#     title="JudicialGPT — Criminal Law RAG API",
 #     description=(
-#         "**JudicialGPT** is an AI legal assistant exclusively designed for Judges "
-#         "within the judicial system of Pakistan.\n\n"
+#         "**JudicialGPT Criminal** is an AI legal assistant exclusively designed for Judges "
+#         "presiding over criminal matters within the judicial system of Pakistan.\n\n"
 #         "It is powered by a RAG (Retrieval-Augmented Generation) pipeline built on "
-#         "the Pakistan civil law corpus — including the CPC 1908, Contract Act 1872, "
-#         "Transfer of Property Act 1882, Specific Relief Act 1877, Qanun-e-Shahadat "
-#         "Order 1984, Limitation Act 1908, and all major family law statutes.\n\n"
+#         "the Pakistan criminal law corpus — including the PPC 1860, CrPC 1898, "
+#         "Qanun-e-Shahadat Order 1984, Anti-Terrorism Act 1997, Control of Narcotic "
+#         "Substances Act 1997, Hudood Ordinances 1979, Qisas & Diyat Ordinance 1990, "
+#         "Juvenile Justice System Act 2018, and all major criminal statutes of Pakistan.\n\n"
 #         "**Primary use cases:**\n"
-#         "- Civil judgment drafting (Order XX Rule 4 CPC format)\n"
-#         "- Legal research on Pakistani statutes\n"
-#         "- Framing of issues, evidence analysis, precedent citation\n\n"
+#         "- Criminal judgment drafting (charge-wise findings, appreciation of evidence)\n"
+#         "- Legal research on PPC offences, CrPC procedure, and special laws\n"
+#         "- Bail analysis (bailable/non-bailable, pre-arrest bail, cancellation)\n"
+#         "- Evidence appreciation (ocular, medical, forensic, confessional)\n"
+#         "- Sentence determination within statutory range\n"
+#         "- Hudood, Qisas, Ta'zir analysis\n\n"
 #         "> ⚠️ This API is for judicial research purposes only. "
 #         "Always apply independent judicial mind to AI-assisted output."
 #     ),
@@ -183,7 +191,7 @@
 #     redoc_url="/redoc",
 # )
 
-# # ── CORS (adjust origins for production) ──────────────────────────
+# # ── CORS ───────────────────────────────────────────────────────────
 # app.add_middleware(
 #     CORSMiddleware,
 #     allow_origins=["*"],       # restrict to your frontend domain in production
@@ -199,9 +207,9 @@
 #     return JSONResponse(
 #         status_code=500,
 #         content={
-#             "error":   "Internal server error",
-#             "detail":  str(exc),
-#             "path":    str(request.url),
+#             "error":  "Internal server error",
+#             "detail": str(exc),
+#             "path":   str(request.url),
 #         },
 #     )
 
@@ -212,9 +220,9 @@
 #         raise HTTPException(
 #             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
 #             detail=(
-#                 "JudicialGPT agent is not ready. "
+#                 "JudicialGPT Criminal agent is not ready. "
 #                 "The vector store may not have been built yet. "
-#                 "Run  python ingest.py  then restart the API server."
+#                 "Run  python ingest_criminal.py  then restart the API server."
 #             ),
 #         )
 #     return agent
@@ -233,7 +241,7 @@
 # )
 # async def health():
 #     """Returns API and agent status. Use this to verify the server is running."""
-#     cfg = Config()
+#     cfg = CriminalConfig()
 #     return HealthResponse(
 #         status="ok" if agent else "degraded",
 #         agent_ready=agent is not None,
@@ -251,18 +259,19 @@
 # )
 # async def info():
 #     """Returns current agent configuration — model, embeddings, retriever settings."""
-#     cfg = Config()
+#     cfg = CriminalConfig()
 #     return InfoResponse(
-#         name="JudicialGPT Civil Law RAG Agent",
+#         name="JudicialGPT Criminal Law RAG Agent",
 #         version="1.0.0",
 #         model=cfg.GEMINI_MODEL,
 #         embeddings=cfg.EMBEDDING_MODEL,
 #         retriever_k=cfg.RETRIEVER_K,
 #         memory_window=cfg.MEMORY_WINDOW,
 #         description=(
-#             "Pakistan civil law RAG agent trained on CPC 1908, Contract Act 1872, "
-#             "Transfer of Property Act 1882, Specific Relief Act 1877, "
-#             "Qanun-e-Shahadat Order 1984, Limitation Act 1908, and family law statutes."
+#             "Pakistan criminal law RAG agent covering PPC 1860, CrPC 1898, "
+#             "Qanun-e-Shahadat Order 1984, Anti-Terrorism Act 1997, CNSA 1997, "
+#             "Hudood Ordinances 1979, Qisas & Diyat Ordinance 1990, JJSA 2018, "
+#             "PECA 2016, and all major Pakistan criminal statutes."
 #         ),
 #     )
 
@@ -271,15 +280,15 @@
 # @app.post(
 #     "/query",
 #     response_model=QueryResponse,
-#     tags=["JudicialGPT"],
-#     summary="Submit a judicial query",
+#     tags=["JudicialGPT Criminal"],
+#     summary="Submit a criminal judicial query",
 #     status_code=status.HTTP_200_OK,
 # )
 # async def query(body: QueryRequest):
 #     """
-#     **Main endpoint.** Submit any judicial query to JudicialGPT.
+#     **Main endpoint.** Submit any criminal law query to JudicialGPT.
 
-#     The agent retrieves relevant sections from the Pakistan civil law
+#     The agent retrieves relevant sections from the Pakistan criminal law
 #     corpus and generates a grounded, cited legal response.
 
 #     **Session continuity:**
@@ -288,14 +297,15 @@
 #     Each unique `session_id` gets its own isolated conversation history.
 
 #     **Example queries:**
-#     - `"What is the limitation period for a suit on a written contract?"`
-#     - `"Draft Issue No. 1 on plaintiff's title in a property suit."`
-#     - `"Explain res judicata under Order 9 Rule 9 CPC."`
-#     - `"What are the essentials of a valid mortgage under the TPA?"`
+#     - `"What are the essential elements of Section 302 PPC?"`
+#     - `"Draft findings on the charge of robbery with hurt."`
+#     - `"Explain bail principles in a narcotics case under CNSA."`
+#     - `"How should a dying declaration be evaluated?"`
+#     - `"What is the Ta'zir punishment for theft where Hadd is not applicable?"`
+#     - `"Draft a Section 342 CrPC statement template."`
 #     """
 #     ag = require_agent()
 
-#     # Auto-generate session_id if not provided
 #     session_id = body.session_id or str(uuid.uuid4())
 
 #     start = time.perf_counter()
@@ -312,7 +322,10 @@
 #         session_id=session_id,
 #         query=body.query,
 #         answer=result["answer"],
-#         sources=[SourceDocument(file=s["file"], page=str(s["page"]), snippet=s["snippet"]) for s in result["sources"]],
+#         sources=[
+#             SourceDocument(file=s["file"], page=str(s["page"]), snippet=s["snippet"])
+#             for s in result["sources"]
+#         ],
 #         response_time=elapsed,
 #     )
 
@@ -327,7 +340,7 @@
 # async def clear_session(body: SessionClearRequest):
 #     """
 #     Clears the conversation history for the given `session_id`.
-#     Use this when a judge starts a new case or wants to reset context.
+#     Use this when a judge starts a new criminal case or wants to reset context.
 #     """
 #     ag = require_agent()
 #     ag.clear_session(body.session_id)
@@ -365,17 +378,17 @@
 
 
 # # ══════════════════════════════════════════════════════════════════
-# # ENTRY POINT  —  run with:  python api.py
-# # or:  uvicorn api:app --host 0.0.0.0 --port 8000 --reload
+# # ENTRY POINT  —  run with:  python api_criminal.py
+# # or:  uvicorn api_criminal:app --host 0.0.0.0 --port 8001 --reload
 # # ══════════════════════════════════════════════════════════════════
 
 # if __name__ == "__main__":
 #     import uvicorn
 #     uvicorn.run(
-#         "api:app",
+#         "api_criminal:app",
 #         host="0.0.0.0",
-#         port=8000,
-#         reload=True,       # set False in production
+#         port=8000,          # Note: port 8001 to avoid conflict with civil API on 8000
+#         reload=True,        # set False in production
 #         log_level="info",
 #     )
 
@@ -395,16 +408,24 @@
 
 
 
+
+
+
+
+
+
+
 """
 ====================================================================
-  JudicialGPT — FastAPI Server
-  Civil Law RAG Agent  |  Pakistan Civil Law Knowledge Base
+  JudicialGPT — FastAPI Server (Criminal Law)
+  Criminal Law RAG Agent  |  Pakistan Criminal Law Knowledge Base
 ====================================================================
 
 Endpoints:
-  POST  /query              — Ask a legal question, with an OPTIONAL image
-                               attached (multipart form). No image → text-only
-                               RAG path. Image attached → Gemini multimodal path.
+  POST  /query              — Ask a criminal law question, with an OPTIONAL
+                               image attached (multipart form). No image →
+                               text-only RAG path. Image attached → Gemini
+                               multimodal path.
   POST  /session/clear      — Clear a session's conversation memory
   GET   /session/list       — List all active sessions
   GET   /health             — Health check
@@ -428,40 +449,41 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
-from rag_agent import JudicialGPTCivilAgent
-from config import Config
+from rag_agent_criminal import JudicialGPTCriminalAgent
+from config_criminal import CriminalConfig
+
 
 # ══════════════════════════════════════════════════════════════════
 # PYDANTIC SCHEMAS  —  Request & Response models
 # ══════════════════════════════════════════════════════════════════
 
 class SourceDocument(BaseModel):
-    file:    str = Field(description="Source PDF filename")
-    page:    str | int = Field(description="Page number within the source PDF")
-    snippet: str = Field(description="Relevant text excerpt from the source")
+    file:    str     = Field(description="Source PDF filename")
+    page:    str|int = Field(description="Page number within the source PDF")
+    snippet: str     = Field(description="Relevant text excerpt from the source")
 
 
 class QueryResponse(BaseModel):
     session_id:    str                  = Field(description="Session ID used for this request")
     query:         str                  = Field(description="The original query submitted")
-    answer:        str                  = Field(description="JudicialGPT's response")
+    answer:        str                  = Field(description="JudicialGPT Criminal's response")
     sources:       list[SourceDocument] = Field(description="Statute pages retrieved as context")
     response_time: float                = Field(description="Response time in seconds")
 
     class Config:
         json_schema_extra = {
             "example": {
-                "session_id":    "civil_suit_42",
-                "query":         "What is the limitation period for a written contract?",
-                "answer":        "Under Article 37 of the Limitation Act, 1908...",
+                "session_id":    "criminal_case_101",
+                "query":         "What are the elements of Section 302 PPC?",
+                "answer":        "Section 302 of the Pakistan Penal Code 1860 prescribes...",
                 "sources": [
                     {
-                        "file":    "limitation_act_1908.pdf",
-                        "page":    "12",
-                        "snippet": "Article 37 — Suit on a contract in writing...",
+                        "file":    "pakistan_penal_code_1860.pdf",
+                        "page":    "87",
+                        "snippet": "Section 302 — Punishment of Qatl-i-Amd...",
                     }
                 ],
-                "response_time": 2.34,
+                "response_time": 2.41,
             }
         }
 
@@ -470,7 +492,7 @@ class SessionClearRequest(BaseModel):
     session_id: str = Field(
         ...,
         description="The session ID whose conversation history should be cleared.",
-        examples=["civil_suit_42"],
+        examples=["criminal_case_101"],
     )
 
 
@@ -491,10 +513,10 @@ class SessionListResponse(BaseModel):
 
 
 class HealthResponse(BaseModel):
-    status:     str
+    status:      str
     agent_ready: bool
-    model:      str
-    embeddings: str
+    model:       str
+    embeddings:  str
 
 
 class InfoResponse(BaseModel):
@@ -511,22 +533,23 @@ class InfoResponse(BaseModel):
 # LIFESPAN  —  load agent once at startup, release at shutdown
 # ══════════════════════════════════════════════════════════════════
 
-agent: Optional[JudicialGPTCivilAgent] = None
+agent: Optional[JudicialGPTCriminalAgent] = None
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Load the JudicialGPT agent at startup."""
+    """Load the JudicialGPT Criminal agent at startup."""
     global agent
-    print("\n🚀  JudicialGPT API starting up...")
+    print("\n🚀  JudicialGPT Criminal API starting up...")
     try:
-        agent = JudicialGPTCivilAgent()
-        print("✅  Agent loaded and ready.\n")
+        agent = JudicialGPTCriminalAgent()
+        print("✅  Criminal Law Agent loaded and ready.\n")
     except FileNotFoundError as e:
         print(f"\n❌  STARTUP ERROR: {e}")
-        print("    Run  python ingest.py  first, then restart the API.\n")
+        print("    Run  python ingest_criminal.py  first, then restart the API.\n")
         agent = None
     yield
-    print("\n🛑  JudicialGPT API shutting down.")
+    print("\n🛑  JudicialGPT Criminal API shutting down.")
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -534,18 +557,22 @@ async def lifespan(app: FastAPI):
 # ══════════════════════════════════════════════════════════════════
 
 app = FastAPI(
-    title="JudicialGPT — Civil Law RAG API",
+    title="JudicialGPT — Criminal Law RAG API",
     description=(
-        "**JudicialGPT** is an AI legal assistant exclusively designed for Judges "
-        "within the judicial system of Pakistan.\n\n"
+        "**JudicialGPT Criminal** is an AI legal assistant exclusively designed for Judges "
+        "presiding over criminal matters within the judicial system of Pakistan.\n\n"
         "It is powered by a RAG (Retrieval-Augmented Generation) pipeline built on "
-        "the Pakistan civil law corpus — including the CPC 1908, Contract Act 1872, "
-        "Transfer of Property Act 1882, Specific Relief Act 1877, Qanun-e-Shahadat "
-        "Order 1984, Limitation Act 1908, and all major family law statutes.\n\n"
+        "the Pakistan criminal law corpus — including the PPC 1860, CrPC 1898, "
+        "Qanun-e-Shahadat Order 1984, Anti-Terrorism Act 1997, Control of Narcotic "
+        "Substances Act 1997, Hudood Ordinances 1979, Qisas & Diyat Ordinance 1990, "
+        "Juvenile Justice System Act 2018, and all major criminal statutes of Pakistan.\n\n"
         "**Primary use cases:**\n"
-        "- Civil judgment drafting (Order XX Rule 4 CPC format)\n"
-        "- Legal research on Pakistani statutes\n"
-        "- Framing of issues, evidence analysis, precedent citation\n\n"
+        "- Criminal judgment drafting (charge-wise findings, appreciation of evidence)\n"
+        "- Legal research on PPC offences, CrPC procedure, and special laws\n"
+        "- Bail analysis (bailable/non-bailable, pre-arrest bail, cancellation)\n"
+        "- Evidence appreciation (ocular, medical, forensic, confessional)\n"
+        "- Sentence determination within statutory range\n"
+        "- Hudood, Qisas, Ta'zir analysis\n\n"
         "> ⚠️ This API is for judicial research purposes only. "
         "Always apply independent judicial mind to AI-assisted output."
     ),
@@ -555,7 +582,7 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-# ── CORS (adjust origins for production) ──────────────────────────
+# ── CORS ───────────────────────────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],       # restrict to your frontend domain in production
@@ -571,9 +598,9 @@ async def global_exception_handler(request: Request, exc: Exception):
     return JSONResponse(
         status_code=500,
         content={
-            "error":   "Internal server error",
-            "detail":  str(exc),
-            "path":    str(request.url),
+            "error":  "Internal server error",
+            "detail": str(exc),
+            "path":   str(request.url),
         },
     )
 
@@ -584,9 +611,9 @@ def require_agent():
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail=(
-                "JudicialGPT agent is not ready. "
+                "JudicialGPT Criminal agent is not ready. "
                 "The vector store may not have been built yet. "
-                "Run  python ingest.py  then restart the API server."
+                "Run  python ingest_criminal.py  then restart the API server."
             ),
         )
     return agent
@@ -605,7 +632,7 @@ def require_agent():
 )
 async def health():
     """Returns API and agent status. Use this to verify the server is running."""
-    cfg = Config()
+    cfg = CriminalConfig()
     return HealthResponse(
         status="ok" if agent else "degraded",
         agent_ready=agent is not None,
@@ -623,18 +650,19 @@ async def health():
 )
 async def info():
     """Returns current agent configuration — model, embeddings, retriever settings."""
-    cfg = Config()
+    cfg = CriminalConfig()
     return InfoResponse(
-        name="JudicialGPT Civil Law RAG Agent",
+        name="JudicialGPT Criminal Law RAG Agent",
         version="1.0.0",
         model=cfg.GEMINI_MODEL,
         embeddings=cfg.EMBEDDING_MODEL,
         retriever_k=cfg.RETRIEVER_K,
         memory_window=cfg.MEMORY_WINDOW,
         description=(
-            "Pakistan civil law RAG agent trained on CPC 1908, Contract Act 1872, "
-            "Transfer of Property Act 1882, Specific Relief Act 1877, "
-            "Qanun-e-Shahadat Order 1984, Limitation Act 1908, and family law statutes."
+            "Pakistan criminal law RAG agent covering PPC 1860, CrPC 1898, "
+            "Qanun-e-Shahadat Order 1984, Anti-Terrorism Act 1997, CNSA 1997, "
+            "Hudood Ordinances 1979, Qisas & Diyat Ordinance 1990, JJSA 2018, "
+            "PECA 2016, and all major Pakistan criminal statutes."
         ),
     )
 
@@ -647,8 +675,8 @@ MAX_IMAGE_BYTES = 8 * 1024 * 1024  # 8 MB
 @app.post(
     "/query",
     response_model=QueryResponse,
-    tags=["JudicialGPT"],
-    summary="Submit a judicial query (text or image)",
+    tags=["JudicialGPT Criminal"],
+    summary="Submit a criminal judicial query (text or image)",
     status_code=status.HTTP_200_OK,
 )
 async def query(
@@ -656,35 +684,35 @@ async def query(
         ...,
         min_length=3,
         max_length=4000,
-        description="The judicial query or instruction for JudicialGPT.",
+        description="The judicial query or instruction for JudicialGPT Criminal.",
     ),
     session_id: Optional[str] = Form(
         default=None,
         description=(
             "Unique session identifier. Use the same ID to maintain conversation "
-            "continuity across multiple requests (e.g. one case = one session_id). "
+            "continuity across multiple requests (e.g. one criminal case = one session_id). "
             "If omitted, a new UUID is auto-generated per request (stateless mode)."
         ),
     ),
     image: Optional[UploadFile] = File(
         default=None,
         description=(
-            "Optional image — e.g. a scanned exhibit, contract page, property "
-            "document, or evidence photo. Omit this field for a text-only query."
+            "Optional image — e.g. a scanned FIR, exhibit photo, medico-legal "
+            "certificate, or forensic report page. Omit for a text-only query."
         ),
     ),
 ):
     """
-    **Main endpoint.** Submit any judicial query to JudicialGPT — with or
+    **Main endpoint.** Submit any criminal law query to JudicialGPT — with or
     without an attached image.
 
-    The agent retrieves relevant sections from the Pakistan civil law
+    The agent retrieves relevant sections from the Pakistan criminal law
     corpus and generates a grounded, cited legal response.
 
       • No `image` attached  → routed to the text-only RAG chain (`agent.ask`).
       • `image` attached     → routed to the Gemini multimodal path
                                 (`agent.ask_with_image`), using the SAME
-                                JudicialGPT system prompt either way.
+                                JudicialGPT Criminal system prompt either way.
 
     **Session continuity:**
     Pass the same `session_id` across multiple requests to maintain
@@ -692,14 +720,13 @@ async def query(
     Each unique `session_id` gets its own isolated conversation history.
 
     **Example queries:**
-    - `"What is the limitation period for a suit on a written contract?"`
-    - `"Draft Issue No. 1 on plaintiff's title in a property suit."`
-    - `"Explain res judicata under Order 9 Rule 9 CPC."`
-    - `"Verify the boundaries described in this attached property map."`
+    - `"What are the essential elements of Section 302 PPC?"`
+    - `"Draft findings on the charge of robbery with hurt."`
+    - `"Explain bail principles in a narcotics case under CNSA."`
+    - `"Summarise the injuries listed in this medico-legal certificate."`
     """
     ag = require_agent()
 
-    # Auto-generate session_id if not provided
     session_id = session_id or str(uuid.uuid4())
 
     # An empty file input still arrives as an UploadFile with an empty
@@ -748,7 +775,10 @@ async def query(
         session_id=session_id,
         query=query,
         answer=result["answer"],
-        sources=[SourceDocument(file=s["file"], page=str(s["page"]), snippet=s["snippet"]) for s in result["sources"]],
+        sources=[
+            SourceDocument(file=s["file"], page=str(s["page"]), snippet=s["snippet"])
+            for s in result["sources"]
+        ],
         response_time=elapsed,
     )
 
@@ -763,7 +793,7 @@ async def query(
 async def clear_session(body: SessionClearRequest):
     """
     Clears the conversation history for the given `session_id`.
-    Use this when a judge starts a new case or wants to reset context.
+    Use this when a judge starts a new criminal case or wants to reset context.
     """
     ag = require_agent()
     ag.clear_session(body.session_id)
@@ -801,16 +831,16 @@ async def list_sessions():
 
 
 # ══════════════════════════════════════════════════════════════════
-# ENTRY POINT  —  run with:  python api.py
-# or:  uvicorn api:app --host 0.0.0.0 --port 8000 --reload
+# ENTRY POINT  —  run with:  python api_criminal.py
+# or:  uvicorn api_criminal:app --host 0.0.0.0 --port 8001 --reload
 # ══════════════════════════════════════════════════════════════════
 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(
-        "api:app",
+        "api_criminal:app",
         host="0.0.0.0",
-        port=8000,
-        reload=True,       # set False in production
+        port=8000,          # Note: port 8001 to avoid conflict with civil API on 8000
+        reload=True,        # set False in production
         log_level="info",
     )

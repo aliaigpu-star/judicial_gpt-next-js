@@ -47,7 +47,7 @@ st.markdown("""
 with st.sidebar:
     st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Flag_of_Pakistan.svg/200px-Flag_of_Pakistan.svg.png", width=80)
     st.title("⚖️ Pakistan Civil Law\nAI Legal Assistant")
-    st.caption("Powered by LangChain v0.3 + Groq + FAISS")
+    st.caption("Powered by LangChain v0.3 + Gemini + FAISS")
 
     st.divider()
     st.markdown("**📚 Indexed Statutes**")

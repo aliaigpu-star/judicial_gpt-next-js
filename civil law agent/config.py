@@ -13,15 +13,10 @@ class Config:
     DATA_DIR          = BASE_DIR / "data"           # Put your PDFs here
     VECTOR_STORE_PATH = str(BASE_DIR / "vector_store" / "faiss_index")
 
-    # ── Groq LLM ──────────────────────────────────────────────────
-    # Best free models on Groq (fast + high context):
-    #   "llama-3.3-70b-versatile"      ← best quality, 128k context
-    #   "llama-3.1-8b-instant"         ← fastest, good for quick queries
-    #   "mixtral-8x7b-32768"           ← 32k context, good reasoning
-    #   "gemma2-9b-it"                 ← lightweight, decent quality
-    GROQ_MODEL   = "llama-3.3-70b-versatile"
+    # ── Google Gemini LLM ────────────────────────────────────────────
+    GEMINI_MODEL = "gemini-3.6-flash"
     TEMPERATURE  = 0.1      # Low = more factual (good for legal)
-    MAX_TOKENS   = 2048     # Max response length
+    MAX_TOKENS   = 15000     # Max response length
 
     # ── Embeddings (local HuggingFace, no API key needed) ─────────
     # "BAAI/bge-base-en-v1.5"  ← Best balance of quality & speed

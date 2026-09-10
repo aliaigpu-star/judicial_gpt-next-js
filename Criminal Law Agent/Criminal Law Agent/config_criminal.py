@@ -1,22 +1,23 @@
+
 """
-config.py — Centralised settings for Pakistan Civil Law RAG Agent
+config_criminal.py — Centralised settings for Pakistan Criminal Law RAG Agent
 Edit this file to tune the agent without touching any other file.
 """
 
 from pathlib import Path
 
 
-class Config:
+class CriminalConfig:
 
     # ── Paths ──────────────────────────────────────────────────────
     BASE_DIR          = Path(__file__).parent
-    DATA_DIR          = BASE_DIR / "data"           # Put your PDFs here
-    VECTOR_STORE_PATH = str(BASE_DIR / "vector_store" / "faiss_index")
+    DATA_DIR          = BASE_DIR / "data"               # Your PDFs folder
+    VECTOR_STORE_PATH = str(BASE_DIR / "vector_store_criminal" / "faiss_index")
 
     # ── Google Gemini LLM ────────────────────────────────────────────
     GEMINI_MODEL = "gemini-3.6-flash"
-    TEMPERATURE  = 0.1      # Low = more factual (good for legal)
-    MAX_TOKENS   = 15000     # Max response length
+    TEMPERATURE  = 0.1       # Low = more factual (critical for criminal law)
+    MAX_TOKENS   = 2048      # Max response length
 
     # ── Embeddings (local HuggingFace, no API key needed) ─────────
     # "BAAI/bge-base-en-v1.5"  ← Best balance of quality & speed

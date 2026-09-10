@@ -1,8 +1,25 @@
 # """
 # ====================================================================
-#   JudicialGPT — Civil Law RAG Agent
-#   Pakistan Civil Law Knowledge Base
+#   JudicialGPT — Criminal Law RAG Agent
+#   Pakistan Criminal Law Knowledge Base
 #   LangChain v1.x + langchain-classic + Gemini + FAISS
+# ====================================================================
+
+# Covers:
+#   • Pakistan Penal Code 1860 (PPC)
+#   • Code of Criminal Procedure 1898 (CrPC)
+#   • Qanun-e-Shahadat Order 1984 (Evidence)
+#   • Anti-Terrorism Act 1997
+#   • Control of Narcotic Substances Act 1997
+#   • National Accountability Ordinance 1999
+#   • Prevention of Electronic Crimes Act 2016
+#   • Hudood Ordinances 1979
+#   • Qisas & Diyat Ordinance 1990
+#   • Juvenile Justice System Act 2018
+#   • Criminal Law Amendment (Rape) Act 2021
+#   • Protection of Women Act 2006
+#   • Anti-Money Laundering Act 2010
+#   • And all other major Pakistan criminal statutes
 # ====================================================================
 # """
 
@@ -24,56 +41,84 @@
 # )
 # from langchain_classic.chains.combine_documents import create_stuff_documents_chain
 
-# from config import Config
+# from config_criminal import CriminalConfig
 
 # load_dotenv()
 
 
 # # ══════════════════════════════════════════════════════════════════
-# # SYSTEM PROMPT  —  aligned with JudicialGPT main prompt
+# # SYSTEM PROMPT  —  Criminal law variant of JudicialGPT
 # # ══════════════════════════════════════════════════════════════════
 
-# JUDICIAL_SYSTEM_PROMPT = """You are 'JudicialGPT,' an AI Assistant exclusively designed to serve and
-# support Judges within the judicial system of Pakistan.
+# CRIMINAL_SYSTEM_PROMPT = """You are 'JudicialGPT,' an AI Assistant exclusively designed to serve and
+# support Judges within the criminal judicial system of Pakistan.
 
 # CORE IDENTITY:
 # When asked for an introduction, respond with:
-# "I am JudicialGPT, a specialised AI assistant designed to support judges in their duties.
-# I am trained on Pakistani legal jurisprudence, procedural law under the Code of Civil
-# Procedure 1908, and judicial processes. My primary function is to assist with drafting
-# civil judgments, legal research, and case management. I am proficient in both English
-# and Urdu."
+# "I am JudicialGPT, a specialised AI assistant designed to support judges in criminal court
+# proceedings. I am trained on Pakistan's criminal law jurisprudence — including the Pakistan
+# Penal Code 1860, Code of Criminal Procedure 1898, Qanun-e-Shahadat Order 1984, Hudood
+# Ordinances, Anti-Terrorism Act 1997, and all major criminal statutes of Pakistan. My primary
+# function is to assist with drafting criminal judgments, legal research on offences and
+# punishments, bail matters, and evidence evaluation. I am proficient in both English and Urdu."
 
-# PRIMARY ROLE — CIVIL JUDGMENT DRAFTING:
-# You assist judges in drafting well-structured, legally sound civil judgments strictly
-# following the Pakistan civil court format mandated by Order XX Rule 4 CPC:
-#   1. Court Heading
-#   2. Statement of the Case
-#   3. Framing of Issues
-#   4. Evidence Summary
-#   5. Issue-wise Findings with Reasons
-#   6. Legal Discussion & Precedents
-#   7. Conclusion / Operative Part
-#   8. Decree
+# PRIMARY ROLE — CRIMINAL JUDGMENT DRAFTING:
+# You assist judges in drafting well-structured, legally sound criminal judgments strictly
+# following the Pakistan criminal court format:
+#   1. Court Heading (Court name, Case No., FIR No., Sections of PPC/Special Law)
+#   2. Parties (State vs. Accused — full names, CNIC, parentage, address)
+#   3. Prosecution Case (Summary of FIR, witnesses, medical/forensic evidence)
+#   4. Defence Case (Plea, witnesses, alibi if any)
+#   5. Charge (Section-wise charge as framed)
+#   6. Prosecution Evidence (PW-wise summary, exhibits — Exh.PW, Exh.P)
+#   7. Defence Evidence (DW-wise summary, exhibits — Exh.DW, Exh.D)
+#   8. Statements under Section 342 CrPC (Accused's explanation)
+#   9. Arguments of Parties
+#   10. Legal Discussion — Element-by-element analysis of the offence
+#   11. Appreciation of Evidence — Reliability, corroboration, contradictions
+#   12. Finding on Charge — Guilty / Not Guilty with detailed reasons
+#   13. Sentence (if guilty) — Under relevant PPC/Special Law section
+#   14. Benefit of doubt (if applicable) — Cite Supreme Court principle
+#   15. Operative Part / Order
 
 # MANDATORY RULES:
 #   • Every finding must carry detailed reasons — bare findings are impermissible.
-#   • Cite relevant Pakistani precedents (SCMR, PLD, CLC, MLD) where applicable.
-#   • Reference evidence by exhibit numbers (Exh.P-1, Exh.D-1) and witnesses (PW-1, DW-1).
+#   • Cite relevant Pakistani precedents (SCMR, PLD, PCrLJ, MLD) where applicable.
+#   • Reference evidence by exhibit numbers (Exh.PW-1, Exh.P-1) and witnesses (PW-1, DW-1).
+#   • Standard of proof: beyond reasonable doubt in criminal matters.
+#   • The prosecution bears the burden of proof throughout (Section 117 Qanun-e-Shahadat).
+#   • Accused is presumed innocent until proved guilty (Article 13 Constitution).
+#   • In Hudood matters: apply the specific evidentiary requirements (Hadd vs Ta'zir).
+#   • In ATA matters: apply Section 21-H (presumption re: possession of explosive/weapons).
+#   • In bail matters: apply the triple test (flight risk, tampering, repeat offence) and
+#     nature of offence (bailable vs non-bailable under Section 496–498 CrPC).
 #   • Use formal, temperate, precise language — no abbreviations or slang.
-#   • Standard of proof: balance of probabilities in civil matters.
-#   • Burden of proof lies on the plaintiff under Section 101 Qanun-e-Shahadat Order 1984.
+#   • Every sentence must be within the statutory minimum-maximum range.
+#   • Where benefit of doubt arises, acquit — even a single doubt benefits the accused.
+
+# SPECIALIST KNOWLEDGE AREAS:
+#   — PPC Offences: Elements, essential ingredients, punishment, exceptions
+#   — CrPC Procedure: Bail (Sections 496–498), charge framing (Section 265-C),
+#     statements (Section 342), appeals (Sections 408–411), revision
+#   — Evidence: Dying declaration, extra-judicial confession, circumstantial evidence,
+#     medical evidence, ocular account, corroboration rules
+#   — Hudood: Zina, Qazf, Robbery (Hadd/Ta'zir distinction, tawbah, diyat)
+#   — Qisas & Diyat: Wali's right, compounding, diyat calculation
+#   — Terrorism: Scheduled offences, joint trial, in-camera proceedings
+#   — Narcotics: CNSA Sections 9, 13, 14 — presumption of possession
+#   — Juveniles: Age determination, exclusion of death penalty, reformatory approach
+#   — Sexual offences: DNA evidence, medical examination, in-camera trial
 
 # CONTEXT FROM KNOWLEDGE BASE:
-# Use the following retrieved context from the Pakistan civil law corpus to inform your response
-# wherever it is relevant. If the retrieved context directly covers the point raised, ground your
-# answer in it and cite the specific statute/section from the context.
+# Use the following retrieved context from the Pakistan criminal law corpus to inform your
+# response wherever it is relevant. If the retrieved context directly covers the point raised,
+# ground your answer in it and cite the specific statute/section from the context.
 
 # If the retrieved context does not cover the point raised, answer using your own knowledge of
-# Pakistani law to the best of your ability. Always answer the query fully and directly — never
-# state that the knowledge base lacks material on a point, and never mention whether your answer
-# came from the retrieved context or from your own knowledge. Simply give the best, most accurate
-# answer to every query.
+# Pakistani criminal law to the best of your ability. Always answer the query fully and directly —
+# never state that the knowledge base lacks material on a point, and never mention whether your
+# answer came from the retrieved context or from your own knowledge. Simply give the best, most
+# accurate answer to every query.
 
 # RETRIEVED CONTEXT:
 # {context}
@@ -82,32 +127,38 @@
 #   • Remain strictly neutral and impartial at all times.
 #   • Treat all case information as highly confidential.
 #   • Maintain a formal, respectful, and objective tone.
+#   • Never express sympathy for either the prosecution or the accused.
 #   • Do not volunteer the current date/time unless explicitly asked.
-  
-  
-# Except all these if you asked to generate an type of image you have to generate it ok."""
+#   • Always include the caveat that judicial mind must be independently applied."""
 
 
 # # ══════════════════════════════════════════════════════════════════
 # # CONTEXTUALIZATION PROMPT
-# # Rephrases follow-up queries from a judge into standalone
-# # legal research questions before hitting the retriever.
+# # Rephrases follow-up queries into standalone legal questions.
 # # ══════════════════════════════════════════════════════════════════
 
-# CONTEXTUALIZE_PROMPT = """You are assisting a Judge of a civil court in Pakistan.
+# CRIMINAL_CONTEXTUALIZE_PROMPT = """You are assisting a Judge of a criminal court in Pakistan.
 # Given the judicial conversation history and the Judge's latest query
-# (which may reference prior discussion about a case or legal point),
+# (which may reference prior discussion about a case, an offence, or a legal point),
 # rewrite the query as a fully self-contained legal research question
 # that can be understood without the conversation history.
 
 # Examples of correct rephrasing:
-#   Judge asks: "What about the second ground?"
-#   → Rephrase to: "What is the second ground for dissolution of a Muslim marriage
-#     under the Dissolution of Muslim Marriages Act 1939?"
+#   Judge asks: "What is the punishment for this offence?"
+#   → Rephrase to: "What is the punishment for murder under Section 302 of the
+#     Pakistan Penal Code 1860?"
 
-#   Judge asks: "And the burden of proof here?"
-#   → Rephrase to: "What is the burden of proof in a civil suit for specific
-#     performance under the Specific Relief Act 1877?"
+#   Judge asks: "What about bail in this case?"
+#   → Rephrase to: "What are the principles governing pre-arrest bail in a
+#     narcotics case under Section 9 of the Control of Narcotic Substances Act 1997?"
+
+#   Judge asks: "And the benefit of doubt?"
+#   → Rephrase to: "What is the principle of benefit of doubt in criminal cases
+#     under Pakistani law, and when does it entitle an accused to acquittal?"
+
+#   Judge asks: "What are the elements of the second charge?"
+#   → Rephrase to: "What are the essential elements of robbery under Section 392
+#     of the Pakistan Penal Code 1860?"
 
 # Do NOT answer the question — only rephrase it. If it is already self-contained,
 # return it unchanged."""
@@ -117,25 +168,25 @@
 # # MAIN AGENT CLASS
 # # ══════════════════════════════════════════════════════════════════
 
-# class JudicialGPTCivilAgent:
+# class JudicialGPTCriminalAgent:
 #     """
-#     JudicialGPT Civil Law RAG Agent.
+#     JudicialGPT Criminal Law RAG Agent.
 
-#     Wraps the Pakistan civil law FAISS knowledge base with the
-#     JudicialGPT system prompt and exposes a conversational interface
-#     for judges to conduct legal research and draft judgments.
+#     Wraps the Pakistan criminal law FAISS knowledge base with the
+#     JudicialGPT criminal system prompt and exposes a conversational
+#     interface for judges to conduct legal research and draft judgments.
 #     """
 
 #     def __init__(self):
-#         print("\n⚖️  Initialising JudicialGPT Civil Law Agent...\n")
-#         self.config       = Config()
+#         print("\n⚖️  Initialising JudicialGPT Criminal Law Agent...\n")
+#         self.config       = CriminalConfig()
 #         self.llm          = self._load_llm()
 #         self.embeddings   = self._load_embeddings()
 #         self.vector_store = self._load_vector_store()
 #         self.retriever    = self._build_retriever()
 #         self._sessions: dict[str, ChatMessageHistory] = {}
 #         self.chain        = self._build_chain()
-#         print("✅  JudicialGPT Civil Agent ready.\n")
+#         print("✅  JudicialGPT Criminal Agent ready.\n")
 
 #     # ── LLM ───────────────────────────────────────────────────────
 #     def _load_llm(self) -> ChatGoogleGenerativeAI:
@@ -167,8 +218,8 @@
 #         path = self.config.VECTOR_STORE_PATH
 #         if not Path(path).exists():
 #             raise FileNotFoundError(
-#                 f"Vector store not found at: {path}\n"
-#                 "Run  python ingest.py  first to build the index."
+#                 f"Criminal law vector store not found at: {path}\n"
+#                 "Run  python ingest_criminal.py  first to build the index."
 #             )
 #         print(f"   📂  Vector store: {path}")
 #         return FAISS.load_local(
@@ -181,7 +232,8 @@
 #         """
 #         MMR retriever — fetches diverse chunks from across different
 #         statutes rather than returning similar sections repeatedly.
-#         Critical for judgment drafting which may cite multiple Acts.
+#         Critical for criminal judgment drafting which may cite PPC,
+#         CrPC, Qanun-e-Shahadat, and special laws simultaneously.
 #         """
 #         print(f"   🔍  Retriever  : MMR  k={self.config.RETRIEVER_K}")
 #         return self.vector_store.as_retriever(
@@ -198,7 +250,7 @@
 
 #         # ── Step 1: contextualize judge's follow-up queries ───────
 #         ctx_prompt = ChatPromptTemplate.from_messages([
-#             ("system", CONTEXTUALIZE_PROMPT),
+#             ("system", CRIMINAL_CONTEXTUALIZE_PROMPT),
 #             MessagesPlaceholder("chat_history"),
 #             ("human", "{input}"),
 #         ])
@@ -207,11 +259,9 @@
 #             self.llm, self.retriever, ctx_prompt
 #         )
 
-#         # ── Step 2: JudicialGPT answer generation ─────────────────
-#         # JUDICIAL_SYSTEM_PROMPT contains {context} which
-#         # create_stuff_documents_chain fills with retrieved chunks.
+#         # ── Step 2: JudicialGPT criminal answer generation ────────
 #         qa_prompt = ChatPromptTemplate.from_messages([
-#             ("system", JUDICIAL_SYSTEM_PROMPT),
+#             ("system", CRIMINAL_SYSTEM_PROMPT),
 #             MessagesPlaceholder("chat_history"),
 #             ("human", "{input}"),
 #         ])
@@ -232,7 +282,7 @@
 #     def _get_session(self, session_id: str) -> BaseChatMessageHistory:
 #         """
 #         Returns the ChatMessageHistory for a given session.
-#         Each judge / case can have its own isolated session_id.
+#         Each judge / criminal case can have its own isolated session_id.
 #         """
 #         if session_id not in self._sessions:
 #             self._sessions[session_id] = ChatMessageHistory()
@@ -246,19 +296,20 @@
 #     # ── Public API ────────────────────────────────────────────────
 #     def ask(self, query: str, session_id: str = "default") -> dict:
 #         """
-#         Submit a judicial query to JudicialGPT.
+#         Submit a judicial query to JudicialGPT Criminal Agent.
 
 #         Args:
 #             query      : The judge's question or instruction
-#                          (e.g. "Draft Issue No. 1 on plaintiff's title",
-#                           "What is the limitation period for this suit?")
+#                          (e.g. "What are the elements of Section 302 PPC?",
+#                           "Draft findings on the charge of robbery.",
+#                           "What are bail principles in terrorism cases?")
 #             session_id : Unique identifier per judge/case session.
 #                          Different IDs give completely isolated conversations.
 
 #         Returns:
 #             {
-#               "answer":  str,             — JudicialGPT's response
-#               "sources": list[dict]       — cited statute pages
+#               "answer":  str,         — JudicialGPT's response
+#               "sources": list[dict]   — cited statute pages
 #             }
 #         """
 #         result = self.chain.invoke(
@@ -307,9 +358,9 @@
 
 # BANNER = """
 # ╔══════════════════════════════════════════════════════════════════════╗
-# ║          J U D I C I A L G P T                                       ║
-# ║          Civil Law Research & Judgment Drafting Assistant            ║
-# ║          Pakistan Civil Law Knowledge Base                           ║
+# ║          J U D I C I A L G P T   —   C R I M I N A L               ║
+# ║          Criminal Law Research & Judgment Drafting Assistant         ║
+# ║          Pakistan Criminal Law Knowledge Base                        ║
 # ╠══════════════════════════════════════════════════════════════════════╣
 # ║  Commands:                                                           ║
 # ║    exit / quit    →  exit                                            ║
@@ -321,12 +372,16 @@
 # """
 
 # SAMPLE_QUERIES = [
-#     "Draft Issue No. 1 on plaintiff's title in a property suit.",
-#     "What is the limitation period for a suit on a written contract?",
-#     "Explain the burden of proof under Section 101 Qanun-e-Shahadat Order.",
-#     "Draft findings on the issue of consideration in a contract dispute.",
-#     "What are the essentials of a valid mortgage under the Transfer of Property Act?",
-#     "Summarise the grounds for specific performance under the Specific Relief Act.",
+#     "What are the essential elements of murder under Section 302 PPC?",
+#     "Draft findings on the charge of robbery under Section 392 PPC.",
+#     "What are the principles of benefit of doubt in Pakistani criminal law?",
+#     "Explain the admissibility of an extra-judicial confession.",
+#     "What are bail principles in a narcotics case under CNSA Section 9?",
+#     "Draft a Section 342 CrPC statement template for an accused in a theft case.",
+#     "What is the difference between Hadd and Ta'zir punishment in Hudood cases?",
+#     "Explain the evidentiary value of ocular account vs. medical evidence.",
+#     "What is the procedure for framing of charge under Section 265-C CrPC?",
+#     "How should a dying declaration be evaluated under Qanun-e-Shahadat?",
 # ]
 
 
@@ -338,7 +393,7 @@
 #         print(f"   {i}. {q}")
 #     print()
 
-#     agent        = JudicialGPTCivilAgent()
+#     agent        = JudicialGPTCriminalAgent()
 #     show_sources = True
 #     session_id   = "case_default"
 
@@ -346,7 +401,7 @@
 #         try:
 #             raw = input(f"\n👨‍⚖️  Judge [{session_id}]: ").strip()
 #         except (KeyboardInterrupt, EOFError):
-#             print("\n\nJudicialGPT session ended.\n")
+#             print("\n\nJudicialGPT Criminal session ended.\n")
 #             sys.exit(0)
 
 #         if not raw:
@@ -378,7 +433,7 @@
 #                 session_id = new_sid
 #                 print(f"   Switched to session: '{session_id}'")
 #             else:
-#                 print("   Usage: session <case_id>  e.g.  session civil_suit_42")
+#                 print("   Usage: session <case_id>  e.g.  session criminal_case_101")
 #             continue
 
 #         # ── Submit to JudicialGPT ─────────────────────────────────
@@ -391,6 +446,11 @@
 
 #         print(result["answer"])
 
+#         # if show_sources and result["sources"]:
+#         #     print("\n📚  Sources:")
+#         #     for s in result["sources"]:
+#         #         print(f"   • {s['file']}  (p.{s['page']})")
+#         #         print(f"     {s['snippet']}")
 
 
 # if __name__ == "__main__":
@@ -410,11 +470,37 @@
 
 
 
+
+
+
+
+
+
+
+
+
 """
 ====================================================================
-  JudicialGPT — Civil Law RAG Agent
-  Pakistan Civil Law Knowledge Base
+  JudicialGPT — Criminal Law RAG Agent
+  Pakistan Criminal Law Knowledge Base
   LangChain v1.x + langchain-classic + Gemini + FAISS
+====================================================================
+
+Covers:
+  • Pakistan Penal Code 1860 (PPC)
+  • Code of Criminal Procedure 1898 (CrPC)
+  • Qanun-e-Shahadat Order 1984 (Evidence)
+  • Anti-Terrorism Act 1997
+  • Control of Narcotic Substances Act 1997
+  • National Accountability Ordinance 1999
+  • Prevention of Electronic Crimes Act 2016
+  • Hudood Ordinances 1979
+  • Qisas & Diyat Ordinance 1990
+  • Juvenile Justice System Act 2018
+  • Criminal Law Amendment (Rape) Act 2021
+  • Protection of Women Act 2006
+  • Anti-Money Laundering Act 2010
+  • And all other major Pakistan criminal statutes
 ====================================================================
 """
 
@@ -438,56 +524,84 @@ from langchain_classic.chains import (
 )
 from langchain_classic.chains.combine_documents import create_stuff_documents_chain
 
-from config import Config
+from config_criminal import CriminalConfig
 
 load_dotenv()
 
 
 # ══════════════════════════════════════════════════════════════════
-# SYSTEM PROMPT  —  aligned with JudicialGPT main prompt
+# SYSTEM PROMPT  —  Criminal law variant of JudicialGPT
 # ══════════════════════════════════════════════════════════════════
 
-JUDICIAL_SYSTEM_PROMPT = """You are 'JudicialGPT,' an AI Assistant exclusively designed to serve and
-support Judges within the judicial system of Pakistan.
+CRIMINAL_SYSTEM_PROMPT = """You are 'JudicialGPT,' an AI Assistant exclusively designed to serve and
+support Judges within the criminal judicial system of Pakistan.
 
 CORE IDENTITY:
 When asked for an introduction, respond with:
-"I am JudicialGPT, a specialised AI assistant designed to support judges in their duties.
-I am trained on Pakistani legal jurisprudence, procedural law under the Code of Civil
-Procedure 1908, and judicial processes. My primary function is to assist with drafting
-civil judgments, legal research, and case management. I am proficient in both English
-and Urdu."
+"I am JudicialGPT, a specialised AI assistant designed to support judges in criminal court
+proceedings. I am trained on Pakistan's criminal law jurisprudence — including the Pakistan
+Penal Code 1860, Code of Criminal Procedure 1898, Qanun-e-Shahadat Order 1984, Hudood
+Ordinances, Anti-Terrorism Act 1997, and all major criminal statutes of Pakistan. My primary
+function is to assist with drafting criminal judgments, legal research on offences and
+punishments, bail matters, and evidence evaluation. I am proficient in both English and Urdu."
 
-PRIMARY ROLE — CIVIL JUDGMENT DRAFTING:
-You assist judges in drafting well-structured, legally sound civil judgments strictly
-following the Pakistan civil court format mandated by Order XX Rule 4 CPC:
-  1. Court Heading
-  2. Statement of the Case
-  3. Framing of Issues
-  4. Evidence Summary
-  5. Issue-wise Findings with Reasons
-  6. Legal Discussion & Precedents
-  7. Conclusion / Operative Part
-  8. Decree
+PRIMARY ROLE — CRIMINAL JUDGMENT DRAFTING:
+You assist judges in drafting well-structured, legally sound criminal judgments strictly
+following the Pakistan criminal court format:
+  1. Court Heading (Court name, Case No., FIR No., Sections of PPC/Special Law)
+  2. Parties (State vs. Accused — full names, CNIC, parentage, address)
+  3. Prosecution Case (Summary of FIR, witnesses, medical/forensic evidence)
+  4. Defence Case (Plea, witnesses, alibi if any)
+  5. Charge (Section-wise charge as framed)
+  6. Prosecution Evidence (PW-wise summary, exhibits — Exh.PW, Exh.P)
+  7. Defence Evidence (DW-wise summary, exhibits — Exh.DW, Exh.D)
+  8. Statements under Section 342 CrPC (Accused's explanation)
+  9. Arguments of Parties
+  10. Legal Discussion — Element-by-element analysis of the offence
+  11. Appreciation of Evidence — Reliability, corroboration, contradictions
+  12. Finding on Charge — Guilty / Not Guilty with detailed reasons
+  13. Sentence (if guilty) — Under relevant PPC/Special Law section
+  14. Benefit of doubt (if applicable) — Cite Supreme Court principle
+  15. Operative Part / Order
 
 MANDATORY RULES:
   • Every finding must carry detailed reasons — bare findings are impermissible.
-  • Cite relevant Pakistani precedents (SCMR, PLD, CLC, MLD) where applicable.
-  • Reference evidence by exhibit numbers (Exh.P-1, Exh.D-1) and witnesses (PW-1, DW-1).
+  • Cite relevant Pakistani precedents (SCMR, PLD, PCrLJ, MLD) where applicable.
+  • Reference evidence by exhibit numbers (Exh.PW-1, Exh.P-1) and witnesses (PW-1, DW-1).
+  • Standard of proof: beyond reasonable doubt in criminal matters.
+  • The prosecution bears the burden of proof throughout (Section 117 Qanun-e-Shahadat).
+  • Accused is presumed innocent until proved guilty (Article 13 Constitution).
+  • In Hudood matters: apply the specific evidentiary requirements (Hadd vs Ta'zir).
+  • In ATA matters: apply Section 21-H (presumption re: possession of explosive/weapons).
+  • In bail matters: apply the triple test (flight risk, tampering, repeat offence) and
+    nature of offence (bailable vs non-bailable under Section 496–498 CrPC).
   • Use formal, temperate, precise language — no abbreviations or slang.
-  • Standard of proof: balance of probabilities in civil matters.
-  • Burden of proof lies on the plaintiff under Section 101 Qanun-e-Shahadat Order 1984.
+  • Every sentence must be within the statutory minimum-maximum range.
+  • Where benefit of doubt arises, acquit — even a single doubt benefits the accused.
+
+SPECIALIST KNOWLEDGE AREAS:
+  — PPC Offences: Elements, essential ingredients, punishment, exceptions
+  — CrPC Procedure: Bail (Sections 496–498), charge framing (Section 265-C),
+    statements (Section 342), appeals (Sections 408–411), revision
+  — Evidence: Dying declaration, extra-judicial confession, circumstantial evidence,
+    medical evidence, ocular account, corroboration rules
+  — Hudood: Zina, Qazf, Robbery (Hadd/Ta'zir distinction, tawbah, diyat)
+  — Qisas & Diyat: Wali's right, compounding, diyat calculation
+  — Terrorism: Scheduled offences, joint trial, in-camera proceedings
+  — Narcotics: CNSA Sections 9, 13, 14 — presumption of possession
+  — Juveniles: Age determination, exclusion of death penalty, reformatory approach
+  — Sexual offences: DNA evidence, medical examination, in-camera trial
 
 CONTEXT FROM KNOWLEDGE BASE:
-Use the following retrieved context from the Pakistan civil law corpus to inform your response
-wherever it is relevant. If the retrieved context directly covers the point raised, ground your
-answer in it and cite the specific statute/section from the context.
+Use the following retrieved context from the Pakistan criminal law corpus to inform your
+response wherever it is relevant. If the retrieved context directly covers the point raised,
+ground your answer in it and cite the specific statute/section from the context.
 
 If the retrieved context does not cover the point raised, answer using your own knowledge of
-Pakistani law to the best of your ability. Always answer the query fully and directly — never
-state that the knowledge base lacks material on a point, and never mention whether your answer
-came from the retrieved context or from your own knowledge. Simply give the best, most accurate
-answer to every query.
+Pakistani criminal law to the best of your ability. Always answer the query fully and directly —
+never state that the knowledge base lacks material on a point, and never mention whether your
+answer came from the retrieved context or from your own knowledge. Simply give the best, most
+accurate answer to every query.
 
 RETRIEVED CONTEXT:
 {context}
@@ -496,32 +610,38 @@ BEHAVIOURAL GUARDRAILS:
   • Remain strictly neutral and impartial at all times.
   • Treat all case information as highly confidential.
   • Maintain a formal, respectful, and objective tone.
+  • Never express sympathy for either the prosecution or the accused.
   • Do not volunteer the current date/time unless explicitly asked.
-  
-  
-Except all these if you asked to generate an type of image you have to generate it ok."""
+  • Always include the caveat that judicial mind must be independently applied."""
 
 
 # ══════════════════════════════════════════════════════════════════
 # CONTEXTUALIZATION PROMPT
-# Rephrases follow-up queries from a judge into standalone
-# legal research questions before hitting the retriever.
+# Rephrases follow-up queries into standalone legal questions.
 # ══════════════════════════════════════════════════════════════════
 
-CONTEXTUALIZE_PROMPT = """You are assisting a Judge of a civil court in Pakistan.
+CRIMINAL_CONTEXTUALIZE_PROMPT = """You are assisting a Judge of a criminal court in Pakistan.
 Given the judicial conversation history and the Judge's latest query
-(which may reference prior discussion about a case or legal point),
+(which may reference prior discussion about a case, an offence, or a legal point),
 rewrite the query as a fully self-contained legal research question
 that can be understood without the conversation history.
 
 Examples of correct rephrasing:
-  Judge asks: "What about the second ground?"
-  → Rephrase to: "What is the second ground for dissolution of a Muslim marriage
-    under the Dissolution of Muslim Marriages Act 1939?"
+  Judge asks: "What is the punishment for this offence?"
+  → Rephrase to: "What is the punishment for murder under Section 302 of the
+    Pakistan Penal Code 1860?"
 
-  Judge asks: "And the burden of proof here?"
-  → Rephrase to: "What is the burden of proof in a civil suit for specific
-    performance under the Specific Relief Act 1877?"
+  Judge asks: "What about bail in this case?"
+  → Rephrase to: "What are the principles governing pre-arrest bail in a
+    narcotics case under Section 9 of the Control of Narcotic Substances Act 1997?"
+
+  Judge asks: "And the benefit of doubt?"
+  → Rephrase to: "What is the principle of benefit of doubt in criminal cases
+    under Pakistani law, and when does it entitle an accused to acquittal?"
+
+  Judge asks: "What are the elements of the second charge?"
+  → Rephrase to: "What are the essential elements of robbery under Section 392
+    of the Pakistan Penal Code 1860?"
 
 Do NOT answer the question — only rephrase it. If it is already self-contained,
 return it unchanged."""
@@ -531,25 +651,25 @@ return it unchanged."""
 # MAIN AGENT CLASS
 # ══════════════════════════════════════════════════════════════════
 
-class JudicialGPTCivilAgent:
+class JudicialGPTCriminalAgent:
     """
-    JudicialGPT Civil Law RAG Agent.
+    JudicialGPT Criminal Law RAG Agent.
 
-    Wraps the Pakistan civil law FAISS knowledge base with the
-    JudicialGPT system prompt and exposes a conversational interface
-    for judges to conduct legal research and draft judgments.
+    Wraps the Pakistan criminal law FAISS knowledge base with the
+    JudicialGPT criminal system prompt and exposes a conversational
+    interface for judges to conduct legal research and draft judgments.
     """
 
     def __init__(self):
-        print("\n⚖️  Initialising JudicialGPT Civil Law Agent...\n")
-        self.config       = Config()
+        print("\n⚖️  Initialising JudicialGPT Criminal Law Agent...\n")
+        self.config       = CriminalConfig()
         self.llm          = self._load_llm()
         self.embeddings   = self._load_embeddings()
         self.vector_store = self._load_vector_store()
         self.retriever    = self._build_retriever()
         self._sessions: dict[str, ChatMessageHistory] = {}
         self.chain        = self._build_chain()
-        print("✅  JudicialGPT Civil Agent ready.\n")
+        print("✅  JudicialGPT Criminal Agent ready.\n")
 
     # ── LLM ───────────────────────────────────────────────────────
     def _load_llm(self) -> ChatGoogleGenerativeAI:
@@ -581,8 +701,8 @@ class JudicialGPTCivilAgent:
         path = self.config.VECTOR_STORE_PATH
         if not Path(path).exists():
             raise FileNotFoundError(
-                f"Vector store not found at: {path}\n"
-                "Run  python ingest.py  first to build the index."
+                f"Criminal law vector store not found at: {path}\n"
+                "Run  python ingest_criminal.py  first to build the index."
             )
         print(f"   📂  Vector store: {path}")
         return FAISS.load_local(
@@ -595,7 +715,8 @@ class JudicialGPTCivilAgent:
         """
         MMR retriever — fetches diverse chunks from across different
         statutes rather than returning similar sections repeatedly.
-        Critical for judgment drafting which may cite multiple Acts.
+        Critical for criminal judgment drafting which may cite PPC,
+        CrPC, Qanun-e-Shahadat, and special laws simultaneously.
         """
         print(f"   🔍  Retriever  : MMR  k={self.config.RETRIEVER_K}")
         return self.vector_store.as_retriever(
@@ -612,7 +733,7 @@ class JudicialGPTCivilAgent:
 
         # ── Step 1: contextualize judge's follow-up queries ───────
         ctx_prompt = ChatPromptTemplate.from_messages([
-            ("system", CONTEXTUALIZE_PROMPT),
+            ("system", CRIMINAL_CONTEXTUALIZE_PROMPT),
             MessagesPlaceholder("chat_history"),
             ("human", "{input}"),
         ])
@@ -621,11 +742,9 @@ class JudicialGPTCivilAgent:
             self.llm, self.retriever, ctx_prompt
         )
 
-        # ── Step 2: JudicialGPT answer generation ─────────────────
-        # JUDICIAL_SYSTEM_PROMPT contains {context} which
-        # create_stuff_documents_chain fills with retrieved chunks.
+        # ── Step 2: JudicialGPT criminal answer generation ────────
         qa_prompt = ChatPromptTemplate.from_messages([
-            ("system", JUDICIAL_SYSTEM_PROMPT),
+            ("system", CRIMINAL_SYSTEM_PROMPT),
             MessagesPlaceholder("chat_history"),
             ("human", "{input}"),
         ])
@@ -646,7 +765,7 @@ class JudicialGPTCivilAgent:
     def _get_session(self, session_id: str) -> BaseChatMessageHistory:
         """
         Returns the ChatMessageHistory for a given session.
-        Each judge / case can have its own isolated session_id.
+        Each judge / criminal case can have its own isolated session_id.
         """
         if session_id not in self._sessions:
             self._sessions[session_id] = ChatMessageHistory()
@@ -660,19 +779,20 @@ class JudicialGPTCivilAgent:
     # ── Public API ────────────────────────────────────────────────
     def ask(self, query: str, session_id: str = "default") -> dict:
         """
-        Submit a judicial query to JudicialGPT.
+        Submit a judicial query to JudicialGPT Criminal Agent.
 
         Args:
             query      : The judge's question or instruction
-                         (e.g. "Draft Issue No. 1 on plaintiff's title",
-                          "What is the limitation period for this suit?")
+                         (e.g. "What are the elements of Section 302 PPC?",
+                          "Draft findings on the charge of robbery.",
+                          "What are bail principles in terrorism cases?")
             session_id : Unique identifier per judge/case session.
                          Different IDs give completely isolated conversations.
 
         Returns:
             {
-              "answer":  str,             — JudicialGPT's response
-              "sources": list[dict]       — cited statute pages
+              "answer":  str,         — JudicialGPT's response
+              "sources": list[dict]   — cited statute pages
             }
         """
         result = self.chain.invoke(
@@ -721,20 +841,23 @@ class JudicialGPTCivilAgent:
         session_id: str = "default",
     ) -> dict:
         """
-        Submit an image (e.g. a scanned exhibit, contract page, property
-        document, or evidence photo) together with a judicial question to
-        JudicialGPT, and get back a Gemini vision-grounded answer.
+        Submit an image (e.g. a scanned FIR, exhibit photo, medico-legal
+        certificate, or forensic report page) together with a judicial
+        question to JudicialGPT Criminal Agent, and get back a Gemini
+        vision-grounded answer.
 
-        The JUDICIAL_SYSTEM_PROMPT — identity, judgment-drafting rules,
-        behavioural guardrails — is applied exactly as it is for text-only
-        queries via `ask()`. The only difference is that Gemini is called
-        directly in multimodal mode (image + text), because the LangChain
-        retrieval chain used by `ask()` only accepts a plain string `input`.
+        The CRIMINAL_SYSTEM_PROMPT — identity, judgment-drafting rules,
+        specialist knowledge areas, behavioural guardrails — is applied
+        exactly as it is for text-only queries via `ask()`. The only
+        difference is that Gemini is called directly in multimodal mode
+        (image + text), because the LangChain retrieval chain used by
+        `ask()` only accepts a plain string `input`.
 
         Args:
             query       : The judge's question about the image
-                          (e.g. "Summarise this exhibit page" or
-                           "Verify the property boundaries in this map.")
+                          (e.g. "Summarise the injuries listed in this
+                           medico-legal certificate" or "Read out the
+                           FIR number and sections on this exhibit.")
             image_bytes : Raw bytes of the uploaded image.
             mime_type   : Image MIME type, e.g. "image/jpeg", "image/png".
             session_id  : Same session_id space as `ask()` — image and
@@ -753,8 +876,8 @@ class JudicialGPTCivilAgent:
         retrieved_docs = self.retriever.invoke(query)
         context_text = "\n\n".join(d.page_content for d in retrieved_docs)
 
-        # 2. Fill the SAME JUDICIAL_SYSTEM_PROMPT template used by `ask()`.
-        system_content = JUDICIAL_SYSTEM_PROMPT.format(context=context_text)
+        # 2. Fill the SAME CRIMINAL_SYSTEM_PROMPT template used by `ask()`.
+        system_content = CRIMINAL_SYSTEM_PROMPT.format(context=context_text)
 
         # 3. Encode the image as a base64 data URL for Gemini.
         b64_image = base64.b64encode(image_bytes).decode("utf-8")
@@ -828,9 +951,9 @@ class JudicialGPTCivilAgent:
 
 BANNER = """
 ╔══════════════════════════════════════════════════════════════════════╗
-║          J U D I C I A L G P T                                       ║
-║          Civil Law Research & Judgment Drafting Assistant            ║
-║          Pakistan Civil Law Knowledge Base                           ║
+║          J U D I C I A L G P T   —   C R I M I N A L               ║
+║          Criminal Law Research & Judgment Drafting Assistant         ║
+║          Pakistan Criminal Law Knowledge Base                        ║
 ╠══════════════════════════════════════════════════════════════════════╣
 ║  Commands:                                                           ║
 ║    exit / quit    →  exit                                            ║
@@ -842,12 +965,16 @@ BANNER = """
 """
 
 SAMPLE_QUERIES = [
-    "Draft Issue No. 1 on plaintiff's title in a property suit.",
-    "What is the limitation period for a suit on a written contract?",
-    "Explain the burden of proof under Section 101 Qanun-e-Shahadat Order.",
-    "Draft findings on the issue of consideration in a contract dispute.",
-    "What are the essentials of a valid mortgage under the Transfer of Property Act?",
-    "Summarise the grounds for specific performance under the Specific Relief Act.",
+    "What are the essential elements of murder under Section 302 PPC?",
+    "Draft findings on the charge of robbery under Section 392 PPC.",
+    "What are the principles of benefit of doubt in Pakistani criminal law?",
+    "Explain the admissibility of an extra-judicial confession.",
+    "What are bail principles in a narcotics case under CNSA Section 9?",
+    "Draft a Section 342 CrPC statement template for an accused in a theft case.",
+    "What is the difference between Hadd and Ta'zir punishment in Hudood cases?",
+    "Explain the evidentiary value of ocular account vs. medical evidence.",
+    "What is the procedure for framing of charge under Section 265-C CrPC?",
+    "How should a dying declaration be evaluated under Qanun-e-Shahadat?",
 ]
 
 
@@ -859,7 +986,7 @@ def main():
         print(f"   {i}. {q}")
     print()
 
-    agent        = JudicialGPTCivilAgent()
+    agent        = JudicialGPTCriminalAgent()
     show_sources = True
     session_id   = "case_default"
 
@@ -867,7 +994,7 @@ def main():
         try:
             raw = input(f"\n👨‍⚖️  Judge [{session_id}]: ").strip()
         except (KeyboardInterrupt, EOFError):
-            print("\n\nJudicialGPT session ended.\n")
+            print("\n\nJudicialGPT Criminal session ended.\n")
             sys.exit(0)
 
         if not raw:
@@ -899,7 +1026,7 @@ def main():
                 session_id = new_sid
                 print(f"   Switched to session: '{session_id}'")
             else:
-                print("   Usage: session <case_id>  e.g.  session civil_suit_42")
+                print("   Usage: session <case_id>  e.g.  session criminal_case_101")
             continue
 
         # ── Submit to JudicialGPT ─────────────────────────────────
@@ -912,6 +1039,11 @@ def main():
 
         print(result["answer"])
 
+        # if show_sources and result["sources"]:
+        #     print("\n📚  Sources:")
+        #     for s in result["sources"]:
+        #         print(f"   • {s['file']}  (p.{s['page']})")
+        #         print(f"     {s['snippet']}")
 
 
 if __name__ == "__main__":

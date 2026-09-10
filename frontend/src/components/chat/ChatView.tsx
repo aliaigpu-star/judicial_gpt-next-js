@@ -431,7 +431,7 @@ export default function ChatView({
         // Call AI directly without saving to chat history - use Groq supported model
         const result = await api.sendChatMessage(
             [{ role: 'user', content }],
-            { model: 'llama-3.3-70b-versatile' }
+            { model: 'openai/gpt-oss-120b' }
         );
         return result.message?.content || result.message || 'Sorry, I could not understand.';
     };

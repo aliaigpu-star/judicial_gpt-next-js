@@ -251,10 +251,10 @@ export default function VoiceAgent({ onClose, onGetAIResponse, isOpen }: VoiceAg
                 if (onGetAIResponse) {
                     aiResponse = await onGetAIResponse(userText);
                 } else {
-                    // Fallback: call API directly - use llama-3.3-70b-versatile (Groq supported model)
+                    // Fallback: call API directly - use openai/gpt-oss-120b (Groq supported model)
                     const result = await api.sendChatMessage(
                         [...conversationHistory.map(m => ({ role: m.role, content: m.text })), { role: 'user', content: userText }],
-                        { model: 'llama-3.3-70b-versatile' }
+                        { model: 'openai/gpt-oss-120b' }
                     );
                     aiResponse = result.message?.content || result.message || 'Sorry, I could not understand.';
                 }

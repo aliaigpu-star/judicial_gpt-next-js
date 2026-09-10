@@ -158,7 +158,7 @@ router.post('/chat', authenticate, aiRateLimiter, asyncHandler(async (req, res) 
 
     const {
         messages,
-        model = 'llama-3.3-70b-versatile',
+        model = 'openai/gpt-oss-120b',
         temperature = 0.7,
         maxTokens = 4000,
         stream = false

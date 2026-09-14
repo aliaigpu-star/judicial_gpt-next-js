@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Loader2, BookOpen, CheckCircle2, XCircle, Clock,
-    Copy, Check, ArrowUp, Scale, Gavel
+    Copy, Check, ArrowUp, Scale, Gavel, Users
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -27,7 +27,7 @@ interface HistoryItem {
 }
 
 export interface LawAgentChatProps {
-    agentType: 'civil' | 'criminal';
+    agentType: 'civil' | 'criminal' | 'family';
     title: string;
     description: string;
     apiUrl: string;
@@ -35,6 +35,15 @@ export interface LawAgentChatProps {
     suggestedQueries: string[];
     portHint: string;
 }
+
+// Per-agent display metadata and the API shape each backend actually expects.
+// Civil/Criminal Law Agents expose POST /query (form-encoded); the Family Law
+// Agent exposes POST /ask (JSON) — see api_family.py's AskRequest/AskResponse.
+const AGENT_META: Record<LawAgentChatProps['agentType'], { name: string; ragLabel: string; icon: typeof Scale; endpoint: string }> = {
+    civil: { name: 'Civil', ragLabel: 'Civil Law RAG', icon: Scale, endpoint: '/query' },
+    criminal: { name: 'Criminal', ragLabel: 'Criminal Law RAG', icon: Gavel, endpoint: '/query' },
+    family: { name: 'Family', ragLabel: 'Family Law RAG', icon: Users, endpoint: '/ask' },
+};
 
 export default function LawAgentChat({
     agentType,
@@ -81,7 +90,7 @@ export default function LawAgentChat({
         setProgress('Consulting legal knowledge base...');
 
         try {
-            const response = await fetch(`${apiUrl}/query`, {
+            const response = await fetch(`${apiUrl}${AGENT_META[agentType].endpoint}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -113,7 +122,7 @@ export default function LawAgentChat({
             try {
                 let convId = dbConversationId;
                 if (!convId) {
-                    const title = `${agentType === 'civil' ? 'Civil' : 'Criminal'} Law: ${searchQuery.slice(0, 40)}`;
+                    const title = `${AGENT_META[agentType].name} Law: ${searchQuery.slice(0, 40)}`;
                     const { conversation } = await api.createConversation(title);
                     convId = conversation.id;
                     setDbConversationId(convId);
@@ -144,7 +153,7 @@ export default function LawAgentChat({
         }
     };
 
-    const Icon = agentType === 'civil' ? Scale : Gavel;
+    const Icon = AGENT_META[agentType].icon;
 
     const inputForm = (
         <form
@@ -309,7 +318,7 @@ export default function LawAgentChat({
                                                         }}
                                                     >
                                                         <CheckCircle2 className="w-3 h-3" />
-                                                        {agentType === 'civil' ? 'Civil Law RAG' : 'Criminal Law RAG'}
+                                                        {AGENT_META[agentType].ragLabel}
                                                     </span>
                                                     <span className="inline-flex items-center gap-1.5 px-2 py-1 text-xs text-[#999999] dark:text-[#666666]">
                                                         <Clock className="w-3 h-3" />

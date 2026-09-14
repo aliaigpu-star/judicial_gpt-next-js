@@ -96,13 +96,15 @@ export default function ChatLayout({ children }: { children: React.ReactNode }) 
     const isCriminalJudgmentPage = pathSegment === 'criminal-judgment';
     const isCivilLawPage = pathSegment === 'civil-law';
     const isCriminalLawPage = pathSegment === 'criminal-law';
+    const isFamilyLawPage = pathSegment === 'family-law';
     const isSpecialAgentPage =
         isJudgmentSearchPage ||
         isSummarizePage ||
         isCivilJudgmentPage ||
         isCriminalJudgmentPage ||
         isCivilLawPage ||
-        isCriminalLawPage;
+        isCriminalLawPage ||
+        isFamilyLawPage;
     const currentConversationId = isSpecialAgentPage ? null : pathSegment;
 
     // Get current conversation object for header
@@ -341,6 +343,7 @@ export default function ChatLayout({ children }: { children: React.ReactNode }) 
                             isCriminalJudgmentPage ? 'Criminal Judgment Writing' :
                             isCivilLawPage ? 'Civil Law Agent' :
                             isCriminalLawPage ? 'Criminal Law Agent' :
+                            isFamilyLawPage ? 'Family Law Agent' :
                             currentConversation?.title || 'New Chat'
                         }
                         isPinned={currentConversation?.isPinned}

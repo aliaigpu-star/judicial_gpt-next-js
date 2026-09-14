@@ -26,7 +26,8 @@ import {
     Scale,
     FileText,
     Gavel,
-    BookOpen
+    BookOpen,
+    Users
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
@@ -91,7 +92,8 @@ export default function ChatSidebar({
     const isJudgementWritingActive = isCivilJudgmentActive || isCriminalJudgmentActive;
     const isCivilLawActive = pathname === '/chat/civil-law';
     const isCriminalLawActive = pathname === '/chat/criminal-law';
-    const isLawAgentsActive = isCivilLawActive || isCriminalLawActive;
+    const isFamilyLawActive = pathname === '/chat/family-law';
+    const isLawAgentsActive = isCivilLawActive || isCriminalLawActive || isFamilyLawActive;
 
     const [searchQuery, setSearchQuery] = useState('');
     const [showSearchInput, setShowSearchInput] = useState(false);
@@ -443,6 +445,22 @@ export default function ChatSidebar({
                                             <span className="block text-[11px] text-[#8e8e8e] mt-0.5 leading-snug">Ask criminal law questions</span>
                                         </span>
                                     </button>
+                                    <button
+                                        onClick={() => {
+                                            setAgentMenu(null);
+                                            router.push('/chat/family-law');
+                                        }}
+                                        className={`w-full flex items-start gap-2.5 px-2.5 py-2 rounded-lg text-left transition-colors ${isFamilyLawActive
+                                            ? 'bg-[#db2777]/10 text-[#db2777]'
+                                            : 'text-[#0d0d0d] dark:text-[#ececec] hover:bg-[#f4f4f4] dark:hover:bg-[#3a3a3a]'
+                                            }`}
+                                    >
+                                        <Users className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#db2777]" />
+                                        <span className="min-w-0">
+                                            <span className="block text-sm font-medium">Family Law</span>
+                                            <span className="block text-[11px] text-[#8e8e8e] mt-0.5 leading-snug">Ask family law questions</span>
+                                        </span>
+                                    </button>
                                 </motion.div>
                             )}
                         </AnimatePresence>
@@ -751,6 +769,19 @@ export default function ChatSidebar({
                                     >
                                         <BookOpen className="w-3.5 h-3.5 text-[#d97706] flex-shrink-0" />
                                         Criminal Law
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            setAgentMenu(null);
+                                            router.push('/chat/family-law');
+                                        }}
+                                        className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-left text-sm transition-colors ${isFamilyLawActive
+                                            ? 'bg-[#db2777]/10 text-[#db2777]'
+                                            : 'text-[#0d0d0d] dark:text-[#ececec] hover:bg-[#ececec] dark:hover:bg-[#2f2f2f]'
+                                            }`}
+                                    >
+                                        <Users className="w-3.5 h-3.5 text-[#db2777] flex-shrink-0" />
+                                        Family Law
                                     </button>
                                 </div>
                             </motion.div>

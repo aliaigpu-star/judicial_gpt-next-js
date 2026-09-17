@@ -90,16 +90,37 @@ export default function LawAgentChat({
         setProgress('Consulting legal knowledge base...');
 
         try {
-            const response = await fetch(`${apiUrl}${AGENT_META[agentType].endpoint}`, {
+            const authToken = api.getToken();
+            const meta = AGENT_META[agentType];
+            // The Family Law Agent's POST /ask takes a JSON body; Civil/Criminal
+            // Law's POST /query takes form-encoded fields (Form(...) on the
+            // FastAPI side) - send whichever shape each backend actually expects.
+            const isJsonAgent = meta.endpoint === '/ask';
+            const authHeaders = authToken ? { Authorization: `Bearer ${authToken}` } : {};
+
+            const response = await fetch(`${apiUrl}${meta.endpoint}`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'ngrok-skip-browser-warning': 'true',
-                },
-                body: JSON.stringify({
-                    query: searchQuery,
-                    session_id: sessionId || undefined,
-                }),
+                headers: isJsonAgent
+                    ? {
+                        'Content-Type': 'application/json',
+                        'ngrok-skip-browser-warning': 'true',
+                        ...authHeaders,
+                    }
+                    : {
+                        // Let the browser set the form-urlencoded Content-Type
+                        // (with correct boundary/charset) itself.
+                        'ngrok-skip-browser-warning': 'true',
+                        ...authHeaders,
+                    },
+                body: isJsonAgent
+                    ? JSON.stringify({
+                        query: searchQuery,
+                        session_id: sessionId || undefined,
+                    })
+                    : new URLSearchParams({
+                        query: searchQuery,
+                        ...(sessionId ? { session_id: sessionId } : {}),
+                    }),
             });
 
             if (!response.ok) {

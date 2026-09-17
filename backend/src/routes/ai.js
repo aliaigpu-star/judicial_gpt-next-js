@@ -713,15 +713,31 @@ const proxyToAgent = (targetBaseUrl) => {
     return asyncHandler(async (req, res) => {
         // Strip out the initial '/agent/name' prefix to just pass the subpath to the agent
         const targetUrl = `${targetBaseUrl.replace(/\/$/, '')}${req.url}`;
-        
+        const contentType = req.headers['content-type'] || 'application/json';
+
+        // express.urlencoded()/express.json() already parsed req.body into a
+        // plain object. axios's default transform only auto-serializes plain
+        // objects to JSON - if the original request was form-urlencoded (e.g.
+        // the Civil/Criminal Law agents' `Form(...)` endpoints), it would
+        // otherwise forward a JSON string under a form-urlencoded Content-Type,
+        // which the target FastAPI agent can't parse. Re-encode explicitly.
+        let data;
+        if (req.method === 'GET') {
+            data = undefined;
+        } else if (contentType.includes('application/x-www-form-urlencoded') && req.body && typeof req.body === 'object') {
+            data = new URLSearchParams(req.body).toString();
+        } else {
+            data = req.body;
+        }
+
         try {
             const response = await axios({
                 method: req.method,
                 url: targetUrl,
-                data: req.method !== 'GET' ? req.body : undefined,
+                data,
                 responseType: 'stream',
                 headers: {
-                    'Content-Type': req.headers['content-type'] || 'application/json',
+                    'Content-Type': contentType,
                     'Accept': req.headers['accept'] || 'application/json, text/event-stream'
                 },
                 validateStatus: () => true // Forward all status codes

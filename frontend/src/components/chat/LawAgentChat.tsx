@@ -96,22 +96,22 @@ export default function LawAgentChat({
             // Law's POST /query takes form-encoded fields (Form(...) on the
             // FastAPI side) - send whichever shape each backend actually expects.
             const isJsonAgent = meta.endpoint === '/ask';
-            const authHeaders = authToken ? { Authorization: `Bearer ${authToken}` } : {};
+
+            const headers: Record<string, string> = {
+                'ngrok-skip-browser-warning': 'true',
+            };
+            if (isJsonAgent) {
+                headers['Content-Type'] = 'application/json';
+            }
+            // Else: let the browser set the form-urlencoded Content-Type
+            // (with correct boundary/charset) itself.
+            if (authToken) {
+                headers['Authorization'] = `Bearer ${authToken}`;
+            }
 
             const response = await fetch(`${apiUrl}${meta.endpoint}`, {
                 method: 'POST',
-                headers: isJsonAgent
-                    ? {
-                        'Content-Type': 'application/json',
-                        'ngrok-skip-browser-warning': 'true',
-                        ...authHeaders,
-                    }
-                    : {
-                        // Let the browser set the form-urlencoded Content-Type
-                        // (with correct boundary/charset) itself.
-                        'ngrok-skip-browser-warning': 'true',
-                        ...authHeaders,
-                    },
+                headers,
                 body: isJsonAgent
                     ? JSON.stringify({
                         query: searchQuery,

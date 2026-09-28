@@ -44,6 +44,9 @@ app.use(cors({
         // Allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
 
+        // Temporary switch for development (e.g. Flutter web on a random localhost port)
+        if (process.env.CORS_ALLOW_ALL === 'true') return callback(null, true);
+
         // Check if the origin is allowed
         if (config.ALLOWED_ORIGINS.indexOf(origin) !== -1 || config.FRONTEND_URL === origin) {
             callback(null, true);

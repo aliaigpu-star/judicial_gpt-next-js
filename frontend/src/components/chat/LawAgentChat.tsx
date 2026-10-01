@@ -90,42 +90,61 @@ export default function LawAgentChat({
         setProgress('Consulting legal knowledge base...');
 
         try {
-            const authToken = api.getToken();
             const meta = AGENT_META[agentType];
             // The Family Law Agent's POST /ask takes a JSON body; Civil/Criminal
             // Law's POST /query takes form-encoded fields (Form(...) on the
             // FastAPI side) - send whichever shape each backend actually expects.
             const isJsonAgent = meta.endpoint === '/ask';
 
-            const headers: Record<string, string> = {
-                'ngrok-skip-browser-warning': 'true',
-            };
-            if (isJsonAgent) {
-                headers['Content-Type'] = 'application/json';
-            }
-            // Else: let the browser set the form-urlencoded Content-Type
-            // (with correct boundary/charset) itself.
-            if (authToken) {
-                headers['Authorization'] = `Bearer ${authToken}`;
-            }
+            const sendQuery = () => {
+                const headers: Record<string, string> = {
+                    'ngrok-skip-browser-warning': 'true',
+                };
+                if (isJsonAgent) {
+                    headers['Content-Type'] = 'application/json';
+                }
+                // Else: let the browser set the form-urlencoded Content-Type
+                // (with correct boundary/charset) itself.
+                const authToken = api.getToken();
+                if (authToken) {
+                    headers['Authorization'] = `Bearer ${authToken}`;
+                }
 
-            const response = await fetch(`${apiUrl}${meta.endpoint}`, {
-                method: 'POST',
-                headers,
-                body: isJsonAgent
-                    ? JSON.stringify({
-                        query: searchQuery,
-                        session_id: sessionId || undefined,
-                    })
-                    : new URLSearchParams({
-                        query: searchQuery,
-                        ...(sessionId ? { session_id: sessionId } : {}),
-                    }),
-            });
+                return fetch(`${apiUrl}${meta.endpoint}`, {
+                    method: 'POST',
+                    headers,
+                    credentials: 'include',
+                    body: isJsonAgent
+                        ? JSON.stringify({
+                            query: searchQuery,
+                            session_id: sessionId || undefined,
+                        })
+                        : new URLSearchParams({
+                            query: searchQuery,
+                            ...(sessionId ? { session_id: sessionId } : {}),
+                        }),
+                });
+            };
+
+            let response = await sendQuery();
+
+            // The access token is short-lived: renew it from the refresh
+            // cookie and retry once before giving up.
+            if (response.status === 401) {
+                try {
+                    await api.refreshToken();
+                    response = await sendQuery();
+                } catch {
+                    // Refresh failed - fall through to the error below.
+                }
+            }
 
             if (!response.ok) {
                 const errData = await response.json().catch(() => ({}));
-                throw new Error(errData.detail || `Request failed (${response.status})`);
+                if (response.status === 401) {
+                    throw new Error('Your session has expired. Please sign in again.');
+                }
+                throw new Error(errData.detail || errData.error || `Request failed (${response.status})`);
             }
 
             const data = await response.json();

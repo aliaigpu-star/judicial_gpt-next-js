@@ -96,48 +96,29 @@ export default function LawAgentChat({
             // FastAPI side) - send whichever shape each backend actually expects.
             const isJsonAgent = meta.endpoint === '/ask';
 
-            const sendQuery = () => {
-                const headers: Record<string, string> = {
-                    'ngrok-skip-browser-warning': 'true',
-                };
-                if (isJsonAgent) {
-                    headers['Content-Type'] = 'application/json';
-                }
-                // Else: let the browser set the form-urlencoded Content-Type
-                // (with correct boundary/charset) itself.
-                const authToken = api.getToken();
-                if (authToken) {
-                    headers['Authorization'] = `Bearer ${authToken}`;
-                }
-
-                return fetch(`${apiUrl}${meta.endpoint}`, {
-                    method: 'POST',
-                    headers,
-                    credentials: 'include',
-                    body: isJsonAgent
-                        ? JSON.stringify({
-                            query: searchQuery,
-                            session_id: sessionId || undefined,
-                        })
-                        : new URLSearchParams({
-                            query: searchQuery,
-                            ...(sessionId ? { session_id: sessionId } : {}),
-                        }),
-                });
+            const headers: Record<string, string> = {
+                'ngrok-skip-browser-warning': 'true',
             };
-
-            let response = await sendQuery();
-
-            // The access token is short-lived: renew it from the refresh
-            // cookie and retry once before giving up.
-            if (response.status === 401) {
-                try {
-                    await api.refreshToken();
-                    response = await sendQuery();
-                } catch {
-                    // Refresh failed - fall through to the error below.
-                }
+            if (isJsonAgent) {
+                headers['Content-Type'] = 'application/json';
             }
+            // Else: let the browser set the form-urlencoded Content-Type
+            // (with correct boundary/charset) itself.
+
+            // authFetch adds the session token and renews it if it has expired.
+            const response = await api.authFetch(`${apiUrl}${meta.endpoint}`, {
+                method: 'POST',
+                headers,
+                body: isJsonAgent
+                    ? JSON.stringify({
+                        query: searchQuery,
+                        session_id: sessionId || undefined,
+                    })
+                    : new URLSearchParams({
+                        query: searchQuery,
+                        ...(sessionId ? { session_id: sessionId } : {}),
+                    }),
+            });
 
             if (!response.ok) {
                 const errData = await response.json().catch(() => ({}));

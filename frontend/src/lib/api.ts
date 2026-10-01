@@ -77,6 +77,43 @@ class ApiClient {
         return this.token;
     }
 
+    private refreshing: Promise<boolean> | null = null;
+
+    /** Renews the access token from the refresh cookie; concurrent callers share one attempt. */
+    private renewSession(): Promise<boolean> {
+        if (!this.refreshing) {
+            this.refreshing = this.refreshToken()
+                .then(() => true, () => false)
+                .finally(() => { this.refreshing = null; });
+        }
+        return this.refreshing;
+    }
+
+    /**
+     * fetch() for our own API (relative `/api/...` URLs or the backend base URL).
+     * Sends the current access token and, when it has expired (401), renews it
+     * once from the refresh cookie and retries. Other URLs are fetched as-is.
+     */
+    async authFetch(url: string, init: RequestInit = {}): Promise<Response> {
+        const isOwnApi = url.startsWith('/') || (!!this.baseUrl && url.startsWith(this.baseUrl));
+        if (!isOwnApi) return fetch(url, init);
+
+        const send = (retry: boolean) => {
+            const headers = new Headers(init.headers);
+            const token = this.getToken();
+            if (token && (retry || !headers.has('Authorization'))) {
+                headers.set('Authorization', `Bearer ${token}`);
+            }
+            return fetch(url, { ...init, headers, credentials: 'include' });
+        };
+
+        const response = await send(false);
+        const isAuthCall = /\/api\/auth\/(refresh|login|register|logout)\b/.test(url);
+        if (response.status !== 401 || isAuthCall) return response;
+
+        return (await this.renewSession()) ? send(true) : response;
+    }
+
     private async request<T>(endpoint: string, options: FetchOptions = {}): Promise<T> {
         const { token, ...fetchOptions } = options;
 
@@ -98,7 +135,7 @@ class ApiClient {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
 
-            response = await fetch(`${this.baseUrl}${endpoint}`, {
+            response = await this.authFetch(`${this.baseUrl}${endpoint}`, {
                 ...fetchOptions,
                 headers,
                 credentials: 'include',
@@ -247,7 +284,7 @@ class ApiClient {
             headers['Authorization'] = `Bearer ${authToken}`;
         }
 
-        const response = await fetch(`${this.baseUrl}/api/users/avatar`, {
+        const response = await this.authFetch(`${this.baseUrl}/api/users/avatar`, {
             method: 'POST',
             headers,
             body: formData,
@@ -405,7 +442,7 @@ class ApiClient {
 
     // Public request (no auth)
     private async requestPublic<T>(endpoint: string): Promise<T> {
-        const response = await fetch(`${this.baseUrl}${endpoint}`, {
+        const response = await this.authFetch(`${this.baseUrl}${endpoint}`, {
             headers: { 
                 'Content-Type': 'application/json',
                 'ngrok-skip-browser-warning': 'true'
@@ -449,7 +486,7 @@ class ApiClient {
 
         let response: Response;
         try {
-            response = await fetch(`${this.baseUrl}/api/ai/chat`, {
+            response = await this.authFetch(`${this.baseUrl}/api/ai/chat`, {
                 method: 'POST',
                 headers,
                 body: JSON.stringify({ messages, stream: true, ...options }),
@@ -543,7 +580,7 @@ class ApiClient {
             headers['Authorization'] = `Bearer ${authToken}`;
         }
 
-        const response = await fetch(`${this.baseUrl}/api/services/transcribe`, {
+        const response = await this.authFetch(`${this.baseUrl}/api/services/transcribe`, {
             method: 'POST',
             headers,
             body: formData,
@@ -565,7 +602,7 @@ class ApiClient {
             headers['Authorization'] = `Bearer ${authToken2}`;
         }
 
-        const response = await fetch(`${this.baseUrl}/api/services/ocr`, {
+        const response = await this.authFetch(`${this.baseUrl}/api/services/ocr`, {
             method: 'POST',
             headers,
             body: formData,
@@ -588,7 +625,7 @@ class ApiClient {
             headers['Authorization'] = `Bearer ${authToken3}`;
         }
 
-        const response = await fetch(`${this.baseUrl}/api/services/pdf-read`, {
+        const response = await this.authFetch(`${this.baseUrl}/api/services/pdf-read`, {
             method: 'POST',
             headers,
             body: formData,
@@ -615,7 +652,7 @@ class ApiClient {
             headers['Authorization'] = `Bearer ${authToken4}`;
         }
 
-        const response = await fetch(`${this.baseUrl}/api/services/ocr`, {
+        const response = await this.authFetch(`${this.baseUrl}/api/services/ocr`, {
             method: 'POST',
             headers,
             body: formData,
@@ -639,7 +676,7 @@ class ApiClient {
             headers['Authorization'] = `Bearer ${authToken}`;
         }
 
-        const response = await fetch(`${this.baseUrl}/api/services/tts`, {
+        const response = await this.authFetch(`${this.baseUrl}/api/services/tts`, {
             method: 'POST',
             headers,
             body: JSON.stringify({ text, voice: voice || 'en-US-JennyNeural' }),
@@ -755,7 +792,7 @@ class ApiClient {
             headers['Authorization'] = `Bearer ${authToken}`;
         }
 
-        const response = await fetch(`${this.baseUrl}/api/services/voice-to-voice`, {
+        const response = await this.authFetch(`${this.baseUrl}/api/services/voice-to-voice`, {
             method: 'POST',
             headers,
             body: formData,

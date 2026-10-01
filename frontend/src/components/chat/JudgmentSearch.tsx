@@ -103,7 +103,7 @@ export default function JudgmentSearch() {
         const timeoutId = setTimeout(() => controller.abort(), 90000); // 90 second timeout
 
         try {
-            const response = await fetch(`${JUDGMENT_API_URL}/search`, {
+            const response = await api.authFetch(`${JUDGMENT_API_URL}/search`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ query: searchQuery, max_results: 8 }),

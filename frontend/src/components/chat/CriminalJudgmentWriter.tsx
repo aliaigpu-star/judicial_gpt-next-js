@@ -142,7 +142,7 @@ export default function CriminalJudgmentWriter() {
         setCurrentStreamingMessage({ id: `stream_${Date.now()}`, query: searchQuery, response: '', sources: [] });
 
         try {
-            const response = await fetch(`${WRITER_API_URL}/chat/stream`, {
+            const response = await api.authFetch(`${WRITER_API_URL}/chat/stream`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ query: searchQuery }),

@@ -76,6 +76,9 @@ const verifyTurnstile = async (token, ip) => {
     }
 };
 
+// Where Google sign-in returns to in the JudicialGPT mobile app.
+const MOBILE_CALLBACK_URL = 'judicialgpt://auth/callback';
+
 /**
  * GET /api/auth/google
  * Initiate Google OAuth flow
@@ -90,7 +93,10 @@ router.get('/google', (req, res) => {
             'https://www.googleapis.com/auth/userinfo.profile',
             'https://www.googleapis.com/auth/userinfo.email'
         ],
-        prompt: 'consent'
+        prompt: 'consent',
+        // The mobile app opens this in the system browser; Google echoes the
+        // state back so the callback can return to the app instead of the website.
+        ...(req.query.platform === 'mobile' ? { state: 'mobile' } : {})
     });
     console.log('🔄 Redirecting to Google:', authorizeUrl);
     res.redirect(authorizeUrl);
@@ -102,6 +108,7 @@ router.get('/google', (req, res) => {
  */
 router.get('/google/callback', asyncHandler(async (req, res) => {
     const { code } = req.query;
+    const isMobile = req.query.state === 'mobile';
 
     console.log('📥 Google Callback received, code:', code ? 'present' : 'missing');
 
@@ -162,6 +169,14 @@ router.get('/google/callback', asyncHandler(async (req, res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         });
 
+        // Mobile app: hand both tokens back through the app's own URL scheme
+        // (it cannot read the refresh-token cookie set above).
+        if (isMobile) {
+            return res.redirect(
+                `${MOBILE_CALLBACK_URL}?token=${encodeURIComponent(accessToken)}&refreshToken=${encodeURIComponent(refreshToken)}`
+            );
+        }
+
         // Redirect to frontend with token
         const frontendUrl = config.FRONTEND_URL || 'http://localhost:3000';
         console.log('🔄 Redirecting to:', `${frontendUrl}/auth/callback?token=...`);
@@ -170,6 +185,9 @@ router.get('/google/callback', asyncHandler(async (req, res) => {
     } catch (error) {
         console.error('❌ Google Auth Error:', error.message);
         console.error('❌ Full error:', error);
+        if (isMobile) {
+            return res.redirect(`${MOBILE_CALLBACK_URL}?error=google_auth_failed`);
+        }
         const frontendUrl = config.FRONTEND_URL || 'http://localhost:3000';
         res.redirect(`${frontendUrl}/login?error=google_auth_failed`);
     }

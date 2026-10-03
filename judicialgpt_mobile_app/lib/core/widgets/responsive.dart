@@ -4,8 +4,8 @@ abstract final class Breakpoints {
   /// At this width the sidebar is shown permanently instead of as a drawer.
   static const double sidebar = 900;
 
-  /// Reading width for chat content, matching the website's `max-w-4xl`.
-  static const double content = 860;
+  /// Comfortable reading width for chat content.
+  static const double content = 760;
 
   static bool isWide(BuildContext context) => MediaQuery.sizeOf(context).width >= sidebar;
 }

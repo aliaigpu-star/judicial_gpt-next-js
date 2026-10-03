@@ -1,4 +1,5 @@
 import '../../conversations/domain/chat_message.dart';
+import '../domain/chat_attachment.dart';
 
 class ChatState {
   const ChatState({
@@ -8,6 +9,8 @@ class ChatState {
     this.isLoading = false,
     this.isResponding = false,
     this.webSearch = false,
+    this.attachment,
+    this.activity,
     this.error,
   });
 
@@ -23,6 +26,12 @@ class ChatState {
 
   /// Answer the next message with live web search instead of the model alone.
   final bool webSearch;
+
+  /// File waiting to be sent with the next message.
+  final ChatAttachment? attachment;
+
+  /// Work in progress before a reply starts, e.g. "Reading document...".
+  final String? activity;
   final String? error;
 
   ChatState copyWith({
@@ -32,6 +41,8 @@ class ChatState {
     bool? isLoading,
     bool? isResponding,
     bool? webSearch,
+    ChatAttachment? Function()? attachment,
+    String? Function()? activity,
     String? error,
     bool clearError = false,
   }) => ChatState(
@@ -41,6 +52,8 @@ class ChatState {
     isLoading: isLoading ?? this.isLoading,
     isResponding: isResponding ?? this.isResponding,
     webSearch: webSearch ?? this.webSearch,
+    attachment: attachment == null ? this.attachment : attachment(),
+    activity: activity == null ? this.activity : activity(),
     error: clearError ? null : (error ?? this.error),
   );
 }

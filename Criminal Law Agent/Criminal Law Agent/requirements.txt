@@ -34,3 +34,4 @@ langchain-classic
 fastapi>=0.115.0
 uvicorn[standard]>=0.30.0
 pydantic>=2.7.0
+hvac>=2.0.0

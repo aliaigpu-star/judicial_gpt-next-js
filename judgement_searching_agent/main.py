@@ -29,6 +29,42 @@ load_dotenv(override=True)
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
 
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Secrets from HashiCorp Vault
+# .env holds only the AppRole credentials; the API keys live in Vault at
+# judicial-ai/python-agents. Variables already set in the environment win.
+# ─────────────────────────────────────────────────────────────────────────────
+def load_vault_secrets() -> None:
+    role_id = os.getenv("VAULT_ROLE_ID")
+    secret_id = os.getenv("VAULT_SECRET_ID")
+    if not role_id or not secret_id:
+        return
+
+    import hvac
+
+    try:
+        client = hvac.Client(url=os.getenv("VAULT_ADDR", "http://127.0.0.1:8200"))
+        if client.sys.is_sealed():
+            logger.warning("Vault is sealed - run `vault operator unseal` (3 keys). Using environment only.")
+            return
+        client.auth.approle.login(role_id=role_id, secret_id=secret_id)
+        secrets = client.secrets.kv.v2.read_secret_version(
+            mount_point="judicial-ai",
+            path="python-agents",
+            raise_on_deleted_version=True,
+        )["data"]["data"]
+    except Exception as exc:
+        logger.warning("Could not load secrets from Vault: %s. Using environment only.", exc)
+        return
+
+    for key, value in secrets.items():
+        os.environ.setdefault(key, str(value))
+    logger.info("Loaded %d secret(s) from Vault.", len(secrets))
+
+
+load_vault_secrets()
+
 os.environ["USER_AGENT"] = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
     "AppleWebKit/537.36 (KHTML, like Gecko) "

@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../core/config/app_config.dart';
+import 'turnstile/turnstile_view.dart';
 
 /// Shows Cloudflare Turnstile and resolves with a verification token, or
-/// `null` if the user dismissed it or the check failed.
-///
-/// The widget is loaded with the website's origin as its base URL so the
-/// site key's hostname restriction is satisfied.
+/// `null` if the user dismissed it.
 Future<String?> requestCaptchaToken(BuildContext context) => showModalBottomSheet<String>(
   context: context,
   isScrollControlled: true,
@@ -23,56 +20,36 @@ class _TurnstileSheet extends StatefulWidget {
 }
 
 class _TurnstileSheetState extends State<_TurnstileSheet> {
-  static const _failed = '__turnstile_error__';
+  /// Why the last check failed, or `null` while it is pending.
+  String? _error;
 
-  late final WebViewController _controller;
-  bool _failedToVerify = false;
+  /// Bumped to reload the widget from scratch on retry.
+  int _attempt = 0;
 
-  @override
-  void initState() {
-    super.initState();
-    _controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(Colors.transparent)
-      ..addJavaScriptChannel('TurnstileChannel', onMessageReceived: _onMessage)
-      ..loadHtmlString(_html, baseUrl: AppConfig.baseUrl);
+  void _onToken(String token) {
+    if (mounted) Navigator.of(context).pop(token);
   }
 
-  void _onMessage(JavaScriptMessage message) {
-    if (!mounted) return;
-    if (message.message == _failed) {
-      setState(() => _failedToVerify = true);
-      return;
-    }
-    Navigator.of(context).pop(message.message);
+  void _onError(String reason) {
+    if (mounted) setState(() => _error = reason);
   }
 
-  String get _html =>
-      '''
-<!DOCTYPE html>
-<html>
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoad" async defer></script>
-  <style>
-    html, body { margin: 0; height: 100%; background: transparent; }
-    body { display: flex; align-items: center; justify-content: center; }
-  </style>
-</head>
-<body>
-  <div id="widget"></div>
-  <script>
-    function onTurnstileLoad() {
-      turnstile.render('#widget', {
-        sitekey: '${AppConfig.turnstileSiteKey}',
-        callback: function (token) { TurnstileChannel.postMessage(token); },
-        'error-callback': function () { TurnstileChannel.postMessage('$_failed'); },
-      });
+  void _retry() => setState(() {
+    _error = null;
+    _attempt++;
+  });
+
+  /// Turns a Turnstile error code into advice the user can act on.
+  /// Codes: https://developers.cloudflare.com/turnstile/troubleshooting/client-side-errors/error-codes/
+  static String _describe(String code) {
+    if (code == 'script-load-failed' || code.startsWith('1')) {
+      return 'Could not reach Cloudflare. Check your internet connection and try again.';
     }
-  </script>
-</body>
-</html>
-''';
+    if (code == 'timeout' || code.startsWith('3') || code.startsWith('6')) {
+      return 'The security check could not confirm this device. Try again, or switch between Wi-Fi and mobile data.';
+    }
+    return 'Verification failed. Try again.';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,15 +63,24 @@ class _TurnstileSheetState extends State<_TurnstileSheet> {
             Text('Security check', style: theme.textTheme.titleMedium),
             const SizedBox(height: 4),
             Text(
-              _failedToVerify
-                  ? 'Verification failed. Close this and try again.'
-                  : 'Please confirm you are human to continue.',
+              _error == null ? 'Please confirm you are human to continue.' : '${_describe(_error!)} (code: $_error)',
+              textAlign: TextAlign.center,
               style: theme.textTheme.bodySmall?.copyWith(
-                color: _failedToVerify ? theme.colorScheme.error : theme.colorScheme.onSurfaceVariant,
+                color: _error != null ? theme.colorScheme.error : theme.colorScheme.onSurfaceVariant,
               ),
             ),
             const SizedBox(height: 12),
-            SizedBox(height: 90, child: WebViewWidget(controller: _controller)),
+            SizedBox(
+              height: 90,
+              width: 320,
+              child: TurnstileView(
+                key: ValueKey(_attempt),
+                siteKey: AppConfig.turnstileSiteKey,
+                onToken: _onToken,
+                onError: _onError,
+              ),
+            ),
+            if (_error != null) TextButton(onPressed: _retry, child: const Text('Try again')),
           ],
         ),
       ),

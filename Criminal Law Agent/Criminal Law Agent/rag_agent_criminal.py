@@ -526,7 +526,10 @@ from langchain_classic.chains.combine_documents import create_stuff_documents_ch
 
 from config_criminal import CriminalConfig
 
+from vault_secrets import load_vault_secrets
+
 load_dotenv()
+load_vault_secrets()
 
 
 # ══════════════════════════════════════════════════════════════════

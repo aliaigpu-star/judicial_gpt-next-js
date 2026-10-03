@@ -8,7 +8,7 @@ INSTALLATION:
                 python-dotenv
 
 RUN:
-    uvicorn criminal_api:app --host 0.0.0.0 --port 8001 --reload
+    uvicorn criminal_api:app --host 0.0.0.0 --port 7004 --reload
 
 ENDPOINTS:
     GET  /              → health check

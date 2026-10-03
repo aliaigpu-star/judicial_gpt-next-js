@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import '../widgets/brand_mark.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/auth_screen.dart';
+import '../../features/auth/presentation/auth_style.dart';
 import '../../features/auth/state/auth_controller.dart';
 import '../../features/chat/presentation/chat_screen.dart';
 import '../../features/judgment_search/presentation/judgment_search_screen.dart';
@@ -10,8 +12,12 @@ import '../../features/judgment_writer/domain/writer_kind.dart';
 import '../../features/judgment_writer/presentation/judgment_writer_screen.dart';
 import '../../features/law_agents/domain/law_agent_kind.dart';
 import '../../features/law_agents/presentation/law_agent_screen.dart';
+import '../../features/settings/domain/settings_section.dart';
+import '../../features/settings/presentation/settings_screen.dart';
 import '../../features/shell/presentation/app_scaffold.dart';
 import '../../features/summarizer/presentation/summarizer_screen.dart';
+import '../../features/voice_agent/presentation/voice_agent_screen.dart';
+import '../theme/app_colors.dart';
 import 'routes.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -41,6 +47,18 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (_, state, child) => ResponsiveShell(currentPath: state.uri.path, child: child),
         routes: [
           GoRoute(path: Routes.chat, builder: (_, _) => const ChatScreen()),
+          GoRoute(path: Routes.voiceAgent, builder: (_, _) => const VoiceAgentScreen()),
+          GoRoute(
+            path: Routes.settings,
+            builder: (_, _) => const SettingsScreen(),
+            routes: [
+              GoRoute(
+                path: ':section',
+                builder: (_, state) =>
+                    SettingsScreen(section: SettingsSection.values.asNameMap()[state.pathParameters['section']]),
+              ),
+            ],
+          ),
           // Agent routes must precede `/chat/:id`, which matches any segment.
           GoRoute(path: Routes.judgmentSearch, builder: (_, _) => const JudgmentSearchScreen()),
           GoRoute(
@@ -80,19 +98,23 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   return router;
 });
 
+/// Shown under the opening splash doors while the stored session is checked.
 class _SplashScreen extends StatelessWidget {
   const _SplashScreen();
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    body: Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Image.asset('assets/images/judicial-logo.png', width: 96, height: 96),
-          const SizedBox(height: 24),
-          const CircularProgressIndicator(),
-        ],
+    backgroundColor: JudicialColors.marble,
+    body: AuthBackdrop(
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const BrandMark(size: 88, shadow: true),
+            const SizedBox(height: 24),
+            const CircularProgressIndicator(color: JudicialColors.green),
+          ],
+        ),
       ),
     ),
   );

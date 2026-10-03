@@ -58,6 +58,21 @@ class ChatRepository {
     }
   }
 
+  /// Non-streaming reply, used by the Voice Agent (same model as the website's).
+  Future<String> reply(List<ChatTurn> history) async {
+    final data = await _api.post(
+      '/api/ai/chat',
+      body: {
+        'model': 'openai/gpt-oss-120b',
+        'messages': [
+          for (final t in history) {'role': t.role, 'content': t.content},
+        ],
+      },
+    );
+    final message = data['message'];
+    return (message is Json ? message['content'] as String? : message as String?) ?? '';
+  }
+
   Future<({String answer, int? responseTimeMs})> webSearch(String query) async {
     final data = await _api.post('/api/ai/web-search', body: {'query': query});
     return (answer: data['answer'] as String? ?? '', responseTimeMs: (data['responseTime'] as num?)?.toInt());

@@ -30,7 +30,10 @@ from langchain_classic.indexes import SQLRecordManager, index
 
 from config import Config
 
+from vault_secrets import load_vault_secrets
+
 load_dotenv()
+load_vault_secrets()
 
 
 # ══════════════════════════════════════════════════════════════════

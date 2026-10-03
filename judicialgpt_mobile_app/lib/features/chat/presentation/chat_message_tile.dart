@@ -81,7 +81,7 @@ class ChatMessageTile extends StatelessWidget {
       MessageAction(
         icon: message.feedback == MessageFeedback.like ? Icons.thumb_up : Icons.thumb_up_outlined,
         tooltip: 'Good response',
-        color: message.feedback == MessageFeedback.like ? AppColors.brand : null,
+        color: message.feedback == MessageFeedback.like ? Theme.of(context).colorScheme.primary : null,
         onPressed: () => onFeedback(message.id, MessageFeedback.like),
       ),
       MessageAction(

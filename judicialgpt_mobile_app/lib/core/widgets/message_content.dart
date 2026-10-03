@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../utils/judgment_text.dart';
@@ -73,7 +74,7 @@ class JudgmentDocumentView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final base = Theme.of(context).textTheme.bodyLarge?.copyWith(fontFamily: 'serif', height: 1.55);
+    final base = GoogleFonts.sourceSerif4(textStyle: Theme.of(context).textTheme.bodyLarge, height: 1.6);
     final lines = JudgmentText.clean(text).split('\n');
 
     return SelectionArea(

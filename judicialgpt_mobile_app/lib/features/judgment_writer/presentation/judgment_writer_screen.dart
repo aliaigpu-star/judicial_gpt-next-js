@@ -108,10 +108,7 @@ class _JudgmentWriterScreenState extends ConsumerState<JudgmentWriterScreen> {
                     busy: state.isBusy,
                     onStop: notifier.stop,
                     onSend: _draft,
-                    leading: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Icon(_kind.icon, color: _kind.accent, size: 20),
-                    ),
+                    leading: ComposerTag(icon: _kind.icon, label: _kind.title, color: _kind.accent),
                   ),
                   if (state.items.isNotEmpty) ...[
                     const SizedBox(height: 6),

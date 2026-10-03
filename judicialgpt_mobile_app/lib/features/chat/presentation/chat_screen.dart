@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../../core/theme/app_colors.dart';
-import '../../../core/widgets/agent_empty_state.dart';
+import '../../../core/router/routes.dart';
 import '../../../core/widgets/auto_scroll.dart';
+import '../../../core/widgets/chat_bubbles.dart';
 import '../../../core/widgets/chat_composer.dart';
 import '../../../core/widgets/feedback.dart';
 import '../../../core/widgets/responsive.dart';
 import '../../shell/presentation/app_scaffold.dart';
+import '../../speech/presentation/dictation_button.dart';
 import '../state/chat_controller.dart';
+import 'attachment_menu.dart';
 import 'chat_message_tile.dart';
+import 'welcome_view.dart';
 
 /// The general JudicialGPT chat. `conversationId == null` is a new chat.
 class ChatScreen extends ConsumerStatefulWidget {
@@ -25,13 +29,6 @@ class ChatScreen extends ConsumerStatefulWidget {
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   final _input = TextEditingController();
   final _scroll = ScrollController();
-
-  static const _suggestions = [
-    'What are the grounds for bail under Section 497 Cr.P.C.?',
-    'Explain the limitation period for a suit for recovery of money.',
-    'What is the procedure for filing a writ petition in the High Court?',
-    'Summarize the essentials of a valid contract under the Contract Act 1872.',
-  ];
 
   @override
   void dispose() {
@@ -80,32 +77,25 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             child: chat.isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : chat.messages.isEmpty
-                ? ContentWidth(
-                    child: AgentEmptyState(
-                      icon: Icons.auto_awesome,
-                      title: 'What can I help with?',
-                      description: 'Ask JudicialGPT anything about Pakistani law and procedure.',
-                      accent: AppColors.brand,
-                      suggestions: _suggestions,
-                      onSuggestion: (s) => _input.text = s,
-                    ),
-                  )
+                ? const WelcomeView()
                 : ListView.builder(
                     controller: _scroll,
                     padding: const EdgeInsets.symmetric(vertical: 12),
-                    itemCount: chat.messages.length,
+                    itemCount: chat.messages.length + (chat.activity == null ? 0 : 1),
                     itemBuilder: (context, i) => ContentWidth(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: ChatMessageTile(
-                          message: chat.messages[i],
-                          busy: chat.isResponding,
-                          onRegenerate: notifier.regenerate,
-                          onEdit: notifier.editMessage,
-                          onFeedback: notifier.setFeedback,
-                          onSwitchVersion: notifier.switchVersion,
-                          onShare: chat.conversationId == null ? null : _share,
-                        ),
+                        child: i == chat.messages.length
+                            ? ThinkingIndicator(label: chat.activity!, accent: Theme.of(context).colorScheme.primary)
+                            : ChatMessageTile(
+                                message: chat.messages[i],
+                                busy: chat.isResponding,
+                                onRegenerate: notifier.regenerate,
+                                onEdit: notifier.editMessage,
+                                onFeedback: notifier.setFeedback,
+                                onSwitchVersion: notifier.switchVersion,
+                                onShare: chat.conversationId == null ? null : _share,
+                              ),
                       ),
                     ),
                   ),
@@ -117,19 +107,44 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 children: [
                   ChatComposer(
                     controller: _input,
-                    hint: 'Message JudicialGPT',
+                    hint: chat.webSearch ? 'Search the web...' : 'Message JudicialGPT',
                     busy: chat.isResponding,
                     onStop: notifier.stop,
                     onSend: _send,
-                    leading: IconButton(
-                      tooltip: chat.webSearch ? 'Web search on' : 'Web search off',
-                      isSelected: chat.webSearch,
-                      color: chat.webSearch ? AppColors.brand : null,
-                      icon: const Icon(Icons.language),
-                      onPressed: chat.isResponding ? null : notifier.toggleWebSearch,
+                    allowEmpty: chat.attachment != null,
+                    onVoiceAgent: () => context.go(Routes.voiceAgent),
+                    header: chat.attachment == null
+                        ? null
+                        : AttachmentChip(attachment: chat.attachment!, onRemove: notifier.removeAttachment),
+                    leading: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        AttachmentMenuButton(
+                          enabled: !chat.isResponding,
+                          webSearch: chat.webSearch,
+                          onToggleWebSearch: notifier.toggleWebSearch,
+                          onAttach: notifier.attach,
+                        ),
+                        if (chat.webSearch) ...[
+                          const SizedBox(width: 8),
+                          ComposerToggle(
+                            icon: Icons.language_rounded,
+                            label: 'Search',
+                            selected: true,
+                            onPressed: chat.isResponding ? null : notifier.toggleWebSearch,
+                          ),
+                        ],
+                      ],
                     ),
+                    actions: [
+                      DictationButton(
+                        enabled: !chat.isResponding,
+                        onText: (text) => _input.text = _input.text.isEmpty ? text : '${_input.text} $text',
+                      ),
+                      const SizedBox(width: 4),
+                    ],
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 8),
                   Text(
                     'JudicialGPT can make mistakes. Consider checking important information.',
                     textAlign: TextAlign.center,

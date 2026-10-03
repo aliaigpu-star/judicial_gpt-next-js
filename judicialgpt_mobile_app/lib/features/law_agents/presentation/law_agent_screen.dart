@@ -102,6 +102,7 @@ class _LawAgentScreenState extends ConsumerState<LawAgentScreen> {
                 accent: _kind.accent,
                 busy: state.isAsking,
                 onSend: _ask,
+                leading: ComposerTag(icon: _kind.icon, label: _kind.title, color: _kind.accent),
               ),
             ),
           ),

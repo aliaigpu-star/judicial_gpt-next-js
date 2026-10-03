@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-/// The user's own message: a right-aligned rounded bubble.
+import '../theme/app_colors.dart';
+
+/// The user's own message: a soft, right-aligned bubble.
 class UserBubble extends StatelessWidget {
   const UserBubble({super.key, required this.text, this.actions = const []});
 
@@ -10,22 +12,22 @@ class UserBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final maxWidth = MediaQuery.sizeOf(context).width * 0.8;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.only(top: 16, bottom: 4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: maxWidth),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(20),
+          FractionallySizedBox(
+            widthFactor: 0.85,
+            alignment: Alignment.centerRight,
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+                decoration: BoxDecoration(color: context.palette.userBubble, borderRadius: BorderRadius.circular(18)),
+                child: SelectableText(text, style: theme.textTheme.bodyLarge?.copyWith(height: 1.45)),
               ),
-              child: SelectableText(text, style: theme.textTheme.bodyLarge),
             ),
           ),
           if (actions.isNotEmpty) Row(mainAxisSize: MainAxisSize.min, children: actions),
@@ -35,8 +37,8 @@ class UserBubble extends StatelessWidget {
   }
 }
 
-/// An assistant reply: accent avatar, optional badges, the body, and an
-/// action row underneath.
+/// An assistant reply: a small agent mark with optional badges, the full-width
+/// body, and a quiet action row underneath.
 class AssistantMessage extends StatelessWidget {
   const AssistantMessage({
     super.key,
@@ -56,7 +58,7 @@ class AssistantMessage extends StatelessWidget {
   final List<Widget> actions;
   final Widget? footer;
 
-  /// Judgment documents sit in a bordered card, like on the website.
+  /// Judgment documents sit on a paper-like card.
   final bool boxed;
 
   @override
@@ -65,9 +67,9 @@ class AssistantMessage extends StatelessWidget {
     final body = boxed
         ? Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              color: theme.brightness == Brightness.dark ? const Color(0xFF171717) : const Color(0xFFF9F9F9),
+              color: context.palette.card,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(color: theme.colorScheme.outline),
             ),
@@ -76,42 +78,51 @@ class AssistantMessage extends StatelessWidget {
         : child;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 28,
-            height: 28,
-            margin: const EdgeInsets.only(top: 2),
-            decoration: BoxDecoration(color: accent, borderRadius: BorderRadius.circular(6)),
-            child: Icon(icon, size: 16, color: Colors.white),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (badges.isNotEmpty) ...[
-                  Wrap(spacing: 6, runSpacing: 6, children: badges),
-                  const SizedBox(height: 10),
-                ],
-                body,
-                if (actions.isNotEmpty) ...[
-                  const SizedBox(height: 4),
-                  Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: actions),
-                ],
-                ?footer,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AgentMark(icon: icon, accent: accent),
+              if (badges.isNotEmpty) ...[
+                const SizedBox(width: 10),
+                Expanded(child: Wrap(spacing: 6, runSpacing: 6, children: badges)),
               ],
-            ),
+            ],
           ),
+          const SizedBox(height: 10),
+          body,
+          if (actions.isNotEmpty) ...[
+            const SizedBox(height: 2),
+            Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: actions),
+          ],
+          ?footer,
         ],
       ),
     );
   }
 }
 
-/// Small rounded label, e.g. "4 sources found" or "Cr.P.C. Compliant".
+/// Rounded-square agent icon used beside replies and in empty states.
+class AgentMark extends StatelessWidget {
+  const AgentMark({super.key, required this.icon, required this.accent, this.size = 26});
+
+  final IconData icon;
+  final Color accent;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    width: size,
+    height: size,
+    decoration: BoxDecoration(color: accent.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(size * 0.3)),
+    child: Icon(icon, size: size * 0.58, color: accent),
+  );
+}
+
+/// Small neutral pill, e.g. "4 sources found" or "Cr.P.C. Compliant".
 class InfoBadge extends StatelessWidget {
   const InfoBadge({super.key, required this.label, required this.color, this.icon});
 
@@ -120,24 +131,35 @@ class InfoBadge extends StatelessWidget {
   final IconData? icon;
 
   @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-    decoration: BoxDecoration(
-      color: color.withValues(alpha: 0.1),
-      border: Border.all(color: color.withValues(alpha: 0.25)),
-      borderRadius: BorderRadius.circular(20),
-    ),
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (icon != null) ...[Icon(icon, size: 13, color: color), const SizedBox(width: 5)],
-        Text(
-          label,
-          style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w600),
-        ),
-      ],
-    ),
-  );
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      height: 26,
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      decoration: BoxDecoration(
+        color: context.palette.card,
+        border: Border.all(color: theme.colorScheme.outline),
+        borderRadius: BorderRadius.circular(13),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (icon != null) ...[Icon(icon, size: 13, color: color), const SizedBox(width: 5)],
+          Flexible(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 /// Compact icon button for message actions (copy, like, regenerate, ...).
@@ -151,32 +173,75 @@ class MessageAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => IconButton(
-    icon: Icon(icon, size: 18),
+    icon: Icon(icon, size: 17),
     tooltip: tooltip,
     onPressed: onPressed,
     color: color ?? Theme.of(context).colorScheme.onSurfaceVariant,
     visualDensity: VisualDensity.compact,
+    style: IconButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
   );
 }
 
-/// "Thinking..." row shown while an agent is working.
-class ThinkingIndicator extends StatelessWidget {
+/// Animated "working" row shown while an agent is thinking.
+class ThinkingIndicator extends StatefulWidget {
   const ThinkingIndicator({super.key, required this.label, required this.accent});
 
   final String label;
   final Color accent;
 
   @override
+  State<ThinkingIndicator> createState() => _ThinkingIndicatorState();
+}
+
+class _ThinkingIndicatorState extends State<ThinkingIndicator> with SingleTickerProviderStateMixin {
+  late final AnimationController _pulse = AnimationController(vsync: this, duration: const Duration(milliseconds: 1200))
+    ..repeat();
+
+  @override
+  void dispose() {
+    _pulse.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 12),
     child: Row(
       children: [
-        SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: accent)),
-        const SizedBox(width: 12),
+        AnimatedBuilder(
+          animation: _pulse,
+          builder: (_, _) => Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (var i = 0; i < 3; i++)
+                Container(
+                  width: 7,
+                  height: 7,
+                  margin: const EdgeInsets.only(right: 4),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: widget.accent.withValues(alpha: _dotOpacity(i)),
+                  ),
+                ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 8),
         Flexible(
-          child: Text(label, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+          child: Text(
+            widget.label,
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+          ),
         ),
       ],
     ),
   );
+
+  /// Each dot peaks a third of a cycle after the previous one.
+  double _dotOpacity(int index) {
+    final phase = (_pulse.value - index / 3) % 1.0;
+    return 0.25 + 0.75 * (phase < 0.5 ? phase * 2 : (1 - phase) * 2);
+  }
 }

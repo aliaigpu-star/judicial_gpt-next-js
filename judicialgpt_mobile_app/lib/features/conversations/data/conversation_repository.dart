@@ -42,6 +42,10 @@ class ConversationRepository {
 
   Future<void> deleteAll() => _api.delete('/api/conversations');
 
+  Future<void> archiveAll() => _api.post('/api/conversations/archive-all');
+
+  Future<void> unarchiveAll() => _api.post('/api/conversations/unarchive-all');
+
   // ── Messages ────────────────────────────────────────────────────────────
 
   Future<ChatMessage> addMessage(

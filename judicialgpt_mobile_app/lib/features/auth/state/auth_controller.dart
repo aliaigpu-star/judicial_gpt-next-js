@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/network/api_exception.dart';
 import '../../../core/providers.dart';
 import '../data/auth_repository.dart';
 import '../domain/app_user.dart';
@@ -12,22 +13,38 @@ class AuthController extends AsyncNotifier<AppUser?> {
 
   @override
   Future<AppUser?> build() async {
-    // Any authenticated request rejected with 401 means the stored token is
-    // no longer valid: drop it so the router returns to the login screen.
+    // The API client calls this when the session can no longer be renewed:
+    // drop it so the router returns to the login screen.
     ref.read(apiClientProvider).onUnauthorized = _handleExpiredSession;
 
     if (!await _repo.hasStoredSession()) return null;
     try {
       return await _repo.currentUser();
-    } catch (_) {
-      await _repo.clearLocalSession();
+    } on ApiException catch (e) {
+      // Only a rejected session signs the user out; a network hiccup at
+      // start-up keeps the stored session for the next launch.
+      if (e.isSessionError) await _repo.clearLocalSession();
       return null;
     }
+  }
+
+  /// Reloads the user after a profile change (name, avatar).
+  Future<void> refreshUser() async {
+    final user = await _repo.currentUser();
+    state = AsyncData(user);
   }
 
   Future<void> login({required String email, required String password, String? captchaToken}) async {
     final user = await _repo.login(email: email, password: password, captchaToken: captchaToken);
     state = AsyncData(user);
+  }
+
+  /// Returns `false` if the user backed out of the Google screen.
+  Future<bool> loginWithGoogle() async {
+    final user = await _repo.signInWithGoogle();
+    if (user == null) return false;
+    state = AsyncData(user);
+    return true;
   }
 
   Future<void> logout() async {

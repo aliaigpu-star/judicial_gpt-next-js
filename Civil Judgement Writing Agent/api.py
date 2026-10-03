@@ -8,7 +8,7 @@
 #                 python-dotenv
 
 # RUN:
-#     uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+#     uvicorn api:app --host 0.0.0.0 --port 7003 --reload
 
 # ENDPOINTS:
 #     GET  /              → health check
@@ -941,6 +941,42 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough, RunnableLambda
 
 load_dotenv()
+
+
+# ── Secrets from HashiCorp Vault ─────────────────────────────────────────────
+# .env holds only the AppRole credentials; the real keys (GOOGLE_API_KEY, ...)
+# live in Vault at judicial-ai/python-agents, as for the Criminal agent.
+# Variables already set in the environment win, so a key exported in the shell
+# still works when Vault is unavailable.
+def load_vault_secrets() -> None:
+    role_id = os.getenv("VAULT_ROLE_ID")
+    secret_id = os.getenv("VAULT_SECRET_ID")
+    if not role_id or not secret_id:
+        return
+
+    import hvac
+
+    try:
+        client = hvac.Client(url=os.getenv("VAULT_ADDR", "http://127.0.0.1:8200"))
+        if client.sys.is_sealed():
+            print("⚠️  Vault is sealed - run `vault operator unseal` (3 keys). Using environment only.")
+            return
+        client.auth.approle.login(role_id=role_id, secret_id=secret_id)
+        secrets = client.secrets.kv.v2.read_secret_version(
+            mount_point="judicial-ai",
+            path="python-agents",
+            raise_on_deleted_version=True,
+        )["data"]["data"]
+    except Exception as exc:
+        print(f"⚠️  Could not load secrets from Vault: {exc}. Using environment only.")
+        return
+
+    for key, value in secrets.items():
+        os.environ.setdefault(key, str(value))
+    print(f"🔐 Loaded {len(secrets)} secret(s) from Vault.")
+
+
+load_vault_secrets()
 
 # ── Document export (Markdown → .docx → Google Drive) ───────────────────────
 # Fully separate from the RAG/LLM chain — only ever called on the *final*

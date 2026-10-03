@@ -5,6 +5,7 @@ import '../../../core/config/app_config.dart';
 import '../../../core/widgets/feedback.dart';
 import '../data/auth_repository.dart';
 import '../domain/password_policy.dart';
+import 'auth_style.dart';
 import 'turnstile_sheet.dart';
 
 class SignUpForm extends ConsumerStatefulWidget {
@@ -93,85 +94,104 @@ class _SignUpFormState extends ConsumerState<SignUpForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (_error != null) ...[ErrorBanner(message: _error!), const SizedBox(height: 16)],
-          Row(
-            children: [
-              Expanded(
-                child: TextFormField(
-                  controller: _firstName,
-                  textCapitalization: TextCapitalization.words,
-                  decoration: const InputDecoration(labelText: 'First name'),
-                  validator: _required,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: TextFormField(
-                  controller: _lastName,
-                  textCapitalization: TextCapitalization.words,
-                  decoration: const InputDecoration(labelText: 'Last name'),
-                  validator: _required,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          TextFormField(
-            controller: _email,
-            keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(labelText: 'Email address'),
-            onChanged: (_) => setState(() {}),
-            validator: (v) => (v == null || !v.contains('@')) ? 'Enter a valid email' : null,
-          ),
-          const SizedBox(height: 12),
+          if (_error != null) ...[ErrorBanner(message: _error!), const SizedBox(height: 14)],
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                width: 120,
-                child: DropdownButtonFormField<String>(
-                  initialValue: _countryCode,
-                  isExpanded: true,
-                  items: [for (final code in _countryCodes) DropdownMenuItem(value: code, child: Text(code))],
-                  onChanged: (v) => setState(() => _countryCode = v ?? _countryCode),
+              Expanded(
+                child: AuthField(
+                  label: 'First name',
+                  child: TextFormField(
+                    controller: _firstName,
+                    textCapitalization: TextCapitalization.words,
+                    textInputAction: TextInputAction.next,
+                    autofillHints: const [AutofillHints.givenName],
+                    decoration: authInputDecoration(hint: 'First', icon: Icons.person_outline_rounded),
+                    validator: _required,
+                  ),
                 ),
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: TextFormField(
-                  controller: _phone,
-                  keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(labelText: 'Phone number'),
-                  validator: _required,
+                child: AuthField(
+                  label: 'Last name',
+                  child: TextFormField(
+                    controller: _lastName,
+                    textCapitalization: TextCapitalization.words,
+                    textInputAction: TextInputAction.next,
+                    autofillHints: const [AutofillHints.familyName],
+                    decoration: authInputDecoration(hint: 'Last', icon: Icons.person_outline_rounded),
+                    validator: _required,
+                  ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          TextFormField(
-            controller: _password,
-            obscureText: _obscure,
-            onChanged: (_) => setState(() {}),
-            decoration: InputDecoration(
-              labelText: 'Password',
-              suffixIcon: IconButton(
-                icon: Icon(_obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined),
-                onPressed: () => setState(() => _obscure = !_obscure),
+          const SizedBox(height: 14),
+          AuthField(
+            label: 'Email address',
+            child: TextFormField(
+              controller: _email,
+              keyboardType: TextInputType.emailAddress,
+              textInputAction: TextInputAction.next,
+              autofillHints: const [AutofillHints.email],
+              decoration: authInputDecoration(hint: 'you@example.com', icon: Icons.mail_outline_rounded),
+              onChanged: (_) => setState(() {}),
+              validator: (v) => (v == null || !v.contains('@')) ? 'Enter a valid email' : null,
+            ),
+          ),
+          const SizedBox(height: 14),
+          AuthField(
+            label: 'Phone number',
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: 96,
+                  child: DropdownButtonFormField<String>(
+                    initialValue: _countryCode,
+                    isExpanded: true,
+                    decoration: authInputDecoration(hint: 'Code'),
+                    items: [for (final code in _countryCodes) DropdownMenuItem(value: code, child: Text(code))],
+                    onChanged: (v) => setState(() => _countryCode = v ?? _countryCode),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: TextFormField(
+                    controller: _phone,
+                    keyboardType: TextInputType.phone,
+                    textInputAction: TextInputAction.next,
+                    autofillHints: const [AutofillHints.telephoneNumberNational],
+                    decoration: authInputDecoration(hint: '3001234567', icon: Icons.phone_outlined),
+                    validator: _required,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 14),
+          AuthField(
+            label: 'Password',
+            child: TextFormField(
+              controller: _password,
+              obscureText: _obscure,
+              autofillHints: const [AutofillHints.newPassword],
+              onChanged: (_) => setState(() {}),
+              onFieldSubmitted: (_) => _submit(),
+              decoration: authInputDecoration(
+                hint: 'Create a strong password',
+                icon: Icons.lock_outline_rounded,
+                suffix: PasswordVisibilityToggle(
+                  obscured: _obscure,
+                  onPressed: () => setState(() => _obscure = !_obscure),
+                ),
               ),
             ),
           ),
           if (_password.text.isNotEmpty) ...[const SizedBox(height: 10), _PasswordChecklist(policy: _policy)],
-          const SizedBox(height: 16),
-          FilledButton(
-            onPressed: _loading ? null : _submit,
-            child: _loading
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                  )
-                : const Text('Continue'),
-          ),
+          const SizedBox(height: 18),
+          AuthSubmitButton(label: 'Create Account', loading: _loading, onPressed: _submit),
         ],
       ),
     );

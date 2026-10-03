@@ -2,10 +2,16 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>JudicialGPT uses the microphone for voice input and the Voice Agent.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>JudicialGPT uses the camera to photograph documents and to set your profile picture.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>JudicialGPT reads images you choose to extract their text or set your profile picture.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Judicialgpt Mobile App</string>
+	<string>JudicialGPT</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -13,7 +19,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>judicialgpt_mobile_app</string>
+	<string>JudicialGPT</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>

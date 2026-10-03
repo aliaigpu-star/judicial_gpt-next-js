@@ -46,7 +46,10 @@ from langchain_community.vectorstores import FAISS
 
 from config_family import FamilyConfig
 
+from vault_secrets import load_vault_secrets
+
 load_dotenv()
+load_vault_secrets()
 
 
 # ══════════════════════════════════════════════════════════════════

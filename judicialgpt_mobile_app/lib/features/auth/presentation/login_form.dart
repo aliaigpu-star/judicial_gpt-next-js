@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/config/app_config.dart';
+import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/feedback.dart';
 import '../data/auth_repository.dart';
 import '../state/auth_controller.dart';
+import 'auth_style.dart';
+import 'google_sign_in_button.dart';
 import 'turnstile_sheet.dart';
 
 class LoginForm extends ConsumerStatefulWidget {
@@ -20,6 +23,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
   final _password = TextEditingController();
   bool _obscure = true;
   bool _loading = false;
+  bool _googleLoading = false;
   String? _error;
 
   @override
@@ -52,6 +56,21 @@ class _LoginFormState extends ConsumerState<LoginForm> {
       if (mounted) setState(() => _error = e.toString());
     } finally {
       if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _continueWithGoogle() async {
+    setState(() {
+      _googleLoading = true;
+      _error = null;
+    });
+    try {
+      // The router redirects to the app once auth state changes.
+      await ref.read(authControllerProvider.notifier).loginWithGoogle();
+    } catch (e) {
+      if (mounted) setState(() => _error = e.toString());
+    } finally {
+      if (mounted) setState(() => _googleLoading = false);
     }
   }
 
@@ -90,46 +109,68 @@ class _LoginFormState extends ConsumerState<LoginForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (_error != null) ...[ErrorBanner(message: _error!), const SizedBox(height: 16)],
-          TextFormField(
-            controller: _email,
-            keyboardType: TextInputType.emailAddress,
-            autofillHints: const [AutofillHints.email],
-            decoration: const InputDecoration(labelText: 'Email address'),
-            validator: (v) => (v == null || !v.contains('@')) ? 'Enter a valid email' : null,
-          ),
-          const SizedBox(height: 12),
-          TextFormField(
-            controller: _password,
-            obscureText: _obscure,
-            autofillHints: const [AutofillHints.password],
-            onFieldSubmitted: (_) => _submit(),
-            decoration: InputDecoration(
-              labelText: 'Password',
-              suffixIcon: IconButton(
-                icon: Icon(_obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined),
-                onPressed: () => setState(() => _obscure = !_obscure),
-              ),
+          if (_error != null) ...[ErrorBanner(message: _error!), const SizedBox(height: 14)],
+          AuthField(
+            label: 'Email address',
+            child: TextFormField(
+              controller: _email,
+              keyboardType: TextInputType.emailAddress,
+              textInputAction: TextInputAction.next,
+              autofillHints: const [AutofillHints.email],
+              decoration: authInputDecoration(hint: 'you@example.com', icon: Icons.mail_outline_rounded),
+              validator: (v) => (v == null || !v.contains('@')) ? 'Enter a valid email' : null,
             ),
-            validator: (v) => (v == null || v.isEmpty) ? 'Enter your password' : null,
+          ),
+          const SizedBox(height: 14),
+          AuthField(
+            label: 'Password',
+            child: TextFormField(
+              controller: _password,
+              obscureText: _obscure,
+              autofillHints: const [AutofillHints.password],
+              onFieldSubmitted: (_) => _submit(),
+              decoration: authInputDecoration(
+                hint: 'Enter your password',
+                icon: Icons.lock_outline_rounded,
+                suffix: PasswordVisibilityToggle(
+                  obscured: _obscure,
+                  onPressed: () => setState(() => _obscure = !_obscure),
+                ),
+              ),
+              validator: (v) => (v == null || v.isEmpty) ? 'Enter your password' : null,
+            ),
           ),
           Align(
             alignment: Alignment.centerRight,
-            child: TextButton(onPressed: _forgotPassword, child: const Text('Forgot password?')),
+            child: TextButton(
+              onPressed: _forgotPassword,
+              child: const Text('Forgot password?', style: TextStyle(fontSize: 11.5)),
+            ),
           ),
-          const SizedBox(height: 4),
-          FilledButton(
-            onPressed: _loading ? null : _submit,
-            child: _loading
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                  )
-                : const Text('Continue'),
-          ),
+          AuthSubmitButton(label: 'Log In', loading: _loading, onPressed: _submit),
+          const _OrDivider(),
+          GoogleSignInButton(loading: _googleLoading, onPressed: _continueWithGoogle),
         ],
       ),
     );
   }
+}
+
+class _OrDivider extends StatelessWidget {
+  const _OrDivider();
+
+  @override
+  Widget build(BuildContext context) => const Padding(
+    padding: EdgeInsets.symmetric(vertical: 16),
+    child: Row(
+      children: [
+        Expanded(child: Divider(color: Color(0x33718477))),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12),
+          child: Text('or', style: TextStyle(color: JudicialColors.muted, fontSize: 12)),
+        ),
+        Expanded(child: Divider(color: Color(0x33718477))),
+      ],
+    ),
+  );
 }

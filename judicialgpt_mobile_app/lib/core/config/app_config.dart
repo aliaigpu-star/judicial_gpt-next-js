@@ -14,11 +14,18 @@ abstract final class AppConfig {
     defaultValue: 'https://familylawagent-judicial-gpt.in.ngrok.io',
   );
 
-  /// Cloudflare Turnstile site key used by the website's login/signup forms.
-  /// Leave empty when the backend runs without captcha (e.g. development).
-  static const String turnstileSiteKey = String.fromEnvironment('TURNSTILE_SITE_KEY');
+  /// Public Cloudflare Turnstile site key used by the website's login/signup
+  /// forms. Pass an empty value when the backend runs without captcha.
+  static const String turnstileSiteKey = String.fromEnvironment(
+    'TURNSTILE_SITE_KEY',
+    defaultValue: '0x4AAAAAAEl5AqDmNrNOn94t',
+  );
 
   static bool get captchaEnabled => turnstileSiteKey.isNotEmpty;
+
+  /// URL scheme the backend returns to after Google sign-in
+  /// (`judicialgpt://auth/callback`); registered in AndroidManifest.xml.
+  static const String authCallbackScheme = 'judicialgpt';
 
   static const Duration requestTimeout = Duration(seconds: 90);
 }

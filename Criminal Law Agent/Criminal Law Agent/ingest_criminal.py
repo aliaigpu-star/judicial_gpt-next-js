@@ -50,7 +50,10 @@ from langchain_community.vectorstores import FAISS
 
 from config_criminal import CriminalConfig
 
+from vault_secrets import load_vault_secrets
+
 load_dotenv()
+load_vault_secrets()
 
 
 # ══════════════════════════════════════════════════════════════════

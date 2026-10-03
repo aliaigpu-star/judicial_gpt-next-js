@@ -5,7 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../conversations/data/conversation_repository.dart';
 import '../../conversations/domain/chat_message.dart';
 import '../../conversations/state/conversations_controller.dart';
+import '../data/attachment_repository.dart';
 import '../data/chat_repository.dart';
+import '../domain/chat_attachment.dart';
 import 'chat_state.dart';
 
 /// Keyed by conversation id; `null` is a fresh "New Chat".
@@ -46,28 +48,49 @@ class ChatController extends Notifier<ChatState> {
 
   void toggleWebSearch() => state = state.copyWith(webSearch: !state.webSearch);
 
+  void attach(ChatAttachment attachment) => state = state.copyWith(attachment: () => attachment);
+
+  void removeAttachment() => state = state.copyWith(attachment: () => null);
+
   void stop() => _stopRequested = true;
 
   // ── Sending ─────────────────────────────────────────────────────────────
 
+  /// Sends [text], together with the pending attachment if there is one.
+  ///
+  /// With an attachment, the model receives the extracted text plus the
+  /// question, while the conversation shows and saves a short
+  /// "📄 Uploaded: name" message - the same split the website makes.
   Future<void> send(String text) async {
-    final content = text.trim();
-    if (content.isEmpty || state.isResponding) return;
+    final question = text.trim();
+    final attachment = state.attachment;
+    if ((question.isEmpty && attachment == null) || state.isResponding) return;
 
-    final history = [..._turns(state.messages), (role: 'user', content: content)];
-    final localUser = ChatMessage(id: _localId(), role: MessageRole.user, content: content);
-    state = state.copyWith(messages: [...state.messages, localUser], isResponding: true, clearError: true);
+    final display = attachment?.displayLabel(question) ?? question;
+    final localUser = ChatMessage(id: _localId(), role: MessageRole.user, content: display);
+    state = state.copyWith(
+      messages: [...state.messages, localUser],
+      isResponding: true,
+      attachment: () => null,
+      clearError: true,
+    );
 
     try {
-      final conversationId = state.conversationId ?? await _startConversation(content);
-      final savedUser = await _conversations.addMessage(conversationId, MessageRole.user, content);
+      final prompt = attachment == null ? question : await _promptWithAttachment(attachment, question);
+      final history = [
+        ..._turns(state.messages.where((m) => m.id != localUser.id).toList()),
+        (role: 'user', content: prompt),
+      ];
+
+      final conversationId = state.conversationId ?? await _startConversation(display);
+      final savedUser = await _conversations.addMessage(conversationId, MessageRole.user, display);
       _replaceMessage(localUser.id, (_) => savedUser);
 
       final localReply = ChatMessage(id: _localId(), role: MessageRole.assistant, content: '', isStreaming: true);
       state = state.copyWith(messages: [...state.messages, localReply]);
 
       final reply = state.webSearch
-          ? await _answerWithWebSearch(localReply.id, content)
+          ? await _answerWithWebSearch(localReply.id, prompt)
           : await _streamInto(localReply.id, history);
       if (reply.content.isEmpty) {
         _removeMessage(localReply.id);
@@ -84,7 +107,25 @@ class ChatController extends Notifier<ChatState> {
     } catch (e) {
       if (ref.mounted) state = state.copyWith(error: e.toString());
     } finally {
-      if (ref.mounted) state = state.copyWith(isResponding: false);
+      if (ref.mounted) state = state.copyWith(isResponding: false, activity: () => null);
+    }
+  }
+
+  /// Builds the model prompt from the attachment's extracted text. If
+  /// extraction fails the question is still sent, noting the attachment.
+  Future<String> _promptWithAttachment(ChatAttachment attachment, String question) async {
+    final isDocument = attachment.kind == AttachmentKind.document;
+    state = state.copyWith(activity: () => isDocument ? 'Reading document...' : 'Reading image...');
+    try {
+      final text = await ref.read(attachmentRepositoryProvider).extractText(attachment);
+      final label = isDocument ? 'Document Content from "${attachment.name}"' : 'Image "${attachment.name}" OCR Text';
+      return '$label:\n\n$text\n\nUser Question: $question';
+    } catch (e) {
+      return isDocument
+          ? 'Error processing document: $e\n\nUser Question: $question'
+          : '[Image attached: ${attachment.name}]\n\nUser Question: $question';
+    } finally {
+      if (ref.mounted) state = state.copyWith(activity: () => null);
     }
   }
 

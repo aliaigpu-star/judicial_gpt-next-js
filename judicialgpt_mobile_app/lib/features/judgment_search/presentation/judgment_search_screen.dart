@@ -146,9 +146,10 @@ class _JudgmentSearchScreenState extends ConsumerState<JudgmentSearchScreen> {
                 accent: _accent,
                 busy: state.isBusy,
                 onSend: _search,
-                leading: const Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Icon(Icons.balance, color: _accent, size: 20),
+                leading: const ComposerTag(
+                  icon: Icons.travel_explore_rounded,
+                  label: 'Judgment Search',
+                  color: _accent,
                 ),
               ),
             ),

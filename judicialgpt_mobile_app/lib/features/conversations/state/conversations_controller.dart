@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../auth/state/auth_controller.dart';
+import '../../settings/state/app_preferences.dart';
 import '../data/conversation_repository.dart';
 import '../domain/conversation.dart';
 
@@ -8,20 +9,26 @@ final conversationsControllerProvider = AsyncNotifierProvider<ConversationsContr
   ConversationsController.new,
 );
 
-/// The chat history shown in the sidebar (pinned first).
+/// The chat history shown in the sidebar (pinned first). Archived chats are
+/// included only when "Show archived chats" is on in Settings.
 class ConversationsController extends AsyncNotifier<List<Conversation>> {
   ConversationRepository get _repo => ref.read(conversationRepositoryProvider);
 
+  bool get _showArchived => ref.read(appPreferencesProvider).showArchived;
+
   @override
   Future<List<Conversation>> build() async {
+    ref.watch(appPreferencesProvider.select((p) => p.showArchived));
     final user = await ref.watch(authControllerProvider.future);
     if (user == null) return const [];
-    return _sorted(await _repo.list());
+    return _fetch();
   }
 
   Future<void> refresh() async {
-    state = await AsyncValue.guard(() async => _sorted(await _repo.list()));
+    state = await AsyncValue.guard(_fetch);
   }
+
+  Future<List<Conversation>> _fetch() async => _sorted(await _repo.list(includeArchived: _showArchived));
 
   /// Adds a newly created conversation to the top of the list.
   void add(Conversation conversation) =>
@@ -37,9 +44,24 @@ class ConversationsController extends AsyncNotifier<List<Conversation>> {
     await _repo.togglePin(id);
   }
 
+  /// Archives (or, for an archived chat, restores) a conversation.
   Future<void> archive(String id) async {
-    _update((list) => list.where((c) => c.id != id).toList());
+    _update(
+      (list) => _showArchived
+          ? [for (final c in list) c.id == id ? c.copyWith(isArchived: !c.isArchived, isPinned: false) : c]
+          : list.where((c) => c.id != id).toList(),
+    );
     await _repo.toggleArchive(id);
+  }
+
+  Future<void> archiveAll() async {
+    await _repo.archiveAll();
+    await refresh();
+  }
+
+  Future<void> unarchiveAll() async {
+    await _repo.unarchiveAll();
+    await refresh();
   }
 
   Future<void> delete(String id) async {

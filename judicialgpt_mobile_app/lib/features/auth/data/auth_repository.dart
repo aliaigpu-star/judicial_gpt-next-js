@@ -1,6 +1,10 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 
+import '../../../core/config/app_config.dart';
 import '../../../core/network/api_client.dart';
+import '../../../core/network/api_exception.dart';
 import '../../../core/providers.dart';
 import '../../../core/storage/token_storage.dart';
 import '../domain/app_user.dart';
@@ -43,6 +47,34 @@ class AuthRepository {
     );
     await _tokens.write(data['token'] as String);
     return AppUser.fromJson(data['user'] as Json);
+  }
+
+  /// Google sign-in through the website's OAuth flow, opened in the system
+  /// browser (Google does not allow it inside embedded web views). The backend
+  /// returns to `judicialgpt://auth/callback` with the session tokens.
+  ///
+  /// Returns `null` if the user closed the browser without signing in.
+  Future<AppUser?> signInWithGoogle() async {
+    final String result;
+    try {
+      result = await FlutterWebAuth2.authenticate(
+        url: '${AppConfig.baseUrl}/api/auth/google?platform=mobile',
+        callbackUrlScheme: AppConfig.authCallbackScheme,
+      );
+    } on PlatformException catch (e) {
+      if (e.code == 'CANCELED') return null;
+      rethrow;
+    }
+
+    final params = Uri.parse(result).queryParameters;
+    final token = params['token'];
+    if (token == null || token.isEmpty) {
+      throw const ApiException('Google sign-in failed. Please try again.');
+    }
+    await _tokens.write(token);
+    final refreshToken = params['refreshToken'];
+    if (refreshToken != null && refreshToken.isNotEmpty) await _tokens.writeRefresh(refreshToken);
+    return currentUser();
   }
 
   /// Returns the server's confirmation message (e.g. "check your email").

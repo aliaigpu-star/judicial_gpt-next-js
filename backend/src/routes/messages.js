@@ -9,6 +9,8 @@ const Message = require('../models/Message');
 const Conversation = require('../models/Conversation');
 const { authenticate } = require('../middleware/auth');
 const { asyncHandler, ApiError } = require('../middleware/errorHandler');
+const config = require('../config/env');
+const { MessageFeedback } = require('../models/MessageFeedback');
 
 /**
  * Helper to verify user owns the conversation
@@ -248,13 +250,18 @@ router.delete('/', authenticate, asyncHandler(async (req, res) => {
 
 /**
  * POST /api/messages/:id/feedback
- * Set like/dislike feedback on a message
+ * Set like/dislike feedback on a message. Body: { feedback, reasons?, comment? }.
+ * Besides the flag on the message, a full record (question + answer snapshot,
+ * reasons, model) is kept in message_feedback for review and training.
  */
 router.post('/:id/feedback', authenticate, asyncHandler(async (req, res) => {
-    const { feedback } = req.body; // 'like', 'dislike', or null
+    const { feedback, reasons = [], comment = null } = req.body; // feedback: 'like', 'dislike', or null
 
     if (feedback && !['like', 'dislike'].includes(feedback)) {
         throw new ApiError(400, 'Feedback must be "like", "dislike", or null', 'INVALID_FEEDBACK');
+    }
+    if (!Array.isArray(reasons)) {
+        throw new ApiError(400, 'Reasons must be an array', 'INVALID_FEEDBACK');
     }
 
     const message = await Message.findById(req.params.id);
@@ -264,9 +271,29 @@ router.post('/:id/feedback', authenticate, asyncHandler(async (req, res) => {
     }
 
     // Verify ownership
-    await verifyConversationOwnership(message.conversation_id, req.user.id);
+    const conversation = await verifyConversationOwnership(message.conversation_id, req.user.id);
 
     const updatedMessage = await Message.setFeedback(req.params.id, feedback);
+
+    // The feedback record is secondary: never fail the user's click because of it.
+    try {
+        if (feedback && message.role === 'assistant') {
+            const geminiConfigured = req.app.locals.secrets?.GEMINI_API_KEY || config.GEMINI_API_KEY;
+            await MessageFeedback.upsert({
+                message: { ...message, content: updatedMessage?.content ?? message.content },
+                conversation,
+                userId: req.user.id,
+                rating: feedback,
+                reasons,
+                comment,
+                model: geminiConfigured ? config.GEMINI_MODEL : 'openai/gpt-oss-120b'
+            });
+        } else if (!feedback) {
+            await MessageFeedback.remove(message.id, req.user.id);
+        }
+    } catch (err) {
+        console.error('Failed to record message feedback:', err.message);
+    }
 
     res.json({
         success: true,

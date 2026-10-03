@@ -122,6 +122,62 @@ interface SearchResults {
     }>;
 }
 
+
+// Feedback (like / dislike on AI replies)
+export type FeedbackRating = 'like' | 'dislike';
+export type FeedbackStatus = 'new' | 'reviewed' | 'approved' | 'excluded';
+
+export interface FeedbackItem {
+    id: string;
+    message_id: string | null;
+    conversation_id: string | null;
+    user_id: string | null;
+    rating: FeedbackRating;
+    reasons: string[];
+    comment: string | null;
+    prompt: string | null;
+    response: string;
+    message_version: number | null;
+    model: string | null;
+    source: string;
+    review_status: FeedbackStatus;
+    admin_notes: string | null;
+    reviewed_at: string | null;
+    created_at: string;
+    user_email: string | null;
+    user_name: string | null;
+    conversation_title: string | null;
+}
+
+export interface FeedbackStats {
+    likes: number;
+    dislikes: number;
+    total: number;
+    satisfaction: number | null;
+    pending_review: number;
+    approved: number;
+    last_7_days: number;
+    raters: number;
+    daily: Array<{ date: string; likes: number; dislikes: number }>;
+    reasons: Array<{ reason: string; label: string; count: number }>;
+    sources: Array<{ source: string; likes: number; dislikes: number }>;
+    topDislikedUsers: Array<{ email: string; dislikes: number }>;
+}
+
+export interface FeedbackFilters {
+    rating?: FeedbackRating | '';
+    status?: FeedbackStatus | '';
+    source?: string;
+    search?: string;
+    from?: string;
+    to?: string;
+}
+
+const toQuery = (params: Record<string, string | number | undefined>) =>
+    new URLSearchParams(
+        Object.entries(params).filter(([, v]) => v !== undefined && v !== '').map(([k, v]) => [k, String(v)])
+    ).toString();
+
 class AdminApiClient {
     private baseUrl: string;
 
@@ -313,6 +369,38 @@ class AdminApiClient {
         if (status) params.append('status', status);
         if (userId) params.append('userId', userId);
         return this.request(`/api/admin/logs/api-requests?${params.toString()}`);
+    }
+    // Feedback
+    async getFeedbackStats(): Promise<{ stats: FeedbackStats }> {
+        return this.request('/api/admin/feedback/stats');
+    }
+
+    async getFeedback(filters: FeedbackFilters = {}, limit = 25, offset = 0): Promise<{ items: FeedbackItem[]; total: number }> {
+        return this.request(`/api/admin/feedback?${toQuery({ ...filters, limit, offset })}`);
+    }
+
+    async reviewFeedback(id: string, data: { status?: FeedbackStatus; notes?: string }): Promise<{ item: FeedbackItem }> {
+        return this.request(`/api/admin/feedback/${id}`, { method: 'PATCH', body: JSON.stringify(data) });
+    }
+
+    /** Downloads the matching feedback as a JSONL (training) or CSV file. */
+    async downloadFeedback(format: 'jsonl' | 'csv', filters: FeedbackFilters = {}): Promise<void> {
+        const token = this.getToken();
+        const response = await fetch(`${this.baseUrl}/api/admin/feedback/export?${toQuery({ ...filters, format })}`, {
+            headers: {
+                'ngrok-skip-browser-warning': 'true',
+                ...(token ? { Authorization: `Bearer ${token}` } : {})
+            },
+            credentials: 'include'
+        });
+        if (!response.ok) throw new Error('Export failed');
+
+        const url = URL.createObjectURL(await response.blob());
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `judicialgpt-feedback-${new Date().toISOString().slice(0, 10)}.${format}`;
+        link.click();
+        URL.revokeObjectURL(url);
     }
 }
 

@@ -48,31 +48,31 @@ const colorClasses = {
 
 export default function StatCard({ icon: Icon, title, value, trend, color, delay = 0 }: StatCardProps) {
     const colors = colorClasses[color];
+    const negative = trend?.trim().startsWith('-');
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay }}
-            className={`${colors.bg} backdrop-blur-sm border ${colors.border} rounded-2xl p-6 hover:border-opacity-50 transition-all`}
+            className="relative overflow-hidden rounded-2xl border border-gray-800 bg-[#0a0a0a] p-5 transition-colors hover:border-gray-700"
         >
-            <div className="flex items-start justify-between">
-                <div>
-                    <p className="text-gray-400 text-sm font-medium mb-1">{title}</p>
-                    <h3 className="text-3xl font-bold text-white mb-2">
-                        {typeof value === 'number' ? value.toLocaleString() : value}
-                    </h3>
-                    {trend && (
-                        <div className="flex items-center gap-1 text-sm">
-                            <TrendingUp className={`h-4 w-4 ${colors.trend}`} />
-                            <span className={colors.trend}>{trend}</span>
-                        </div>
-                    )}
-                </div>
-                <div className={`p-3 rounded-xl ${colors.bg}`}>
-                    <Icon className={`h-6 w-6 ${colors.icon}`} />
+            <div className={`pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full ${colors.bg} blur-2xl`} />
+            <div className="relative flex items-center justify-between">
+                <p className="text-sm font-medium text-gray-400">{title}</p>
+                <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${colors.bg} border ${colors.border}`}>
+                    <Icon className={`h-[18px] w-[18px] ${colors.icon}`} />
                 </div>
             </div>
+            <h3 className="relative mt-3 text-3xl font-bold tracking-tight text-white">
+                {typeof value === 'number' ? value.toLocaleString() : value}
+            </h3>
+            {trend && (
+                <div className={`relative mt-1.5 flex items-center gap-1 text-xs font-medium ${negative ? 'text-red-400' : colors.trend}`}>
+                    <TrendingUp className={`h-3.5 w-3.5 ${negative ? 'rotate-180' : ''}`} />
+                    <span>{trend}</span>
+                </div>
+            )}
         </motion.div>
     );
 }

@@ -13,6 +13,17 @@ import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import { api } from '@/lib/api';
 import { isJudgmentDocument, renderJudgmentText } from '@/lib/judgmentText';
+
+// Reasons offered after a dislike (keys match the backend's DISLIKE_REASONS).
+const DISLIKE_REASONS: [string, string][] = [
+    ['inaccurate', 'Inaccurate or wrong law'],
+    ['wrong_citation', 'Wrong citation'],
+    ['incomplete', 'Incomplete'],
+    ['not_relevant', "Didn't answer my question"],
+    ['unclear', 'Unclear or badly formatted'],
+    ['outdated', 'Outdated'],
+    ['other', 'Other'],
+];
 import { fileToChatImage, type ChatImage } from '@/lib/chatImage';
 import { copyCleanText } from '@/lib/textUtils';
 import ShareModal from '@/components/modals/ShareModal';
@@ -126,6 +137,11 @@ export default function ChatView({
     const [editContent, setEditContent] = useState('');
     const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
     const [feedbackState, setFeedbackState] = useState<Record<string, 'like' | 'dislike' | null>>({});
+    // Optional details asked for after a dislike.
+    const [feedbackPanelId, setFeedbackPanelId] = useState<string | null>(null);
+    const [feedbackReasons, setFeedbackReasons] = useState<string[]>([]);
+    const [feedbackComment, setFeedbackComment] = useState('');
+    const [feedbackSending, setFeedbackSending] = useState(false);
     const [showShareModal, setShowShareModal] = useState(false);
     const [expandedSourcesId, setExpandedSourcesId] = useState<string | null>(null);
     const [showScrollButton, setShowScrollButton] = useState(false);
@@ -320,17 +336,43 @@ export default function ChatView({
     };
 
     // Handle feedback (like/dislike)
-    const handleFeedback = async (e: React.MouseEvent, messageId: string, feedback: 'like' | 'dislike') => {
+    const getFeedback = (message: Message) =>
+        message.id in feedbackState ? feedbackState[message.id] : (message.metadata?.feedback ?? null);
+
+    const handleFeedback = async (e: React.MouseEvent, message: Message, feedback: 'like' | 'dislike') => {
         e.preventDefault();
         e.stopPropagation();
-        const currentFeedback = feedbackState[messageId];
-        const newFeedback = currentFeedback === feedback ? null : feedback;
+        const newFeedback = getFeedback(message) === feedback ? null : feedback;
 
         try {
-            await api.setMessageFeedback(messageId, newFeedback);
-            setFeedbackState(prev => ({ ...prev, [messageId]: newFeedback }));
+            await api.setMessageFeedback(message.id, newFeedback);
+            setFeedbackState(prev => ({ ...prev, [message.id]: newFeedback }));
+            // After a dislike, optionally ask what went wrong.
+            if (newFeedback === 'dislike') {
+                setFeedbackPanelId(message.id);
+                setFeedbackReasons([]);
+                setFeedbackComment('');
+            } else if (feedbackPanelId === message.id) {
+                setFeedbackPanelId(null);
+            }
         } catch (err) {
             showNotification('Failed to save feedback', 'error');
+        }
+    };
+
+    const submitFeedbackDetails = async (messageId: string) => {
+        setFeedbackSending(true);
+        try {
+            await api.setMessageFeedback(messageId, 'dislike', {
+                reasons: feedbackReasons,
+                comment: feedbackComment.trim() || undefined
+            });
+            setFeedbackPanelId(null);
+            showNotification('Thanks for your feedback!', 'success');
+        } catch (err) {
+            showNotification('Failed to save feedback', 'error');
+        } finally {
+            setFeedbackSending(false);
         }
     };
 
@@ -1047,22 +1089,22 @@ export default function ChatView({
                                                         <>
                                                             <button
                                                                 type="button"
-                                                                onClick={(e) => handleFeedback(e, message.id, 'like')}
+                                                                onClick={(e) => handleFeedback(e, message, 'like')}
                                                                 className="p-1.5 hover:bg-[#ececec] dark:hover:bg-[#2f2f2f] active:scale-95 rounded-lg transition-all text-[#666666] dark:text-[#b4b4b4]"
                                                                 title="Good response"
                                                             >
-                                                                <ThumbsUp className={`w-4 h-4 ${(feedbackState[message.id] || message.metadata?.feedback) === 'like'
+                                                                <ThumbsUp className={`w-4 h-4 ${getFeedback(message) === 'like'
                                                                     ? 'fill-current text-[#00a859]'
                                                                     : ''
                                                                     }`} />
                                                             </button>
                                                             <button
                                                                 type="button"
-                                                                onClick={(e) => handleFeedback(e, message.id, 'dislike')}
+                                                                onClick={(e) => handleFeedback(e, message, 'dislike')}
                                                                 className="p-1.5 hover:bg-[#ececec] dark:hover:bg-[#2f2f2f] active:scale-95 rounded-lg transition-all text-[#666666] dark:text-[#b4b4b4]"
                                                                 title="Bad response"
                                                             >
-                                                                <ThumbsDown className={`w-4 h-4 ${(feedbackState[message.id] || message.metadata?.feedback) === 'dislike'
+                                                                <ThumbsDown className={`w-4 h-4 ${getFeedback(message) === 'dislike'
                                                                     ? 'fill-current'
                                                                     : ''
                                                                     }`} />
@@ -1117,6 +1159,61 @@ export default function ChatView({
                                                         </div>
                                                     )}
                                                 </div>
+                                            )}
+
+                                            {/* "What went wrong?" after a dislike (optional) */}
+                                            {feedbackPanelId === message.id && (
+                                                <motion.div
+                                                    initial={{ opacity: 0, y: -4 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    className="mt-3 max-w-xl rounded-2xl border border-[#e5e5e5] dark:border-[#424242] bg-[#fafafa] dark:bg-[#262626] p-4"
+                                                >
+                                                    <div className="flex items-center justify-between mb-3">
+                                                        <p className="text-sm font-medium text-[#0d0d0d] dark:text-[#ececec]">What went wrong? <span className="font-normal text-[#999999]">(optional)</span></p>
+                                                        <button type="button" onClick={() => setFeedbackPanelId(null)} className="p-1 rounded-lg text-[#999999] hover:bg-[#ececec] dark:hover:bg-[#333333]" title="Close">
+                                                            <X className="w-4 h-4" />
+                                                        </button>
+                                                    </div>
+                                                    <div className="flex flex-wrap gap-2 mb-3">
+                                                        {DISLIKE_REASONS.map(([value, label]) => {
+                                                            const selected = feedbackReasons.includes(value);
+                                                            return (
+                                                                <button
+                                                                    key={value}
+                                                                    type="button"
+                                                                    onClick={() => setFeedbackReasons(prev => selected ? prev.filter(r => r !== value) : [...prev, value])}
+                                                                    className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${selected
+                                                                        ? 'bg-[#00a859] border-[#00a859] text-white'
+                                                                        : 'bg-white dark:bg-[#2f2f2f] border-[#e5e5e5] dark:border-[#424242] text-[#444444] dark:text-[#d4d4d4] hover:border-[#00a859]'
+                                                                        }`}
+                                                                >
+                                                                    {label}
+                                                                </button>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                    <textarea
+                                                        value={feedbackComment}
+                                                        onChange={(e) => setFeedbackComment(e.target.value)}
+                                                        maxLength={2000}
+                                                        rows={2}
+                                                        placeholder="Tell us more, e.g. the correct section or citation"
+                                                        className="w-full resize-none rounded-xl border border-[#e5e5e5] dark:border-[#424242] bg-white dark:bg-[#2f2f2f] px-3 py-2 text-sm text-[#0d0d0d] dark:text-[#ececec] outline-none focus:border-[#00a859]"
+                                                    />
+                                                    <div className="mt-3 flex justify-end gap-2">
+                                                        <button type="button" onClick={() => setFeedbackPanelId(null)} className="px-3 py-1.5 rounded-lg text-sm text-[#666666] dark:text-[#b4b4b4] hover:bg-[#ececec] dark:hover:bg-[#333333]">
+                                                            Skip
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            disabled={feedbackSending || (!feedbackReasons.length && !feedbackComment.trim())}
+                                                            onClick={() => submitFeedbackDetails(message.id)}
+                                                            className="px-3 py-1.5 rounded-lg text-sm font-medium bg-[#0d0d0d] dark:bg-[#ececec] text-white dark:text-[#0d0d0d] disabled:opacity-40"
+                                                        >
+                                                            {feedbackSending ? 'Sending…' : 'Submit'}
+                                                        </button>
+                                                    </div>
+                                                </motion.div>
                                             )}
 
                                             {/* Judgment Search sources collapsible (persisted via message.metadata) */}

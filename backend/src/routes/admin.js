@@ -10,6 +10,7 @@ const User = require('../models/User');
 const UserProfile = require('../models/UserProfile');
 const Conversation = require('../models/Conversation');
 const Message = require('../models/Message');
+const { MessageFeedback, REVIEW_STATUSES } = require('../models/MessageFeedback');
 const { authenticate, requireAdmin } = require('../middleware/auth');
 const { asyncHandler, ApiError } = require('../middleware/errorHandler');
 const ActivityLogger = require('../services/activityLogger');
@@ -865,6 +866,90 @@ router.post('/settings/test-smtp', asyncHandler(async (req, res) => {
         console.error('SMTP test error:', error);
         throw new ApiError(500, error.message || 'Failed to test SMTP configuration', 'SMTP_TEST_FAILED');
     }
+}));
+
+
+// ============================================================================
+// FEEDBACK (like / dislike on AI replies)
+// ============================================================================
+
+const feedbackFilters = (q) => ({
+    rating: ['like', 'dislike'].includes(q.rating) ? q.rating : undefined,
+    status: REVIEW_STATUSES.includes(q.status) ? q.status : undefined,
+    source: q.source || undefined,
+    search: q.search ? String(q.search).slice(0, 200) : undefined,
+    from: q.from || undefined,
+    to: q.to || undefined
+});
+
+/**
+ * GET /api/admin/feedback/stats
+ * Satisfaction totals, 30-day trend, dislike reasons and per-source split.
+ */
+router.get('/feedback/stats', asyncHandler(async (req, res) => {
+    res.json({ success: true, stats: await MessageFeedback.stats() });
+}));
+
+/**
+ * GET /api/admin/feedback/export?format=jsonl|csv&rating=&status=&source=
+ * Downloads matching feedback as a dataset (one example per line in JSONL).
+ */
+router.get('/feedback/export', asyncHandler(async (req, res) => {
+    const rows = await MessageFeedback.exportRows(feedbackFilters(req.query));
+    const stamp = new Date().toISOString().slice(0, 10);
+
+    if (req.query.format === 'csv') {
+        const columns = ['id', 'created_at', 'rating', 'reasons', 'comment', 'prompt', 'response', 'model', 'source', 'review_status', 'admin_notes'];
+        const cell = (v) => {
+            const text = Array.isArray(v) ? v.join('; ') : v instanceof Date ? v.toISOString() : (v ?? '');
+            return `"${String(text).replace(/"/g, '""')}"`;
+        };
+        res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+        res.setHeader('Content-Disposition', `attachment; filename="judicialgpt-feedback-${stamp}.csv"`);
+        return res.send([columns.join(','), ...rows.map(r => columns.map(c => cell(r[c])).join(','))].join('\n'));
+    }
+
+    res.setHeader('Content-Type', 'application/x-ndjson; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="judicialgpt-feedback-${stamp}.jsonl"`);
+    res.send(rows.map(r => JSON.stringify({
+        id: r.id,
+        prompt: r.prompt,
+        response: r.response,
+        label: r.rating === 'like' ? 'good' : 'bad',
+        reasons: r.reasons,
+        comment: r.comment,
+        model: r.model,
+        source: r.source,
+        review_status: r.review_status,
+        admin_notes: r.admin_notes,
+        created_at: r.created_at
+    })).join('\n'));
+}));
+
+/**
+ * GET /api/admin/feedback?rating=&status=&source=&search=&from=&to=&limit=&offset=
+ */
+router.get('/feedback', asyncHandler(async (req, res) => {
+    const limit = Math.min(parseInt(req.query.limit) || 25, 100);
+    const offset = Math.max(parseInt(req.query.offset) || 0, 0);
+    const { items, total } = await MessageFeedback.list(feedbackFilters(req.query), { limit, offset });
+    res.json({ success: true, items, total, limit, offset });
+}));
+
+/**
+ * PATCH /api/admin/feedback/:id  { status?, notes? }
+ * Review a feedback record (e.g. approve it for the training set).
+ */
+router.patch('/feedback/:id', asyncHandler(async (req, res) => {
+    const { status, notes } = req.body;
+    if (status && !REVIEW_STATUSES.includes(status)) {
+        throw new ApiError(400, `Status must be one of: ${REVIEW_STATUSES.join(', ')}`, 'INVALID_STATUS');
+    }
+    const item = await MessageFeedback.review(req.params.id, { status, notes }, req.user.id);
+    if (!item) {
+        throw new ApiError(404, 'Feedback not found', 'NOT_FOUND');
+    }
+    res.json({ success: true, item });
 }));
 
 module.exports = router;

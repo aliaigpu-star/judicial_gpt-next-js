@@ -389,10 +389,10 @@ class ApiClient {
         return this.request(`/api/messages/${id}/versions/${version}`, { method: 'PATCH' });
     }
 
-    async setMessageFeedback(id: string, feedback: 'like' | 'dislike' | null) {
+    async setMessageFeedback(id: string, feedback: 'like' | 'dislike' | null, details?: { reasons?: string[]; comment?: string }) {
         return this.request<{ success: boolean; feedback: string | null }>(`/api/messages/${id}/feedback`, {
             method: 'POST',
-            body: JSON.stringify({ feedback })
+            body: JSON.stringify({ feedback, ...details })
         });
     }
 

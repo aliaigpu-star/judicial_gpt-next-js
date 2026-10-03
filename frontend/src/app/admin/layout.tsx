@@ -5,7 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import { motion } from 'framer-motion';
-import { Shield, Loader2, Menu, X } from 'lucide-react';
+import { Shield, Loader2, Menu, X, Scale } from 'lucide-react';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 
 export default function AdminLayout({
@@ -135,8 +135,10 @@ export default function AdminLayout({
                         )}
                     </button>
                     <div className="flex items-center gap-2">
-                        <Shield className="w-5 h-5 text-[#00a859]" />
-                        <span className="text-white font-semibold">Admin</span>
+                        <span className="w-7 h-7 rounded-lg bg-[#0c7a4b] flex items-center justify-center">
+                            <Scale className="w-3.5 h-3.5 text-white stroke-[2.2]" />
+                        </span>
+                        <span className="text-white font-semibold">Admin console</span>
                     </div>
                 </div>
                 <div className="min-h-full">

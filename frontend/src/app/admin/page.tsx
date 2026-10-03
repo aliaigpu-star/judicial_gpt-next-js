@@ -9,18 +9,22 @@ import {
     Clock,
     RefreshCw,
     UserPlus,
-    Search
+    Search,
+    ThumbsUp,
+    ThumbsDown,
+    ArrowRight
 } from 'lucide-react';
 import StatCard from '@/components/admin/StatCard';
 import SystemStatus from '@/components/admin/SystemStatus';
 import ActivityFeed from '@/components/admin/ActivityFeed';
-import { adminApi, type DashboardStats, type SystemStatus as SystemStatusType, type ActivityItem } from '@/lib/adminApi';
+import { adminApi, type DashboardStats, type SystemStatus as SystemStatusType, type ActivityItem, type FeedbackStats } from '@/lib/adminApi';
 import Link from 'next/link';
 
 export default function AdminDashboard() {
     const [stats, setStats] = useState<DashboardStats | null>(null);
     const [systemStatus, setSystemStatus] = useState<SystemStatusType | null>(null);
     const [activities, setActivities] = useState<ActivityItem[]>([]);
+    const [quality, setQuality] = useState<FeedbackStats | null>(null);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -36,6 +40,8 @@ export default function AdminDashboard() {
             setSystemStatus(statusRes);
             setActivities(activityRes.activity);
             setError(null);
+            // Feedback is optional: the dashboard still works if it fails.
+            adminApi.getFeedbackStats().then(r => setQuality(r.stats)).catch(() => {});
         } catch (err: any) {
             setError(err.message || 'Failed to load dashboard data');
         } finally {
@@ -192,6 +198,48 @@ export default function AdminDashboard() {
                         </div>
                     </div>
                 </Link>
+            </motion.div>
+
+            {/* AI answer quality (from users' like / dislike) */}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.35 }}
+                className="mb-6 md:mb-8 rounded-2xl border border-gray-800 bg-[#0a0a0a] p-5"
+            >
+                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    <div>
+                        <h2 className="text-base font-semibold text-white">AI answer quality</h2>
+                        <p className="text-sm text-gray-400">Based on users&apos; likes and dislikes</p>
+                    </div>
+                    <Link href="/admin/feedback" className="inline-flex items-center gap-1.5 text-sm font-medium text-[#00a859] hover:underline">
+                        Review feedback <ArrowRight className="h-4 w-4" />
+                    </Link>
+                </div>
+                <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-4">
+                    <div>
+                        <p className="text-xs text-gray-500">Satisfaction</p>
+                        <p className="mt-1 text-2xl font-bold text-white">{quality?.satisfaction != null ? `${quality.satisfaction}%` : '–'}</p>
+                    </div>
+                    <div>
+                        <p className="flex items-center gap-1 text-xs text-gray-500"><ThumbsUp className="h-3 w-3" /> Liked</p>
+                        <p className="mt-1 text-2xl font-bold text-[#00a859]">{quality?.likes ?? '–'}</p>
+                    </div>
+                    <div>
+                        <p className="flex items-center gap-1 text-xs text-gray-500"><ThumbsDown className="h-3 w-3" /> Disliked</p>
+                        <p className="mt-1 text-2xl font-bold text-red-400">{quality?.dislikes ?? '–'}</p>
+                    </div>
+                    <div>
+                        <p className="text-xs text-gray-500">Waiting for review</p>
+                        <p className="mt-1 text-2xl font-bold text-blue-400">{quality?.pending_review ?? '–'}</p>
+                    </div>
+                </div>
+                {quality && quality.total > 0 && (
+                    <div className="mt-4 flex h-2 overflow-hidden rounded-full bg-gray-800">
+                        <div className="bg-[#00a859]" style={{ width: `${quality.satisfaction ?? 0}%` }} />
+                        <div className="bg-red-500/80" style={{ width: `${100 - (quality.satisfaction ?? 0)}%` }} />
+                    </div>
+                )}
             </motion.div>
 
             {/* Activity & System Status */}

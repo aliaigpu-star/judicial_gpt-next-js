@@ -12,6 +12,7 @@ const path = require('path');
 const config = require('./config/env');
 const { testConnection } = require('./config/database');
 const { loadBackendSecrets } = require('./vault');
+const { MessageFeedback } = require('./models/MessageFeedback');
 
 // Import routes
 const authRoutes = require('./routes/auth');
@@ -144,6 +145,13 @@ const startServer = async () => {
         if (!dbConnected) {
             console.error('❌ Failed to connect to database');
             process.exit(1);
+        }
+
+        // Create the feedback table if this database doesn't have it yet.
+        try {
+            await MessageFeedback.ensureSchema();
+        } catch (err) {
+            console.error('⚠️ Could not prepare message_feedback table:', err.message);
         }
 
         // Start listening

@@ -6,7 +6,7 @@ import {
     Mic, Globe, Plus, ArrowUp, ArrowDown,
     FileText, Image as ImageIcon, X, StopCircle, Loader2,
     Copy, Edit3, ThumbsUp, ThumbsDown, RefreshCw, ChevronLeft, ChevronRight, Check, Upload, Clock, Share2,
-    Phone, ShieldAlert, CheckCircle2, ChevronDown, ChevronUp, ExternalLink, AlertTriangle
+    Phone, ShieldAlert, CheckCircle2, ChevronDown, ChevronUp, ExternalLink, AlertTriangle, Paperclip
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -202,7 +202,6 @@ export default function ChatView({
     const messagesContainerRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const imageInputRef = useRef<HTMLInputElement>(null);
     const menuRef = useRef<HTMLDivElement>(null);
     const prevConversationIdRef = useRef<string | null>(null);
     const isInitialLoadRef = useRef(true);
@@ -502,52 +501,72 @@ export default function ChatView({
         }
     };
 
-    // File handling
-    const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        e.target.value = '';
+    // File handling: documents (PDF/Word/TXT) are read as text, images are
+    // sent to the model as images. Used by the "+" menu and drag & drop.
+    const DOCUMENT_TYPES = [
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'text/plain'
+    ];
 
-        if (!file) return;
-
-        const allowedTypes = [
-            'application/pdf',
-            'application/msword',
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            'text/plain'
-        ];
-
-        if (!allowedTypes.includes(file.type)) {
-            showNotification('Please select a PDF, Word, or Text file', 'error');
+    const attachFile = (file: File) => {
+        if (file.type.startsWith('image/')) {
+            if (file.size > 10 * 1024 * 1024) {
+                showNotification('Image must be smaller than 10MB', 'error');
+                return;
+            }
+            setSelectedImage(file);
+            showNotification(`Image "${file.name}" attached`, 'success');
             return;
         }
 
+        if (!DOCUMENT_TYPES.includes(file.type)) {
+            showNotification('Please select an image, PDF, Word, or Text file', 'error');
+            return;
+        }
         if (file.size > 5 * 1024 * 1024) {
             showNotification('File must be smaller than 5MB', 'error');
             return;
         }
-
         setSelectedFile(file);
         showNotification(`"${file.name}" attached. Ask your question!`, 'success');
     };
 
-    const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         e.target.value = '';
+        if (file) attachFile(file);
+    };
 
-        if (!file) return;
+    // Drag & drop anywhere on the chat. The counter avoids flicker when the
+    // pointer moves over child elements.
+    const [isDragging, setIsDragging] = useState(false);
+    const dragDepth = useRef(0);
+    const hasFiles = (e: React.DragEvent) => e.dataTransfer.types.includes('Files');
 
-        if (!file.type.startsWith('image/')) {
-            showNotification('Please select an image file', 'error');
-            return;
-        }
-
-        if (file.size > 10 * 1024 * 1024) {
-            showNotification('Image must be smaller than 10MB', 'error');
-            return;
-        }
-
-        setSelectedImage(file);
-        showNotification(`Image "${file.name}" attached`, 'success');
+    const handleDragEnter = (e: React.DragEvent) => {
+        if (!hasFiles(e)) return;
+        e.preventDefault();
+        dragDepth.current += 1;
+        setIsDragging(true);
+    };
+    const handleDragOver = (e: React.DragEvent) => {
+        if (hasFiles(e)) e.preventDefault();
+    };
+    const handleDragLeave = (e: React.DragEvent) => {
+        if (!hasFiles(e)) return;
+        dragDepth.current = Math.max(0, dragDepth.current - 1);
+        if (dragDepth.current === 0) setIsDragging(false);
+    };
+    const handleDrop = (e: React.DragEvent) => {
+        if (!hasFiles(e)) return;
+        e.preventDefault();
+        dragDepth.current = 0;
+        setIsDragging(false);
+        if (isProcessingMessage || isProcessingFile) return;
+        const file = e.dataTransfer.files?.[0];
+        if (file) attachFile(file);
     };
 
     // Voice recording
@@ -612,15 +631,8 @@ export default function ChatView({
             <input
                 ref={fileInputRef}
                 type="file"
-                accept=".pdf,.doc,.docx,.txt,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
+                accept="image/*,.pdf,.doc,.docx,.txt,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
                 onChange={handleFileSelect}
-                className="hidden"
-            />
-            <input
-                ref={imageInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handleImageSelect}
                 className="hidden"
             />
 
@@ -698,17 +710,11 @@ export default function ChatView({
                                             }}
                                             className="w-full px-3 py-2.5 text-left text-sm hover:bg-[#f4f4f4] dark:hover:bg-[#424242] flex items-center gap-3 text-[#0d0d0d] dark:text-[#ececec]"
                                         >
-                                            <FileText className="w-4 h-4 text-[#666666] dark:text-[#b4b4b4]" /> Upload file
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                imageInputRef.current?.click();
-                                                setShowAttachMenu(false);
-                                            }}
-                                            className="w-full px-3 py-2.5 text-left text-sm hover:bg-[#f4f4f4] dark:hover:bg-[#424242] flex items-center gap-3 text-[#0d0d0d] dark:text-[#ececec]"
-                                        >
-                                            <ImageIcon className="w-4 h-4 text-[#666666] dark:text-[#b4b4b4]" /> Upload image
+                                            <Paperclip className="w-4 h-4 text-[#666666] dark:text-[#b4b4b4]" />
+                                            <span className="flex flex-col">
+                                                Upload file or image
+                                                <span className="text-xs text-[#999999]">PDF, Word, TXT or image</span>
+                                            </span>
                                         </button>
                                         <div className="my-1 border-t border-[#e5e5e5] dark:border-[#424242]" />
                                         <button
@@ -818,7 +824,21 @@ export default function ChatView({
     );
 
     return (
-        <div className="flex flex-col h-full bg-white dark:bg-[#212121]">
+        <div
+            className="relative flex flex-col h-full bg-white dark:bg-[#212121]"
+            onDragEnter={handleDragEnter}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+        >
+            {/* Drag & drop overlay */}
+            {isDragging && (
+                <div className="pointer-events-none absolute inset-0 z-50 m-3 flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-[#00a859] bg-[#00a859]/10 backdrop-blur-sm">
+                    <Upload className="w-8 h-8 text-[#00a859]" />
+                    <p className="text-base font-medium text-[#0d0d0d] dark:text-[#ececec]">Drop your file or image here</p>
+                    <p className="text-sm text-[#666666] dark:text-[#b4b4b4]">PDF, Word, TXT up to 5MB · Images up to 10MB</p>
+                </div>
+            )}
             {/* Notification */}
             <AnimatePresence>
                 {notification && (

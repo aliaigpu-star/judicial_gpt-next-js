@@ -3,6 +3,8 @@
  * Centralized API communication with the Express backend
  */
 
+import type { ChatImage } from './chatImage';
+
 const getBaseUrl = () => {
     return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 };
@@ -464,7 +466,7 @@ class ApiClient {
 
     // Streaming chat - returns a reader for real-time updates
     async sendChatMessageStream(
-        messages: Array<{ role: string; content: string }>,
+        messages: Array<{ role: string; content: string; images?: ChatImage[] }>,
         onChunk: (content: string) => void,
         onComplete: (responseTime: number) => void,
         options?: { model?: string; temperature?: number }
@@ -523,23 +525,28 @@ class ApiClient {
 
                     for (const line of lines) {
                         if (line.startsWith('data: ')) {
+                            let data: any;
                             try {
-                                const data = JSON.parse(line.slice(6));
-                                if (data.content) {
-                                    fullContent += data.content;
-                                    onChunk(fullContent);
-                                }
-                                if (data.done) {
-                                    onComplete(data.responseTime || 0);
-                                    // Stop as soon as the payload signals completion —
-                                    // don't wait on the reader to also see the
-                                    // connection close, which some proxies/keep-alive
-                                    // setups never do, hanging this loop forever.
-                                    streamDone = true;
-                                    break;
-                                }
+                                data = JSON.parse(line.slice(6));
                             } catch (e) {
-                                // Skip invalid JSON
+                                continue; // Skip invalid JSON
+                            }
+                            // The backend reports failures mid-stream in-band.
+                            if (data.error) {
+                                throw new Error(data.error);
+                            }
+                            if (data.content) {
+                                fullContent += data.content;
+                                onChunk(fullContent);
+                            }
+                            if (data.done) {
+                                onComplete(data.responseTime || 0);
+                                // Stop as soon as the payload signals completion —
+                                // don't wait on the reader to also see the
+                                // connection close, which some proxies/keep-alive
+                                // setups never do, hanging this loop forever.
+                                streamDone = true;
+                                break;
                             }
                         }
                     }

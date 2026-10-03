@@ -12,6 +12,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import { api } from '@/lib/api';
+import { fileToChatImage, type ChatImage } from '@/lib/chatImage';
 import { copyCleanText } from '@/lib/textUtils';
 import ShareModal from '@/components/modals/ShareModal';
 import TypingAnimation from '@/components/ui/TypingAnimation';
@@ -55,7 +56,7 @@ interface Conversation {
 
 interface ChatViewProps {
     conversation: Conversation | null;
-    onSend: (content: string, displayContent?: string, webEnabled?: boolean) => Promise<void>;
+    onSend: (content: string, displayContent?: string, webEnabled?: boolean, images?: ChatImage[]) => Promise<void>;
     user: any;
     isProcessingMessage: boolean;
     isWebSearchMode: boolean;
@@ -444,6 +445,7 @@ export default function ChatView({
         let messageToSend = input.trim();
         let displayMessage = input.trim();
         const userQuestion = input.trim();
+        let images: ChatImage[] | undefined;
 
         // Handle PDF/document file
         if (selectedFile) {
@@ -464,19 +466,21 @@ export default function ChatView({
             }
         }
 
-        // Handle image file
+        // Handle image file: the model (Gemini) sees the image itself.
         if (selectedImage) {
             setIsProcessingFile(true);
             try {
-                const result = await api.readImageText(selectedImage);
+                images = [await fileToChatImage(selectedImage)];
                 displayMessage = `🖼️ Uploaded: ${selectedImage.name}\n\n${userQuestion}`;
-                messageToSend = `Image "${selectedImage.name}" OCR Text:\n\n${result.text}\n\nUser Question: ${userQuestion}`;
-                showNotification('Image text extracted successfully!', 'success');
+                if (!userQuestion) {
+                    messageToSend = messageToSend
+                        ? `${messageToSend}\n\nDescribe this image in detail.`
+                        : 'Describe this image in detail.';
+                }
             } catch (error: any) {
-                console.error('OCR failed:', error);
-                displayMessage = `🖼️ Uploaded: ${selectedImage.name}\n\n${userQuestion}`;
-                messageToSend = `[Image attached: ${selectedImage.name}]\n\nUser Question: ${userQuestion}`;
-                showNotification('Could not extract text from image, sending as attachment', 'warning');
+                console.error('Image processing failed:', error);
+                showNotification('Could not read this image. Please try another file.', 'error');
+                return;
             } finally {
                 setSelectedImage(null);
                 setIsProcessingFile(false);
@@ -487,7 +491,7 @@ export default function ChatView({
             setInput('');
             shouldAutoScrollRef.current = true;
             setShowScrollButton(false);
-            await onSend(messageToSend, displayMessage, webSearchEnabled);
+            await onSend(messageToSend, displayMessage, webSearchEnabled, images);
         }
     };
 

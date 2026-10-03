@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { api } from '@/lib/api';
+import type { ChatImage } from '@/lib/chatImage';
 import { createStreamBuffer } from '@/lib/streamBuffer';
 import ChatView from '@/components/chat/ChatView';
 import { useChatLayout } from '../layout';
@@ -81,8 +82,10 @@ export default function ConversationPage() {
         }
     };
 
-    const handleSend = useCallback(async (content: string, displayContent?: string, webEnabled = false) => {
+    const handleSend = useCallback(async (content: string, displayContent?: string, webEnabled = false, images?: ChatImage[]) => {
         if (!content.trim()) return;
+        // Images go to the chat model (Gemini), which can see them; web search can't.
+        if (images?.length) webEnabled = false;
 
         setIsProcessingMessage(true);
         setIsWebSearchMode(webEnabled);
@@ -137,9 +140,10 @@ export default function ConversationPage() {
             let responseTime = 0;
 
             // Prepare messages for AI
-            const messagesForAI = [...(currentConversation?.messages || []), { role: 'user', content }]
-                .slice(-10)
-                .map(m => ({ role: m.role, content: m.content }));
+            const messagesForAI = [
+                ...(currentConversation?.messages || []).slice(-9).map(m => ({ role: m.role, content: m.content })),
+                { role: 'user', content, images }
+            ];
 
             if (webEnabled) {
                 const response = await api.webSearch(content);

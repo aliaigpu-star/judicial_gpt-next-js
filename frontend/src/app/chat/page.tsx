@@ -3,6 +3,7 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
+import type { ChatImage } from '@/lib/chatImage';
 import { createStreamBuffer } from '@/lib/streamBuffer';
 import ChatView from '@/components/chat/ChatView';
 import { useChatLayout } from './layout';
@@ -52,8 +53,10 @@ export default function ChatPage() {
         }
     }, [newChatTrigger]);
 
-    const handleSend = useCallback(async (content: string, displayContent?: string, webEnabled = false) => {
+    const handleSend = useCallback(async (content: string, displayContent?: string, webEnabled = false, images?: ChatImage[]) => {
         if (!content.trim()) return;
+        // Images go to the chat model (Gemini), which can see them; web search can't.
+        if (images?.length) webEnabled = false;
 
         setIsProcessingMessage(true);
         setIsWebSearchMode(webEnabled);
@@ -75,7 +78,7 @@ export default function ChatPage() {
                 // Get AI response
                 const messagesForAI = [
                     ...newChatMessages.map(m => ({ role: m.role, content: m.content })),
-                    { role: 'user', content }
+                    { role: 'user', content, images }
                 ];
 
                 let finalContent = '';
@@ -191,7 +194,7 @@ export default function ChatPage() {
             // Get AI response - include all messages in context
             const messagesForAI = [
                 ...newChatMessages.map(m => ({ role: m.role, content: m.content })),
-                { role: 'user', content }
+                { role: 'user', content, images }
             ].slice(-10);
 
             let finalContent = '';

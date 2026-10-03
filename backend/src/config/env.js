@@ -31,6 +31,11 @@ const config = {
     // Groq API
     GROQ_API_KEY: process.env.GROQ_API_KEY || '',
 
+    // Gemini (main chat, text + images). When a key is set, /api/ai/chat uses
+    // Gemini; otherwise it falls back to Groq.
+    GEMINI_API_KEY: process.env.GEMINI_API_KEY || '',
+    GEMINI_MODEL: process.env.GEMINI_MODEL || 'gemini-3.6-flash',
+
     
     // Email (Nodemailer)
     SMTP_HOST: process.env.SMTP_HOST || 'smtp.gmail.com',

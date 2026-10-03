@@ -12,6 +12,7 @@ const { asyncHandler, ApiError } = require('../middleware/errorHandler');
 const config = require('../config/env');
 const ApiRequestLogger = require('../services/apiRequestLogger');
 const { truncateMessages } = require('../utils/ai');
+const { validateImages, streamGeminiReply, generateGeminiReply } = require('../utils/gemini');
 
 // API Key Manager for load balancing
 class ApiKeyManager {
@@ -146,9 +147,101 @@ function validateChatRequest(body) {
     return { valid: true };
 }
 
+/** The chat system prompt, with the user's custom instructions appended. */
+function buildSystemPrompt(user) {
+    let systemPrompt = JUDICIAL_SYSTEM_PROMPT;
+    if (user?.preferences?.custom_instructions) {
+        systemPrompt += `\n\nUser Custom Instructions:\n${user.preferences.custom_instructions}\n\nPlease prioritize these instructions above unrelated guidelines.`;
+    }
+    return systemPrompt;
+}
+
+/**
+ * Answers a chat request with Gemini (text and attached images), using the
+ * same response formats as the Groq path: SSE `{content}` chunks followed by
+ * `{done, responseTime}`, or a single JSON reply.
+ */
+async function handleGeminiChat(req, res, { apiKey, messages, temperature, maxTokens, stream }) {
+    const imageError = validateImages(messages);
+    if (imageError) {
+        throw new ApiError(400, imageError, 'INVALID_IMAGE');
+    }
+
+    const model = config.GEMINI_MODEL;
+    const options = {
+        model,
+        systemPrompt: buildSystemPrompt(req.user),
+        // Gemini has a far larger context window than the Groq models.
+        messages: truncateMessages(messages.filter(m => m.role !== 'system'), 30000),
+        temperature,
+        maxTokens
+    };
+
+    const startTime = Date.now();
+    const requestId = await ApiRequestLogger.log({
+        userId: req.user?.id,
+        requestType: 'gemini_chat',
+        endpoint: '/api/ai/chat',
+        method: 'POST',
+        model,
+        status: 'pending',
+        ipAddress: req.ip || req.connection.remoteAddress,
+        userAgent: req.headers['user-agent']
+    });
+    const finishLog = (fields) => requestId && ApiRequestLogger.update(requestId, {
+        responseTime: Date.now() - startTime,
+        completedAt: new Date(),
+        ...fields
+    });
+
+    try {
+        if (stream) {
+            res.setHeader('Content-Type', 'text/event-stream');
+            res.setHeader('Cache-Control', 'no-cache');
+            res.setHeader('Connection', 'keep-alive');
+
+            for await (const content of streamGeminiReply(apiKey, options)) {
+                res.write(`data: ${JSON.stringify({ content })}\n\n`);
+            }
+
+            const responseTime = Date.now() - startTime;
+            await finishLog({ status: 'success', statusCode: 200 });
+            res.write(`data: ${JSON.stringify({ done: true, responseTime })}\n\n`);
+            return res.end();
+        }
+
+        const { text, tokensUsed } = await generateGeminiReply(apiKey, options);
+        const responseTime = Date.now() - startTime;
+        await finishLog({ status: 'success', statusCode: 200, tokensUsed });
+        return res.json({
+            success: true,
+            message: { role: 'assistant', content: text },
+            usage: { total_tokens: tokensUsed },
+            responseTime,
+            model
+        });
+    } catch (error) {
+        const statusCode = error.status || 500;
+        await finishLog({ status: 'failed', statusCode, errorMessage: error.message || 'Unknown error' });
+        console.error('Gemini API error:', { message: error.message, status: error.status });
+
+        const rateLimited = statusCode === 429;
+        const message = rateLimited
+            ? 'Rate limit exceeded. Please try again later.'
+            : 'Failed to generate response. Please try again.';
+
+        // Mid-stream the headers are already sent, so report the error in-band.
+        if (res.headersSent) {
+            res.write(`data: ${JSON.stringify({ error: message })}\n\n`);
+            return res.end();
+        }
+        throw new ApiError(rateLimited ? 429 : 500, message, rateLimited ? 'RATE_LIMIT' : 'AI_ERROR');
+    }
+}
+
 /**
  * POST /api/ai/chat
- * Send message to Groq API
+ * Send message to Gemini (when GEMINI_API_KEY is set) or the Groq API
  */
 router.post('/chat', authenticate, aiRateLimiter, asyncHandler(async (req, res) => {
     const validation = validateChatRequest(req.body);
@@ -166,6 +259,22 @@ router.post('/chat', authenticate, aiRateLimiter, asyncHandler(async (req, res) 
 
     // Enforce a sensible server-side cap for maxTokens to prevent 413 errors
     const effectiveMaxTokens = Math.min(maxTokens, 4000);
+
+    // Gemini answers all chat (text and images) when its key is configured;
+    // otherwise the Groq path below is used, as before.
+    const geminiKey = req.app.locals.secrets?.GEMINI_API_KEY || config.GEMINI_API_KEY;
+    if (geminiKey) {
+        return handleGeminiChat(req, res, {
+            apiKey: geminiKey,
+            messages,
+            temperature,
+            maxTokens: effectiveMaxTokens,
+            stream
+        });
+    }
+    if (messages.some(m => m.images)) {
+        throw new ApiError(503, 'Image chat is not available: GEMINI_API_KEY is not configured.', 'VISION_UNAVAILABLE');
+    }
 
     // Get API key
     const km = getKeyManager(req);
@@ -196,10 +305,7 @@ router.post('/chat', authenticate, aiRateLimiter, asyncHandler(async (req, res) 
         const groq = new Groq({ apiKey: selectedKey.key });
 
         // Construct system prompt with user customizations
-        let systemPrompt = JUDICIAL_SYSTEM_PROMPT;
-        if (req.user?.preferences?.custom_instructions) {
-            systemPrompt += `\n\nUser Custom Instructions:\n${req.user.preferences.custom_instructions}\n\nPlease prioritize these instructions above unrelated guidelines.`;
-        }
+        const systemPrompt = buildSystemPrompt(req.user);
 
         // Prepend system prompt if not already present
         const hasSystemPrompt = messages.some(m => m.role === 'system');

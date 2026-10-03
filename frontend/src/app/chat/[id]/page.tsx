@@ -335,8 +335,8 @@ export default function ConversationPage() {
                         ? { 
                             ...m, 
                             content: newContent, 
-                            currentVersion: savedMsg.current_version,
-                            totalVersions: savedMsg.total_versions 
+                            currentVersion: savedMsg.message.currentVersion,
+                            totalVersions: savedMsg.message.totalVersions 
                           } 
                         : m
                 )
@@ -355,13 +355,15 @@ export default function ConversationPage() {
         const messageIndex = currentConversation.messages.findIndex(m => m.id === messageId);
         if (messageIndex === -1) return;
 
-        await api.updateMessage(messageId, newContent);
+        const { message: saved } = await api.updateMessage(messageId, newContent);
 
         if (currentConversation.messages[messageIndex].role === 'user') {
             setCurrentConversation(prev => prev ? {
                 ...prev,
                 messages: prev.messages.map((m, i) =>
-                    i === messageIndex ? { ...m, content: newContent } : m
+                    i === messageIndex
+                        ? { ...m, content: newContent, currentVersion: saved.currentVersion, totalVersions: saved.totalVersions }
+                        : m
                 )
             } : null);
 

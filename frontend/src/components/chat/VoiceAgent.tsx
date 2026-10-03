@@ -295,36 +295,34 @@ export default function VoiceAgent({ onClose, onGetAIResponse, isOpen }: VoiceAg
         }
     };
 
-    // Get status color with gradients
-    const getStatusColor = () => {
-        switch (voiceState.status) {
-            case 'listening': return 'bg-gradient-to-br from-red-500 to-red-600 animate-pulse shadow-red-500/50';
-            case 'processing': return 'bg-gradient-to-br from-amber-400 to-amber-500 shadow-amber-400/50';
-            case 'speaking': return 'bg-gradient-to-br from-[#00a859] to-[#00a859] shadow-[#00a859]/50';
-            case 'error': return 'bg-gradient-to-br from-red-600 to-red-700';
-            default: return 'bg-gradient-to-br from-[#00a859] to-[#00a859] hover:from-[#00a859] hover:to-[#00a859]';
-        }
-    };
+    const status = voiceState.status;
+    const busy = status === 'processing';
+    const lastUser = [...conversationHistory].reverse().find(m => m.role === 'user');
+    const lastAssistant = [...conversationHistory].reverse().find(m => m.role === 'assistant');
+    const currentVoice = VOICE_OPTIONS.find(v => v.id === selectedVoice) ?? VOICE_OPTIONS[0];
 
-    // Get status glow effect
-    const getStatusGlow = () => {
-        switch (voiceState.status) {
-            case 'listening': return 'shadow-[0_0_40px_rgba(239,68,68,0.5)]';
-            case 'processing': return 'shadow-[0_0_40px_rgba(251,191,36,0.4)]';
-            case 'speaking': return 'shadow-[0_0_40px_rgba(52,211,153,0.5)]';
-            default: return 'shadow-[0_0_30px_rgba(16,185,129,0.3)]';
-        }
-    };
+    // Orb colours per state (green idle/speaking, red listening, amber thinking).
+    const orbGradient = {
+        idle: 'from-[#00c26a] via-[#00a859] to-[#007a40]',
+        listening: 'from-[#ff6b6b] via-[#ef4444] to-[#b91c1c]',
+        processing: 'from-[#fcd34d] via-[#f59e0b] to-[#d97706]',
+        speaking: 'from-[#00c26a] via-[#00a859] to-[#0e7490]',
+        error: 'from-[#f87171] via-[#dc2626] to-[#991b1b]',
+    }[status];
+    const ringColor = status === 'listening' ? 'bg-red-500' : status === 'processing' ? 'bg-amber-400' : 'bg-[#00a859]';
 
-    // Get status icon
-    const getStatusIcon = () => {
-        switch (voiceState.status) {
-            case 'listening': return <Mic className="w-8 h-8" />;
-            case 'processing': return <Loader2 className="w-8 h-8 animate-spin" />;
-            case 'speaking': return <Volume2 className="w-8 h-8 animate-pulse" />;
-            case 'error': return <Mic className="w-8 h-8" />;
-            default: return <Mic className="w-8 h-8" />;
-        }
+    const statusLabel = {
+        idle: conversationTurn > 0 ? 'Tap the mic to continue' : 'Tap the mic and ask your question',
+        listening: 'Listening… tap to send',
+        processing: 'Thinking…',
+        speaking: 'Speaking… tap to stop',
+        error: voiceState.message,
+    }[status];
+
+    const onMainButton = () => {
+        if (status === 'listening') stopListening();
+        else if (status === 'speaking') stopSpeaking();
+        else if (status === 'idle' || status === 'error') startListening();
     };
 
     return (
@@ -334,314 +332,189 @@ export default function VoiceAgent({ onClose, onGetAIResponse, isOpen }: VoiceAg
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md"
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4"
                     onClick={onClose}
                 >
                     <motion.div
-                        initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                        initial={{ scale: 0.95, opacity: 0, y: 16 }}
                         animate={{ scale: 1, opacity: 1, y: 0 }}
-                        exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                        transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                        className="relative bg-white/95 dark:bg-[#1f1f1f]/95 rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] border border-white/20 dark:border-white/10 p-8 max-w-md w-full mx-4 overflow-hidden"
+                        exit={{ scale: 0.95, opacity: 0, y: 16 }}
+                        transition={{ type: 'spring', damping: 26, stiffness: 300 }}
+                        className="relative w-full max-w-md overflow-hidden rounded-[28px] bg-white dark:bg-[#1c1c1c] border border-[#e5e5e5] dark:border-[#333333] shadow-2xl"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        {/* Background gradient effects */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-[#00a859]/5 via-transparent to-blue-500/5 pointer-events-none" />
-                        <div className="absolute -top-32 -right-32 w-64 h-64 bg-[#00a859]/10 rounded-full blur-3xl pointer-events-none" />
-                        <div className="absolute -bottom-32 -left-32 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+                        {/* Soft background glow that follows the state colour */}
+                        <div className={`pointer-events-none absolute left-1/2 top-24 h-72 w-72 -translate-x-1/2 rounded-full bg-gradient-to-br ${orbGradient} opacity-[0.12] blur-3xl transition-all duration-700`} />
 
                         {/* Header */}
-                        <div className="relative flex items-center justify-between mb-8">
-                            <div className="flex items-center gap-4">
-                                <motion.div 
-                                    className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#00a859] to-[#00a859] flex items-center justify-center relative shadow-lg shadow-[#00a859]/30"
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
-                                >
-                                    <Phone className="w-6 h-6 text-white" />
-                                    {/* Online indicator with ping animation */}
-                                    <span className="absolute -bottom-1 -right-1 flex h-4 w-4">
-                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                        <span className="relative inline-flex rounded-full h-4 w-4 bg-green-500 border-2 border-white dark:border-[#1f1f1f]"></span>
+                        <div className="relative flex items-center justify-between px-5 pt-5">
+                            <div>
+                                <h3 className="text-lg font-semibold text-[#0d0d0d] dark:text-white">Voice Agent</h3>
+                                <div className="mt-0.5 flex items-center gap-1.5 text-xs text-[#666666] dark:text-[#b4b4b4]">
+                                    <span className="relative flex h-2 w-2">
+                                        <span className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-60 ${ringColor}`} />
+                                        <span className={`relative inline-flex h-2 w-2 rounded-full ${ringColor}`} />
                                     </span>
-                                </motion.div>
-                                <div>
-                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                                        Voice Agent
-                                    </h3>
-                                    <div className="flex items-center gap-2">
-                                        <p className="text-sm text-green-600 dark:text-green-400 font-medium">
-                                            Online
-                                        </p>
-                                        {conversationTurn > 0 && (
-                                            <span className="text-xs text-gray-500 dark:text-gray-400">
-                                                • {conversationTurn} turn{conversationTurn !== 1 ? 's' : ''}
-                                            </span>
-                                        )}
-                                    </div>
+                                    {conversationTurn > 0 ? `${conversationTurn} ${conversationTurn === 1 ? 'reply' : 'replies'}` : 'Ready'}
                                 </div>
                             </div>
-                            <div className="flex items-center gap-2">
-                                {/* Voice Selector Toggle */}
-                                <div className="relative">
-                                    <motion.button
-                                        onClick={() => setShowVoiceSelector(!showVoiceSelector)}
-                                        className="p-2.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        title="Change voice"
-                                    >
-                                        <Settings className="w-5 h-5" />
-                                    </motion.button>
-                                    
-                                    {/* Voice Selector Dropdown */}
-                                    <AnimatePresence>
-                                        {showVoiceSelector && (
-                                            <motion.div
-                                                initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                                                animate={{ opacity: 1, y: 0, scale: 1 }}
-                                                exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                                className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-[#2f2f2f] rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 py-2 z-50"
-                                            >
-                                                <p className="px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                                    Select Voice
-                                                </p>
-                                                {VOICE_OPTIONS.map((voice) => (
-                                                    <button
-                                                        key={voice.id}
-                                                        onClick={() => {
-                                                            setSelectedVoice(voice.id);
-                                                            setShowVoiceSelector(false);
-                                                        }}
-                                                        className={`w-full px-4 py-2.5 text-left text-sm flex items-center gap-3 transition-colors ${
-                                                            selectedVoice === voice.id
-                                                                ? 'bg-[#00a859]/10 dark:bg-[#00a859]/30 text-[#00a859] dark:text-[#00a859]'
-                                                                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
-                                                        }`}
-                                                    >
-                                                        <span className="text-lg">{voice.flag}</span>
-                                                        <span>{voice.name}</span>
-                                                        {selectedVoice === voice.id && (
-                                                            <Sparkles className="w-4 h-4 ml-auto" />
-                                                        )}
-                                                    </button>
-                                                ))}
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                </div>
 
-                                {/* Stop speaking button - only show when speaking */}
+                            {/* Voice selector pill */}
+                            <div className="relative">
+                                <button
+                                    onClick={() => setShowVoiceSelector(!showVoiceSelector)}
+                                    className="flex items-center gap-2 rounded-full border border-[#e5e5e5] dark:border-[#424242] bg-[#f7f7f7] dark:bg-[#2a2a2a] px-3 py-1.5 text-sm text-[#0d0d0d] dark:text-[#ececec] hover:bg-[#efefef] dark:hover:bg-[#333333] transition-colors"
+                                    title="Change voice"
+                                >
+                                    <span>{currentVoice.flag}</span>
+                                    <span className="font-medium">{currentVoice.name.split(' ')[0]}</span>
+                                    <Settings className="h-3.5 w-3.5 text-[#999999]" />
+                                </button>
                                 <AnimatePresence>
-                                    {voiceState.status === 'speaking' && (
-                                        <motion.button
-                                            initial={{ opacity: 0, scale: 0.8 }}
-                                            animate={{ opacity: 1, scale: 1 }}
-                                            exit={{ opacity: 0, scale: 0.8 }}
-                                            onClick={stopSpeaking}
-                                            className="p-2.5 rounded-xl bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 hover:bg-red-200 transition-colors"
-                                            whileHover={{ scale: 1.05 }}
-                                            whileTap={{ scale: 0.95 }}
-                                            title="Stop speaking"
+                                    {showVoiceSelector && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 6, scale: 0.97 }}
+                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                            exit={{ opacity: 0, y: 6, scale: 0.97 }}
+                                            className="absolute right-0 top-full z-50 mt-2 w-60 rounded-2xl border border-[#e5e5e5] dark:border-[#424242] bg-white dark:bg-[#2a2a2a] p-1.5 shadow-xl"
                                         >
-                                            <Square className="w-5 h-5 fill-current" />
-                                        </motion.button>
+                                            {VOICE_OPTIONS.map((voice) => (
+                                                <button
+                                                    key={voice.id}
+                                                    onClick={() => {
+                                                        setSelectedVoice(voice.id);
+                                                        setShowVoiceSelector(false);
+                                                    }}
+                                                    className={`flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm transition-colors ${selectedVoice === voice.id
+                                                        ? 'bg-[#00a859]/10 text-[#00a859]'
+                                                        : 'text-[#0d0d0d] dark:text-[#ececec] hover:bg-[#f4f4f4] dark:hover:bg-[#333333]'
+                                                        }`}
+                                                >
+                                                    <span className="text-base">{voice.flag}</span>
+                                                    <span className="flex-1">{voice.name}</span>
+                                                    {selectedVoice === voice.id && <Sparkles className="h-4 w-4" />}
+                                                </button>
+                                            ))}
+                                        </motion.div>
                                     )}
                                 </AnimatePresence>
-
-                                {/* Mute button */}
-                                <motion.button
-                                    onClick={toggleMute}
-                                    className={`p-2.5 rounded-xl transition-colors ${
-                                        isMuted 
-                                            ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' 
-                                            : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
-                                    }`}
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    title={isMuted ? 'Unmute' : 'Mute'}
-                                >
-                                    {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-                                </motion.button>
-
-                                {/* End Call button */}
-                                <motion.button
-                                    onClick={onClose}
-                                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 transition-all font-medium shadow-lg shadow-red-500/30"
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
-                                >
-                                    <PhoneOff className="w-5 h-5" />
-                                    <span>End</span>
-                                </motion.button>
                             </div>
                         </div>
 
-                        {/* Main Voice Button Area */}
-                        <div className="relative flex flex-col items-center gap-6 py-4">
-                            {/* Pulsing rings for listening state */}
-                            <AnimatePresence>
-                                {voiceState.status === 'listening' && (
-                                    <>
-                                        <motion.div
-                                            initial={{ opacity: 0, scale: 1 }}
-                                            animate={{ opacity: [0, 0.3, 0], scale: [1, 1.5, 2] }}
-                                            exit={{ opacity: 0 }}
-                                            transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
-                                            className="absolute w-32 h-32 rounded-full bg-red-500/30"
-                                        />
-                                        <motion.div
-                                            initial={{ opacity: 0, scale: 1 }}
-                                            animate={{ opacity: [0, 0.2, 0], scale: [1, 1.8, 2.5] }}
-                                            exit={{ opacity: 0 }}
-                                            transition={{ duration: 2, repeat: Infinity, ease: "easeOut", delay: 0.5 }}
-                                            className="absolute w-32 h-32 rounded-full bg-red-400/20"
-                                        />
-                                    </>
-                                )}
-                                {voiceState.status === 'speaking' && (
-                                    <>
-                                        <motion.div
-                                            initial={{ opacity: 0, scale: 1 }}
-                                            animate={{ opacity: [0, 0.3, 0], scale: [1, 1.3, 1.6] }}
-                                            exit={{ opacity: 0 }}
-                                            transition={{ duration: 1.5, repeat: Infinity, ease: "easeOut" }}
-                                            className="absolute w-32 h-32 rounded-full bg-[#00a859]/30"
-                                        />
-                                    </>
-                                )}
-                            </AnimatePresence>
+                        {/* Orb */}
+                        <div className="relative flex flex-col items-center px-6 pt-10 pb-6">
+                            <div className="relative flex h-48 w-48 items-center justify-center">
+                                {(status === 'listening' || status === 'speaking') && [0, 1].map(i => (
+                                    <motion.span
+                                        key={i}
+                                        className={`absolute h-36 w-36 rounded-full ${ringColor}`}
+                                        initial={{ opacity: 0.35, scale: 1 }}
+                                        animate={{ opacity: 0, scale: 1.45 }}
+                                        transition={{ duration: 1.8, repeat: Infinity, ease: 'easeOut', delay: i * 0.9 }}
+                                    />
+                                ))}
+                                <motion.div
+                                    className={`relative flex h-36 w-36 items-center justify-center rounded-full bg-gradient-to-br ${orbGradient} shadow-2xl transition-colors duration-500`}
+                                    animate={status === 'idle' ? { scale: [1, 1.04, 1] } : { scale: 1 }}
+                                    transition={{ duration: 3, repeat: status === 'idle' ? Infinity : 0, ease: 'easeInOut' }}
+                                >
+                                    <div className="absolute inset-2 rounded-full bg-white/10" />
+                                    {status === 'processing' ? (
+                                        <Loader2 className="h-10 w-10 animate-spin text-white" />
+                                    ) : status === 'listening' || status === 'speaking' ? (
+                                        <div className="flex h-12 items-center gap-1.5">
+                                            {[0, 1, 2, 3, 4].map(i => (
+                                                <motion.span
+                                                    key={i}
+                                                    className="w-1.5 rounded-full bg-white"
+                                                    animate={{ height: [10, 40 - Math.abs(2 - i) * 8, 14, 32, 10] }}
+                                                    transition={{ duration: 1 + i * 0.12, repeat: Infinity, ease: 'easeInOut' }}
+                                                />
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <Mic className="h-10 w-10 text-white" />
+                                    )}
+                                </motion.div>
+                            </div>
 
-                            {/* Main button with glow effect */}
-                            <motion.button
-                                onClick={voiceState.status === 'listening' ? stopListening : startListening}
-                                disabled={voiceState.status === 'processing' || voiceState.status === 'speaking'}
-                                whileHover={voiceState.status === 'idle' || voiceState.status === 'error' ? { scale: 1.08 } : {}}
-                                whileTap={voiceState.status === 'idle' || voiceState.status === 'error' ? { scale: 0.92 } : {}}
-                                className={`relative w-28 h-28 rounded-full flex items-center justify-center text-white shadow-2xl transition-all duration-300 ${getStatusColor()} ${getStatusGlow()} ${
-                                    (voiceState.status === 'processing' || voiceState.status === 'speaking') 
-                                        ? 'opacity-60 cursor-not-allowed' 
-                                        : 'cursor-pointer'
-                                }`}
+                            <motion.p
+                                key={status}
+                                initial={{ opacity: 0, y: 6 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className={`mt-6 text-center text-base font-medium ${status === 'error' ? 'text-red-500' : 'text-[#0d0d0d] dark:text-[#ececec]'}`}
                             >
-                                <div className="relative z-10">
-                                    {getStatusIcon()}
+                                {statusLabel}
+                            </motion.p>
+
+                            {/* Latest exchange */}
+                            {(lastUser || lastAssistant) && (
+                                <div className="mt-5 w-full space-y-2">
+                                    {lastUser && (
+                                        <p className="ml-auto w-fit max-w-[85%] rounded-2xl rounded-br-md bg-[#f4f4f4] dark:bg-[#2f2f2f] px-3.5 py-2 text-sm text-[#0d0d0d] dark:text-[#ececec] line-clamp-2">
+                                            {lastUser.text}
+                                        </p>
+                                    )}
+                                    {lastAssistant && (
+                                        <p className="w-fit max-w-[85%] rounded-2xl rounded-bl-md bg-[#00a859]/10 px-3.5 py-2 text-sm text-[#0d0d0d] dark:text-[#ececec] line-clamp-3">
+                                            {lastAssistant.text}
+                                        </p>
+                                    )}
                                 </div>
+                            )}
+                        </div>
+
+                        {/* Controls */}
+                        <div className="relative flex items-center justify-center gap-6 border-t border-[#f0f0f0] dark:border-[#2c2c2c] px-6 py-5">
+                            <motion.button
+                                whileTap={{ scale: 0.92 }}
+                                onClick={toggleMute}
+                                className={`flex h-12 w-12 items-center justify-center rounded-full transition-colors ${isMuted
+                                    ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400'
+                                    : 'bg-[#f4f4f4] text-[#444444] hover:bg-[#ebebeb] dark:bg-[#2f2f2f] dark:text-[#d4d4d4] dark:hover:bg-[#3a3a3a]'
+                                    }`}
+                                title={isMuted ? 'Unmute replies' : 'Mute replies'}
+                            >
+                                {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
                             </motion.button>
 
-                            {/* Status Text with icon */}
-                            <div className="text-center space-y-1">
-                                <motion.p 
-                                    key={voiceState.status}
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    className="text-xl font-semibold text-gray-900 dark:text-white"
-                                >
-                                    {voiceState.message}
-                                </motion.p>
-                                <AnimatePresence mode="wait">
-                                    {voiceState.status === 'idle' && (
-                                        <motion.p 
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            exit={{ opacity: 0 }}
-                                            className="text-sm text-gray-500 dark:text-gray-400"
-                                        >
-                                            Tap to start conversation
-                                        </motion.p>
-                                    )}
-                                    {voiceState.status === 'listening' && (
-                                        <motion.p 
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            exit={{ opacity: 0 }}
-                                            className="text-sm text-red-500 dark:text-red-400 font-medium"
-                                        >
-                                            Recording... tap to stop
-                                        </motion.p>
-                                    )}
-                                    {voiceState.status === 'processing' && (
-                                        <motion.div
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            exit={{ opacity: 0 }}
-                                            className="flex items-center justify-center gap-2 text-sm text-amber-600 dark:text-amber-400"
-                                        >
-                                            <Loader2 className="w-4 h-4 animate-spin" />
-                                            <span>AI is thinking...</span>
-                                        </motion.div>
-                                    )}
-                                    {voiceState.status === 'speaking' && (
-                                        <motion.div
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            exit={{ opacity: 0 }}
-                                            className="flex items-center justify-center gap-2 text-sm text-[#00a859] dark:text-[#00a859]"
-                                        >
-                                            <Volume2 className="w-4 h-4 animate-pulse" />
-                                            <span>Speaking response...</span>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                            </div>
+                            <motion.button
+                                whileHover={busy ? {} : { scale: 1.05 }}
+                                whileTap={busy ? {} : { scale: 0.93 }}
+                                onClick={onMainButton}
+                                disabled={busy}
+                                className={`flex h-16 w-16 items-center justify-center rounded-full text-white shadow-lg transition-colors ${status === 'listening'
+                                    ? 'bg-red-500 shadow-red-500/40'
+                                    : status === 'speaking'
+                                        ? 'bg-[#0d0d0d] dark:bg-white dark:text-[#0d0d0d]'
+                                        : 'bg-[#00a859] shadow-[#00a859]/40'
+                                    } ${busy ? 'opacity-60 cursor-not-allowed' : ''}`}
+                                title={status === 'listening' ? 'Send' : status === 'speaking' ? 'Stop speaking' : 'Speak'}
+                            >
+                                {status === 'listening' ? (
+                                    <Square className="h-6 w-6 fill-current" />
+                                ) : status === 'speaking' ? (
+                                    <Square className="h-5 w-5 fill-current" />
+                                ) : busy ? (
+                                    <Loader2 className="h-6 w-6 animate-spin" />
+                                ) : (
+                                    <Mic className="h-7 w-7" />
+                                )}
+                            </motion.button>
+
+                            <motion.button
+                                whileTap={{ scale: 0.92 }}
+                                onClick={onClose}
+                                className="flex h-12 w-12 items-center justify-center rounded-full bg-red-500 text-white shadow-lg shadow-red-500/30 hover:bg-red-600 transition-colors"
+                                title="End conversation"
+                            >
+                                <X className="h-5 w-5" />
+                            </motion.button>
                         </div>
-
-                        {/* Enhanced Waveform Animation */}
-                        <AnimatePresence>
-                            {voiceState.status === 'listening' && (
-                                <motion.div 
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: 20 }}
-                                    className="flex justify-center items-end gap-1 h-16 mt-4"
-                                >
-                                    {[...Array(9)].map((_, i) => (
-                                        <motion.div
-                                            key={i}
-                                            className="w-1.5 bg-gradient-to-t from-red-500 to-red-400 rounded-full"
-                                            animate={{
-                                                height: [12, 48, 16, 56, 20, 40, 12],
-                                                opacity: [0.5, 1, 0.6, 1, 0.5, 0.9, 0.5],
-                                            }}
-                                            transition={{
-                                                duration: 0.8 + i * 0.1,
-                                                repeat: Infinity,
-                                                ease: "easeInOut",
-                                                delay: i * 0.05,
-                                            }}
-                                        />
-                                    ))}
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-
-                        {/* Conversation Activity Indicator */}
-                        <AnimatePresence>
-                            {conversationTurn > 0 && voiceState.status === 'idle' && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: 10 }}
-                                    className="mt-4 flex items-center justify-center gap-2 text-sm text-gray-500 dark:text-gray-400"
-                                >
-                                    <MessageCircle className="w-4 h-4" />
-                                    <span>Conversation in progress</span>
-                                    <motion.span
-                                        animate={{ opacity: [0.3, 1, 0.3] }}
-                                        transition={{ duration: 1.5, repeat: Infinity }}
-                                    >
-                                        •
-                                    </motion.span>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
 
                         {/* Click outside to close voice selector */}
                         {showVoiceSelector && (
-                            <div 
-                                className="fixed inset-0 z-40"
-                                onClick={() => setShowVoiceSelector(false)}
-                            />
+                            <div className="fixed inset-0 z-40" onClick={() => setShowVoiceSelector(false)} />
                         )}
                     </motion.div>
                 </motion.div>

@@ -372,13 +372,16 @@ export default function ChatPage() {
                 stopRef.current = null;
             }
 
-            if (!isTemporaryMode) {
-                await api.updateMessage(messageId, newContent);
-            }
+            const versions = isTemporaryMode ? null : (await api.updateMessage(messageId, newContent)).message;
 
             setNewChatMessages(prev => prev.map(m =>
                 m.id === messageId
-                    ? { ...m, content: newContent, responseTime }
+                    ? {
+                        ...m,
+                        content: newContent,
+                        responseTime,
+                        ...(versions ? { currentVersion: versions.currentVersion, totalVersions: versions.totalVersions } : {})
+                    }
                     : m
             ));
         } catch (error) {
@@ -387,6 +390,33 @@ export default function ChatPage() {
             setIsProcessingMessage(false);
         }
     }, [newChatMessages, isTemporaryMode]);
+
+    // Edit a user message (saved as a new version), then regenerate the reply below it.
+    const handleEditMessage = useCallback(async (messageId: string, newContent: string) => {
+        const messageIndex = newChatMessages.findIndex(m => m.id === messageId);
+        if (messageIndex === -1 || newChatMessages[messageIndex].role !== 'user') return;
+
+        const versions = isTemporaryMode ? null : (await api.updateMessage(messageId, newContent)).message;
+        setNewChatMessages(prev => prev.map(m =>
+            m.id === messageId
+                ? {
+                    ...m,
+                    content: newContent,
+                    ...(versions ? { currentVersion: versions.currentVersion, totalVersions: versions.totalVersions } : {})
+                }
+                : m
+        ));
+
+        const nextMessage = newChatMessages[messageIndex + 1];
+        if (nextMessage?.role === 'assistant') {
+            await handleRegenerate(nextMessage.id);
+        }
+    }, [newChatMessages, isTemporaryMode, handleRegenerate]);
+
+    // Version switching (and other in-place updates) from ChatView.
+    const handleUpdateMessages = useCallback((messages: Message[]) => {
+        setNewChatMessages(messages);
+    }, []);
 
     // New chat - no conversation selected
     const newChatConversation: Conversation = {
@@ -407,6 +437,8 @@ export default function ChatPage() {
             webSearchEnabled={webSearchEnabled}
             setWebSearchEnabled={setWebSearchEnabled}
             onRegenerate={handleRegenerate}
+            onEditMessage={handleEditMessage}
+            onUpdateMessages={handleUpdateMessages}
             isTemporaryMode={isTemporaryMode}
         />
     );

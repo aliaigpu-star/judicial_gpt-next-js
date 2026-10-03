@@ -6,7 +6,7 @@ import {
     Mic, Globe, Plus, ArrowUp, ArrowDown,
     FileText, Image as ImageIcon, X, StopCircle, Loader2,
     Copy, Edit3, ThumbsUp, ThumbsDown, RefreshCw, ChevronLeft, ChevronRight, Check, Upload, Clock, Share2,
-    Phone, ShieldAlert, CheckCircle2, ChevronDown, ChevronUp, ExternalLink, AlertTriangle, Paperclip, Square
+    Phone, ShieldAlert, CheckCircle2, ChevronDown, ChevronUp, ExternalLink, AlertTriangle, Paperclip, Square, AudioLines
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -367,10 +367,12 @@ export default function ChatView({
     // Save edited message
     const handleSaveEdit = async (messageId: string) => {
         if (!editContent.trim() || !onEditMessage) return;
+        const content = editContent;
+        // Close the editor right away; the new version and reply appear in place.
+        setEditingMessageId(null);
+        setEditContent('');
         try {
-            await onEditMessage(messageId, editContent);
-            setEditingMessageId(null);
-            setEditContent('');
+            await onEditMessage(messageId, content);
         } catch (err) {
             showNotification('Failed to update message', 'error');
         }
@@ -786,20 +788,6 @@ export default function ChatView({
                         {isRecording ? <StopCircle className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
                     </button>
 
-                    {/* Voice Agent button - opens voice-to-voice conversation */}
-                    <button
-                        type="button"
-                        onClick={() => setShowVoiceAgent(true)}
-                        disabled={isProcessingFile}
-                        className={`p-1.5 rounded-lg transition-colors ${isTemporaryMode 
-                            ? 'text-[#b4b4b4] hover:text-[#ececec] hover:bg-[#4a4a4a]' 
-                            : 'text-[#666666] dark:text-[#b4b4b4] hover:text-[#0d0d0d] dark:hover:text-[#ececec] hover:bg-[#e5e5e5] dark:hover:bg-[#424242]'
-                        }`}
-                        title="Voice Agent - Speak with AI"
-                    >
-                        <Phone className="w-5 h-5" />
-                    </button>
-
                     {/* Send button - ChatGPT style; becomes Stop while a reply is written */}
                     {isProcessingMessage && onStop ? (
                         <button
@@ -813,6 +801,20 @@ export default function ChatView({
                             aria-label="Stop generating"
                         >
                             <Square className="w-5 h-5 p-0.5" fill="currentColor" />
+                        </button>
+                    ) : !input.trim() && !selectedFile && !selectedImage && !isProcessingFile && !isProcessingMessage ? (
+                        // Nothing to send yet: the button opens the Voice Agent.
+                        <button
+                            type="button"
+                            onClick={() => setShowVoiceAgent(true)}
+                            className={`p-2 rounded-full transition-all ${isTemporaryMode
+                                ? 'bg-white text-black hover:opacity-90'
+                                : 'bg-[#00a859] text-white hover:bg-[#009a51]'
+                                }`}
+                            title="Voice Agent - Speak with AI"
+                            aria-label="Open Voice Agent"
+                        >
+                            <AudioLines className="w-5 h-5" />
                         </button>
                     ) : (
                         <button

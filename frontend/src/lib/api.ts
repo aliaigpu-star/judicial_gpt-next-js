@@ -369,11 +369,8 @@ class ApiClient {
 
     async updateMessage(id: string, content: string) {
         return this.request<{
-            id: string;
-            content: string;
-            current_version: number;
-            total_versions: number;
-            [key: string]: any;
+            success: boolean;
+            message: { id: string; content: string; currentVersion: number; totalVersions: number };
         }>(`/api/messages/${id}`, {
             method: 'PUT',
             body: JSON.stringify({ content })

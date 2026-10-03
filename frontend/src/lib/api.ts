@@ -469,7 +469,8 @@ class ApiClient {
         messages: Array<{ role: string; content: string; images?: ChatImage[] }>,
         onChunk: (content: string) => void,
         onComplete: (responseTime: number) => void,
-        options?: { model?: string; temperature?: number }
+        options?: { model?: string; temperature?: number },
+        stopSignal?: AbortSignal
     ) {
         const headers: Record<string, string> = {
             'Content-Type': 'application/json',
@@ -485,6 +486,8 @@ class ApiClient {
         // any spinner tied to it) stuck indefinitely.
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 90000); // 90 second timeout
+        // The user pressed Stop: end the request and keep what arrived so far.
+        stopSignal?.addEventListener('abort', () => controller.abort(), { once: true });
 
         let response: Response;
         try {
@@ -497,6 +500,7 @@ class ApiClient {
             });
         } catch (err: any) {
             clearTimeout(timeoutId);
+            if (stopSignal?.aborted) return '';
             if (err.name === 'AbortError') {
                 throw new Error('Request timed out. Please try again.');
             }
@@ -517,7 +521,14 @@ class ApiClient {
         try {
             if (reader) {
                 while (!streamDone) {
-                    const { done, value } = await reader.read();
+                    let chunkResult: ReadableStreamReadResult<Uint8Array>;
+                    try {
+                        chunkResult = await reader.read();
+                    } catch (err) {
+                        if (stopSignal?.aborted) break;
+                        throw err;
+                    }
+                    const { done, value } = chunkResult;
                     if (done) break;
 
                     const chunk = decoder.decode(value);

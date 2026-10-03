@@ -13,6 +13,7 @@ export function createStreamBuffer(
     let displayedContent = '';
     let timerRef: NodeJS.Timeout | null = null;
     let resolveComplete: (() => void) | null = null;
+    let stopped = false;
 
     // Helper to immediately flush the buffer when the tab is hidden
     const handleVisibilityChange = () => {
@@ -65,6 +66,7 @@ export function createStreamBuffer(
     return {
         /** Call this when a new chunk arrives from the server */
         push(content: string) {
+            if (stopped) return;
             targetContent = content;
             
             // If the tab is hidden, bypass typing queue and update instantly
@@ -93,6 +95,24 @@ export function createStreamBuffer(
         /** Get the full content (for saving to database) */
         getFullContent(): string {
             return targetContent;
+        },
+
+        /**
+         * Stops typing immediately: what is on screen stays, later chunks are
+         * ignored, and waitForComplete() resolves. Returns the shown text.
+         */
+        stop(): string {
+            stopped = true;
+            if (timerRef) {
+                clearTimeout(timerRef);
+                timerRef = null;
+            }
+            targetContent = displayedContent;
+            if (resolveComplete) {
+                resolveComplete();
+                resolveComplete = null;
+            }
+            return displayedContent;
         },
 
         /** Clean up timer and event listeners */

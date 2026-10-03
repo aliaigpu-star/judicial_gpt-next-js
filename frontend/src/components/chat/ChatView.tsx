@@ -6,7 +6,7 @@ import {
     Mic, Globe, Plus, ArrowUp, ArrowDown,
     FileText, Image as ImageIcon, X, StopCircle, Loader2,
     Copy, Edit3, ThumbsUp, ThumbsDown, RefreshCw, ChevronLeft, ChevronRight, Check, Upload, Clock, Share2,
-    Phone, ShieldAlert, CheckCircle2, ChevronDown, ChevronUp, ExternalLink, AlertTriangle, Paperclip
+    Phone, ShieldAlert, CheckCircle2, ChevronDown, ChevronUp, ExternalLink, AlertTriangle, Paperclip, Square
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -57,6 +57,8 @@ interface Conversation {
 interface ChatViewProps {
     conversation: Conversation | null;
     onSend: (content: string, displayContent?: string, webEnabled?: boolean, images?: ChatImage[]) => Promise<void>;
+    /** Stops the reply that is currently being written. */
+    onStop?: () => void;
     user: any;
     isProcessingMessage: boolean;
     isWebSearchMode: boolean;
@@ -164,6 +166,7 @@ const getSourceStatusBadgeClass = (status: string) => {
 export default function ChatView({
     conversation,
     onSend,
+    onStop,
     user,
     isProcessingMessage,
     isWebSearchMode,
@@ -701,32 +704,35 @@ export default function ChatView({
                                     transition={{ duration: 0.1 }}
                                     className="absolute bottom-full left-0 mb-2 z-50"
                                 >
-                                    <div className="bg-white dark:bg-[#2f2f2f] rounded-xl shadow-lg border border-[#e5e5e5] dark:border-[#424242] py-1 min-w-[180px]">
+                                    <div className="bg-white dark:bg-[#2f2f2f] rounded-2xl shadow-xl border border-[#e5e5e5] dark:border-[#424242] p-1.5 w-56">
                                         <button
                                             type="button"
                                             onClick={() => {
                                                 fileInputRef.current?.click();
                                                 setShowAttachMenu(false);
                                             }}
-                                            className="w-full px-3 py-2.5 text-left text-sm hover:bg-[#f4f4f4] dark:hover:bg-[#424242] flex items-center gap-3 text-[#0d0d0d] dark:text-[#ececec]"
+                                            className="w-full px-2.5 py-2 rounded-xl text-left text-sm hover:bg-[#f4f4f4] dark:hover:bg-[#424242] flex items-center gap-3 text-[#0d0d0d] dark:text-[#ececec] transition-colors"
                                         >
-                                            <Paperclip className="w-4 h-4 text-[#666666] dark:text-[#b4b4b4]" />
-                                            <span className="flex flex-col">
-                                                Upload file or image
-                                                <span className="text-xs text-[#999999]">PDF, Word, TXT or image</span>
+                                            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#00a859]/10 text-[#00a859]">
+                                                <Paperclip className="w-4 h-4" />
                                             </span>
+                                            Add photos & files
                                         </button>
-                                        <div className="my-1 border-t border-[#e5e5e5] dark:border-[#424242]" />
                                         <button
                                             type="button"
                                             onClick={() => {
                                                 setWebSearchEnabled(!webSearchEnabled);
                                                 setShowAttachMenu(false);
                                             }}
-                                            className="w-full px-3 py-2.5 text-left text-sm hover:bg-[#f4f4f4] dark:hover:bg-[#424242] flex items-center gap-3 text-[#0d0d0d] dark:text-[#ececec]"
+                                            className="w-full px-2.5 py-2 rounded-xl text-left text-sm hover:bg-[#f4f4f4] dark:hover:bg-[#424242] flex items-center gap-3 text-[#0d0d0d] dark:text-[#ececec] transition-colors"
                                         >
-                                            <Globe className={`w-4 h-4 ${webSearchEnabled ? 'text-[#00a859]' : 'text-[#666666] dark:text-[#b4b4b4]'}`} />
-                                            {webSearchEnabled ? 'Disable search' : 'Search the web'}
+                                            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#3b82f6]/10 text-[#3b82f6]">
+                                                <Globe className="w-4 h-4" />
+                                            </span>
+                                            <span className="flex-1">Search the web</span>
+                                            <span className={`relative h-5 w-9 rounded-full transition-colors ${webSearchEnabled ? 'bg-[#00a859]' : 'bg-[#d9d9d9] dark:bg-[#555555]'}`}>
+                                                <span className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${webSearchEnabled ? 'translate-x-4' : ''}`} />
+                                            </span>
                                         </button>
                                     </div>
                                 </motion.div>
@@ -794,22 +800,37 @@ export default function ChatView({
                         <Phone className="w-5 h-5" />
                     </button>
 
-                    {/* Send button - ChatGPT style */}
-                    <button
-                        type="submit"
-                        disabled={isDisabled}
-                        className={`p-2 rounded-full transition-all ${isDisabled
-                            ? (isTemporaryMode ? 'bg-[#424242] text-[#666666] cursor-not-allowed' : 'bg-[#d9d9d9] dark:bg-[#424242] text-[#999999] dark:text-[#666666] cursor-not-allowed')
-                            : (isTemporaryMode ? 'bg-white text-black hover:opacity-90' : 'bg-[#0d0d0d] dark:bg-[#ececec] text-white dark:text-[#0d0d0d] hover:opacity-80')
-                            }`}
-                        title="Send message"
-                    >
-                        {isProcessingFile ? (
-                            <Loader2 className="w-5 h-5 animate-spin" />
-                        ) : (
-                            <ArrowUp className="w-5 h-5" />
-                        )}
-                    </button>
+                    {/* Send button - ChatGPT style; becomes Stop while a reply is written */}
+                    {isProcessingMessage && onStop ? (
+                        <button
+                            type="button"
+                            onClick={onStop}
+                            className={`p-2 rounded-full transition-all ${isTemporaryMode
+                                ? 'bg-white text-black hover:opacity-90'
+                                : 'bg-[#0d0d0d] dark:bg-[#ececec] text-white dark:text-[#0d0d0d] hover:opacity-80'
+                                }`}
+                            title="Stop generating"
+                            aria-label="Stop generating"
+                        >
+                            <Square className="w-5 h-5 p-0.5" fill="currentColor" />
+                        </button>
+                    ) : (
+                        <button
+                            type="submit"
+                            disabled={isDisabled}
+                            className={`p-2 rounded-full transition-all ${isDisabled
+                                ? (isTemporaryMode ? 'bg-[#424242] text-[#666666] cursor-not-allowed' : 'bg-[#d9d9d9] dark:bg-[#424242] text-[#999999] dark:text-[#666666] cursor-not-allowed')
+                                : (isTemporaryMode ? 'bg-white text-black hover:opacity-90' : 'bg-[#0d0d0d] dark:bg-[#ececec] text-white dark:text-[#0d0d0d] hover:opacity-80')
+                                }`}
+                            title="Send message"
+                        >
+                            {isProcessingFile ? (
+                                <Loader2 className="w-5 h-5 animate-spin" />
+                            ) : (
+                                <ArrowUp className="w-5 h-5" />
+                            )}
+                        </button>
+                    )}
                 </div>
 
                 {/* Disclaimer text - ChatGPT style */}
@@ -1044,8 +1065,8 @@ export default function ChatView({
                                                 </>
                                             )}
 
-                                            {/* Action bar - ChatGPT style */}
-                                            {!editingMessageId && (
+                                            {/* Action bar - ChatGPT style; hidden while the reply is still being written */}
+                                            {!editingMessageId && !(message.role === 'assistant' && (message.isStreaming || (isProcessingMessage && index === messages.length - 1))) && (
                                                 <div className={`flex items-center gap-1 mt-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                                                     {/* Response Time */}
                                                     {message.role === 'assistant' && message.responseTime && (

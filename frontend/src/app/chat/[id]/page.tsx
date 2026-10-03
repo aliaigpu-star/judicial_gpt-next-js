@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { api } from '@/lib/api';
 import type { ChatImage } from '@/lib/chatImage';
@@ -45,6 +45,9 @@ export default function ConversationPage() {
     const [currentConversation, setCurrentConversation] = useState<Conversation | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isProcessingMessage, setIsProcessingMessage] = useState(false);
+    // Set while a reply is streaming; calling it stops that reply.
+    const stopRef = useRef<(() => void) | null>(null);
+    const handleStop = useCallback(() => stopRef.current?.(), []);
     const [isWebSearchMode, setIsWebSearchMode] = useState(false);
     const [webSearchEnabled, setWebSearchEnabled] = useState(false);
     const [notFound, setNotFound] = useState(false);
@@ -190,6 +193,13 @@ export default function ConversationPage() {
                 }, 15);
                 
                 try {
+                    // Stop button: freeze the reply where it is and end the request.
+                    const stopController = new AbortController();
+                    let stoppedText: string | null = null;
+                    stopRef.current = () => {
+                        stoppedText = buffer.stop();
+                        stopController.abort();
+                    };
                     await api.sendChatMessageStream(
                         messagesForAI,
                         (streamedContent) => {
@@ -198,12 +208,16 @@ export default function ConversationPage() {
                         },
                         (time) => {
                             responseTime = time;
-                        }
+                        },
+                        undefined,
+                        stopController.signal
                     );
                     
                     await buffer.waitForComplete();
+                    if (stoppedText !== null) finalContent = stoppedText;
                 } finally {
                     buffer.destroy();
+                    stopRef.current = null;
                 }
             }
 
@@ -274,6 +288,13 @@ export default function ConversationPage() {
             }, 15);
 
             try {
+                // Stop button: freeze the reply where it is and end the request.
+                const stopController = new AbortController();
+                let stoppedText: string | null = null;
+                stopRef.current = () => {
+                    stoppedText = buffer.stop();
+                    stopController.abort();
+                };
                 await api.sendChatMessageStream(
                     messagesForAI,
                     (streamedContent) => {
@@ -282,10 +303,13 @@ export default function ConversationPage() {
                     },
                     (time) => {
                         responseTime = time;
-                    }
+                    },
+                    undefined,
+                    stopController.signal
                 );
 
                 await buffer.waitForComplete();
+                if (stoppedText !== null) newContent = stoppedText;
                 
                 // Mark as finished streaming
                 setCurrentConversation(prev => prev ? {
@@ -298,6 +322,7 @@ export default function ConversationPage() {
                 } : null);
             } finally {
                 buffer.destroy();
+                stopRef.current = null;
             }
 
             const savedMsg = await api.updateMessage(messageId, newContent);
@@ -423,6 +448,7 @@ export default function ConversationPage() {
         <ChatView
             conversation={currentConversation}
             onSend={handleSend}
+            onStop={handleStop}
             user={user}
             isProcessingMessage={isProcessingMessage}
             isWebSearchMode={isWebSearchMode}

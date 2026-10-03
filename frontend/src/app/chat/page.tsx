@@ -38,6 +38,9 @@ export default function ChatPage() {
 
     const [newChatMessages, setNewChatMessages] = useState<Message[]>([]);
     const [isProcessingMessage, setIsProcessingMessage] = useState(false);
+    // Set while a reply is streaming; calling it stops that reply.
+    const stopRef = useRef<(() => void) | null>(null);
+    const handleStop = useCallback(() => stopRef.current?.(), []);
     const [isWebSearchMode, setIsWebSearchMode] = useState(false);
     const [webSearchEnabled, setWebSearchEnabled] = useState(false);
 
@@ -118,6 +121,13 @@ export default function ChatPage() {
                     }, 15); // Set character delay for readable speed
 
                     try {
+                        // Stop button: freeze the reply where it is and end the request.
+                        const stopController = new AbortController();
+                        let stoppedText: string | null = null;
+                        stopRef.current = () => {
+                            stoppedText = buffer.stop();
+                            stopController.abort();
+                        };
                         await api.sendChatMessageStream(
                             messagesForAI,
                             (streamedContent) => {
@@ -126,11 +136,14 @@ export default function ChatPage() {
                             },
                             (time) => {
                                 responseTime = time;
-                            }
+                            },
+                            undefined,
+                            stopController.signal
                         );
 
                         // Wait for the typing animation to reach the end
                         await buffer.waitForComplete();
+                        if (stoppedText !== null) finalContent = stoppedText;
 
                         // Update final state with response time
                         setNewChatMessages(prev => prev.map(m =>
@@ -140,6 +153,7 @@ export default function ChatPage() {
                         ));
                     } finally {
                         buffer.destroy();
+                        stopRef.current = null;
                     }
                 }
 
@@ -234,6 +248,13 @@ export default function ChatPage() {
                 }, 15); // Set character delay for readable speed
                 
                 try {
+                    // Stop button: freeze the reply where it is and end the request.
+                    const stopController = new AbortController();
+                    let stoppedText: string | null = null;
+                    stopRef.current = () => {
+                        stoppedText = buffer.stop();
+                        stopController.abort();
+                    };
                     await api.sendChatMessageStream(
                         messagesForAI,
                         (streamedContent) => {
@@ -242,11 +263,14 @@ export default function ChatPage() {
                         },
                         (time) => {
                             responseTime = time;
-                        }
+                        },
+                        undefined,
+                        stopController.signal
                     );
                     
                     // Wait for the typing animation to reach the end
                     await buffer.waitForComplete();
+                    if (stoppedText !== null) finalContent = stoppedText;
                     
                     // Update final state with response time
                     setNewChatMessages(prev => prev.map(m =>
@@ -256,6 +280,7 @@ export default function ChatPage() {
                     ));
                 } finally {
                     buffer.destroy();
+                    stopRef.current = null;
                 }
             }
 
@@ -314,6 +339,13 @@ export default function ChatPage() {
             }, 15);
 
             try {
+                // Stop button: freeze the reply where it is and end the request.
+                const stopController = new AbortController();
+                let stoppedText: string | null = null;
+                stopRef.current = () => {
+                    stoppedText = buffer.stop();
+                    stopController.abort();
+                };
                 await api.sendChatMessageStream(
                     messagesForAI,
                     (streamedContent) => {
@@ -322,10 +354,13 @@ export default function ChatPage() {
                     },
                     (time) => {
                         responseTime = time;
-                    }
+                    },
+                    undefined,
+                    stopController.signal
                 );
 
                 await buffer.waitForComplete();
+                if (stoppedText !== null) newContent = stoppedText;
 
                 setNewChatMessages(prev => prev.map(m =>
                     m.id === messageId
@@ -334,6 +369,7 @@ export default function ChatPage() {
                 ));
             } finally {
                 buffer.destroy();
+                stopRef.current = null;
             }
 
             if (!isTemporaryMode) {
@@ -364,6 +400,7 @@ export default function ChatPage() {
         <ChatView
             conversation={newChatConversation}
             onSend={handleSend}
+            onStop={handleStop}
             user={user}
             isProcessingMessage={isProcessingMessage}
             isWebSearchMode={isWebSearchMode}

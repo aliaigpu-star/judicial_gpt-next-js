@@ -95,7 +95,6 @@ export default function ChatHeader({
                 ) : (
                     <button className="flex items-center gap-1.5 font-semibold text-[#0d0d0d] dark:text-[#ececec] hover:bg-[#ececec] dark:hover:bg-[#2f2f2f] px-3 py-1.5 rounded-lg transition-colors">
                         <span className="text-lg">JudicialGPT</span>
-                        <ChevronDown className="w-4 h-4 text-[#666666] dark:text-[#b4b4b4]" />
                     </button>
                 )}
             </div>

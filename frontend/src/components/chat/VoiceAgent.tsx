@@ -75,6 +75,7 @@ export default function VoiceAgent({ onClose, onGetAIResponse, isOpen }: VoiceAg
             audioRef.current = null;
         }
         setIsSpeaking(false);
+        if (typeof window !== 'undefined') window.speechSynthesis?.cancel();
         // Abort any pending requests
         if (abortControllerRef.current) {
             abortControllerRef.current.abort();
@@ -83,6 +84,7 @@ export default function VoiceAgent({ onClose, onGetAIResponse, isOpen }: VoiceAg
 
     // Stop audio playback
     const stopSpeaking = () => {
+        if (typeof window !== 'undefined') window.speechSynthesis?.cancel();
         if (audioRef.current) {
             audioRef.current.pause();
             audioRef.current.currentTime = 0;
@@ -92,8 +94,36 @@ export default function VoiceAgent({ onClose, onGetAIResponse, isOpen }: VoiceAg
         setVoiceState({ status: 'idle', message: 'Tap to speak' });
     };
 
+    /** Plain text for speech: no markdown symbols, within the TTS limit. */
+    const toSpeakable = (markdown: string) => {
+        const plain = markdown
+            .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+            .replace(/[*_`#>|]+/g, '')
+            .replace(/^\s*[-+]\s+/gm, '')
+            .replace(/^\s*-{3,}\s*$/gm, '')
+            .replace(/\n{2,}/g, '\n')
+            .trim();
+        return plain.length > 4800 ? plain.slice(0, 4800) : plain;
+    };
+
+    /** Reads text with the browser's built-in voice (used if server TTS fails). */
+    const speakWithBrowser = (text: string) =>
+        new Promise<void>((resolve) => {
+            if (typeof window === 'undefined' || !window.speechSynthesis) return resolve();
+            const utterance = new SpeechSynthesisUtterance(text);
+            const lang = selectedVoice.split('-').slice(0, 2).join('-');
+            utterance.lang = lang;
+            const voice = window.speechSynthesis.getVoices().find(v => v.lang === lang);
+            if (voice) utterance.voice = voice;
+            utterance.onend = () => resolve();
+            utterance.onerror = () => resolve();
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(utterance);
+        });
+
     // Text-to-Speech function
-    const speakText = async (text: string): Promise<void> => {
+    const speakText = async (rawText: string): Promise<void> => {
+        const text = toSpeakable(rawText);
         if (isMuted) {
             setIsSpeaking(false);
             setVoiceState({ status: 'idle', message: 'Tap to speak' });
@@ -134,7 +164,10 @@ export default function VoiceAgent({ onClose, onGetAIResponse, isOpen }: VoiceAg
                 });
             });
         } catch (error) {
-            console.error('TTS Error:', error);
+            // Server voice unavailable (or blocked): read it with the browser's voice.
+            console.error('TTS Error, using browser voice:', error);
+            setVoiceState({ status: 'speaking', message: 'Speaking...' });
+            await speakWithBrowser(text);
             setIsSpeaking(false);
             setVoiceState({ status: 'idle', message: 'Tap to speak' });
         }
@@ -248,12 +281,13 @@ export default function VoiceAgent({ onClose, onGetAIResponse, isOpen }: VoiceAg
             // Step 2: Get AI response directly (without saving to chat)
             let aiResponse: string;
             try {
+                const spokenPrompt = `${userText}\n\n(Answer for a voice conversation: 2-5 short spoken sentences, plain text, no lists, tables or markdown.)`;
                 if (onGetAIResponse) {
-                    aiResponse = await onGetAIResponse(userText);
+                    aiResponse = await onGetAIResponse(spokenPrompt);
                 } else {
                     // Fallback: call API directly - use openai/gpt-oss-120b (Groq supported model)
                     const result = await api.sendChatMessage(
-                        [...conversationHistory.map(m => ({ role: m.role, content: m.text })), { role: 'user', content: userText }],
+                        [...conversationHistory.map(m => ({ role: m.role, content: m.text })), { role: 'user', content: spokenPrompt }],
                         { model: 'openai/gpt-oss-120b' }
                     );
                     aiResponse = result.message?.content || result.message || 'Sorry, I could not understand.';
@@ -297,8 +331,6 @@ export default function VoiceAgent({ onClose, onGetAIResponse, isOpen }: VoiceAg
 
     const status = voiceState.status;
     const busy = status === 'processing';
-    const lastUser = [...conversationHistory].reverse().find(m => m.role === 'user');
-    const lastAssistant = [...conversationHistory].reverse().find(m => m.role === 'assistant');
     const currentVoice = VOICE_OPTIONS.find(v => v.id === selectedVoice) ?? VOICE_OPTIONS[0];
 
     // Orb colours per state (green idle/speaking, red listening, amber thinking).
@@ -447,21 +479,6 @@ export default function VoiceAgent({ onClose, onGetAIResponse, isOpen }: VoiceAg
                                 {statusLabel}
                             </motion.p>
 
-                            {/* Latest exchange */}
-                            {(lastUser || lastAssistant) && (
-                                <div className="mt-5 w-full space-y-2">
-                                    {lastUser && (
-                                        <p className="ml-auto w-fit max-w-[85%] rounded-2xl rounded-br-md bg-[#f4f4f4] dark:bg-[#2f2f2f] px-3.5 py-2 text-sm text-[#0d0d0d] dark:text-[#ececec] line-clamp-2">
-                                            {lastUser.text}
-                                        </p>
-                                    )}
-                                    {lastAssistant && (
-                                        <p className="w-fit max-w-[85%] rounded-2xl rounded-bl-md bg-[#00a859]/10 px-3.5 py-2 text-sm text-[#0d0d0d] dark:text-[#ececec] line-clamp-3">
-                                            {lastAssistant.text}
-                                        </p>
-                                    )}
-                                </div>
-                            )}
                         </div>
 
                         {/* Controls */}

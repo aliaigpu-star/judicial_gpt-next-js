@@ -125,6 +125,8 @@ export default function ChatView({
 }: ChatViewProps) {
     const [input, setInput] = useState('');
     const [isRecording, setIsRecording] = useState(false);
+    // Recorded speech is being converted to text on the server.
+    const [isTranscribing, setIsTranscribing] = useState(false);
     const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -569,9 +571,10 @@ export default function ChatView({
             recorder.ondataavailable = (e) => chunks.push(e.data);
             recorder.onstop = async () => {
                 const audioBlob = new Blob(chunks, { type: 'audio/webm' });
+                stream.getTracks().forEach(track => track.stop());
+                setIsTranscribing(true);
 
                 try {
-                    showNotification('Transcribing audio...', 'success');
                     const result = await api.transcribeAudio(audioBlob);
                     if (result.text) {
                         setInput(result.text);
@@ -583,9 +586,9 @@ export default function ChatView({
                 } catch (error: any) {
                     console.error('Transcription error:', error);
                     showNotification('Transcription failed. Check microphone/server.', 'error');
+                } finally {
+                    setIsTranscribing(false);
                 }
-
-                stream.getTracks().forEach(track => track.stop());
             };
 
             recorder.start();
@@ -651,6 +654,26 @@ export default function ChatView({
                                     <X className="w-4 h-4 text-[#666666]" />
                                 </button>
                             </div>
+                        )}
+                    </div>
+                )}
+
+                {/* Voice input status */}
+                {(isRecording || isTranscribing) && (
+                    <div className="mb-2 flex items-center gap-2 px-3 text-sm">
+                        {isTranscribing ? (
+                            <>
+                                <Loader2 className="w-4 h-4 animate-spin text-[#00a859]" />
+                                <span className="text-[#666666] dark:text-[#b4b4b4]">Converting your voice to text…</span>
+                            </>
+                        ) : (
+                            <>
+                                <span className="relative flex h-2.5 w-2.5">
+                                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
+                                    <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500" />
+                                </span>
+                                <span className="text-red-500">Listening… tap stop when you finish speaking</span>
+                            </>
                         )}
                     </div>
                 )}
@@ -739,6 +762,8 @@ export default function ChatView({
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={handleKeyDown}
                         placeholder={
+                            isTranscribing ? 'Converting your voice to text…' :
+                            isRecording ? 'Listening…' :
                             isProcessingFile ? 'Processing...' :
                                 webSearchEnabled ? 'Search the web...' :
                                     'Message JudicialGPT'
@@ -755,14 +780,16 @@ export default function ChatView({
                     <button
                         type="button"
                         onClick={isRecording ? stopRecording : startRecording}
-                        disabled={isProcessingFile}
+                        disabled={isProcessingFile || isTranscribing}
                         className={`p-1.5 rounded-lg transition-colors ${isRecording
                             ? 'text-red-500 bg-red-100 dark:bg-red-900/30 animate-pulse'
                             : (isTemporaryMode ? 'text-[#b4b4b4] hover:text-[#ececec] hover:bg-[#4a4a4a]' : 'text-[#666666] dark:text-[#b4b4b4] hover:text-[#0d0d0d] dark:hover:text-[#ececec] hover:bg-[#e5e5e5] dark:hover:bg-[#424242]')
                             }`}
-                        title={isRecording ? "Stop recording" : "Voice input"}
+                        title={isTranscribing ? "Converting your voice to text…" : isRecording ? "Stop recording" : "Voice input"}
                     >
-                        {isRecording ? <StopCircle className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+                        {isTranscribing
+                            ? <Loader2 className="w-5 h-5 animate-spin text-[#00a859]" />
+                            : isRecording ? <StopCircle className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
                     </button>
 
                     {/* Send button - ChatGPT style; becomes Stop while a reply is written */}

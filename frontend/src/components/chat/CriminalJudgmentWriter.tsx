@@ -323,24 +323,6 @@ export default function CriminalJudgmentWriter() {
             </div>
 
             <AnimatePresence>
-                {isProcessing && progress && (
-                    <motion.div
-                        initial={{ opacity: 0, y: -5 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0 }}
-                        className="flex items-center gap-2 mt-3 px-2"
-                    >
-                        <div className="flex gap-1">
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#dc2626] animate-bounce" style={{ animationDelay: '0ms' }} />
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#dc2626] animate-bounce" style={{ animationDelay: '150ms' }} />
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#dc2626] animate-bounce" style={{ animationDelay: '300ms' }} />
-                        </div>
-                        <span className="text-sm text-[#dc2626]">{progress}</span>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
-            <AnimatePresence>
                 {error && (
                     <motion.div
                         initial={{ opacity: 0, y: -5 }}

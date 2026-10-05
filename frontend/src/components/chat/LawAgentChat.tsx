@@ -4,13 +4,28 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Loader2, BookOpen, CheckCircle2, XCircle, Clock,
-    Copy, Check, ArrowUp, Scale, Gavel, Users
+    Copy, Check, ArrowUp, Scale, Gavel, Users, ThumbsUp, ThumbsDown, Share2
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { api } from '@/lib/api';
 import { copyCleanText } from '@/lib/textUtils';
 import { useChatLayout } from '@/app/chat/layout';
+import ShareModal from '@/components/modals/ShareModal';
+
+/**
+ * Removes the closing "Note: …" disclaimer the law agents append to answers
+ * (and the divider before it), so only the answer itself is shown and saved.
+ */
+const stripTrailingNote = (answer: string) => {
+    const lines = answer.trimEnd().split('\n');
+    const noteStart = lines.findLastIndex(line => /^[\s>*_]*(\*\*)?note\s*:/i.test(line));
+    // Only a note at the very end (its own final paragraph) is removed.
+    if (noteStart < 0 || lines.slice(noteStart + 1).some(line => line.trim() === '')) return answer;
+    let cut = noteStart;
+    while (cut > 0 && (lines[cut - 1].trim() === '' || /^\s*([-*_─]\s*){3,}$/.test(lines[cut - 1]))) cut--;
+    return cut > 0 ? lines.slice(0, cut).join('\n') : answer;
+};
 
 interface SourceDoc {
     file?: string;
@@ -20,6 +35,8 @@ interface SourceDoc {
 
 interface HistoryItem {
     id: string;
+    /** Id of the saved assistant message, once stored in the conversation. */
+    messageId?: string;
     query: string;
     answer: string;
     sources: SourceDoc[];
@@ -62,6 +79,8 @@ export default function LawAgentChat({
     const [sessionId, setSessionId] = useState<string | null>(null);
     const [dbConversationId, setDbConversationId] = useState<string | null>(null);
     const [progress, setProgress] = useState('');
+    const [feedback, setFeedback] = useState<Record<string, 'like' | 'dislike' | null>>({});
+    const [showShare, setShowShare] = useState(false);
 
     const { setConversations } = useChatLayout();
     const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -134,7 +153,7 @@ export default function LawAgentChat({
             const item: HistoryItem = {
                 id: `law_${Date.now()}`,
                 query: searchQuery,
-                answer: data.answer || '',
+                answer: stripTrailingNote(data.answer || ''),
                 sources: data.sources || [],
                 timestamp: new Date(),
             };
@@ -150,7 +169,8 @@ export default function LawAgentChat({
                     setConversations(prev => [{ ...conversation, messages: [] }, ...prev]);
                 }
                 await api.createMessage(convId!, 'user', searchQuery);
-                await api.createMessage(convId!, 'assistant', data.answer || '');
+                const { message: saved } = await api.createMessage(convId!, 'assistant', item.answer);
+                setHistory(prev => prev.map(h => (h.id === item.id ? { ...h, messageId: saved.id } : h)));
             } catch {
                 // Non-blocking if backend conversation save fails
             }
@@ -163,6 +183,17 @@ export default function LawAgentChat({
         } finally {
             setIsProcessing(false);
             setProgress('');
+        }
+    };
+
+    const handleFeedback = async (item: HistoryItem, rating: 'like' | 'dislike') => {
+        if (!item.messageId) return;
+        const next = feedback[item.id] === rating ? null : rating;
+        try {
+            await api.setMessageFeedback(item.messageId, next);
+            setFeedback(prev => ({ ...prev, [item.id]: next }));
+        } catch {
+            setError('Failed to save feedback');
         }
     };
 
@@ -215,7 +246,7 @@ export default function LawAgentChat({
             </div>
 
             <AnimatePresence>
-                {(error || progress) && (
+                {error && (
                     <motion.div
                         initial={{ opacity: 0, y: 6 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -347,47 +378,52 @@ export default function LawAgentChat({
                                                     </span>
                                                 </div>
 
-                                                <div className="message-content text-[#0d0d0d] dark:text-[#ececec] bg-[#f9f9f9] dark:bg-[#171717] p-5 rounded-2xl border border-[#e5e5e5] dark:border-[#2f2f2f]">
+                                                <div className="message-content text-[#0d0d0d] dark:text-[#ececec]">
                                                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
                                                         {item.answer}
                                                     </ReactMarkdown>
                                                 </div>
 
-                                                {item.sources?.length > 0 && (
-                                                    <div className="mt-3 space-y-2">
-                                                        <p className="text-xs font-medium text-[#666666] dark:text-[#b4b4b4]">Sources</p>
-                                                        {item.sources.slice(0, 4).map((src, i) => (
-                                                            <div
-                                                                key={i}
-                                                                className="text-xs px-3 py-2 rounded-lg bg-white dark:bg-[#2f2f2f] border border-[#e5e5e5] dark:border-[#424242]"
+                                                <div className="flex items-center gap-1 mt-3">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleCopy(item.id, item.answer)}
+                                                        className="p-1.5 hover:bg-[#ececec] dark:hover:bg-[#2f2f2f] active:scale-95 rounded-lg transition-all text-[#666666] dark:text-[#b4b4b4]"
+                                                        title="Copy"
+                                                    >
+                                                        {copiedId === item.id ? <Check className="w-4 h-4 text-[#00a859]" /> : <Copy className="w-4 h-4" />}
+                                                    </button>
+                                                    {item.messageId && (
+                                                        <>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => handleFeedback(item, 'like')}
+                                                                className="p-1.5 hover:bg-[#ececec] dark:hover:bg-[#2f2f2f] active:scale-95 rounded-lg transition-all text-[#666666] dark:text-[#b4b4b4]"
+                                                                title="Good response"
                                                             >
-                                                                <span className="font-medium text-[#0d0d0d] dark:text-[#ececec]">
-                                                                    {src.file || 'Statute'}
-                                                                </span>
-                                                                {src.page != null && (
-                                                                    <span className="text-[#999999]"> · p.{src.page}</span>
-                                                                )}
-                                                                {src.snippet && (
-                                                                    <p className="mt-1 text-[#666666] dark:text-[#b4b4b4] line-clamp-2">
-                                                                        {src.snippet}
-                                                                    </p>
-                                                                )}
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                )}
-
-                                                <button
-                                                    onClick={() => handleCopy(item.id, item.answer)}
-                                                    className="mt-3 inline-flex items-center gap-1.5 text-xs text-[#666666] dark:text-[#b4b4b4] hover:text-[#0d0d0d] dark:hover:text-[#ececec]"
-                                                >
-                                                    {copiedId === item.id ? (
-                                                        <Check className="w-3.5 h-3.5 text-[#00a859]" />
-                                                    ) : (
-                                                        <Copy className="w-3.5 h-3.5" />
+                                                                <ThumbsUp className={`w-4 h-4 ${feedback[item.id] === 'like' ? 'fill-current text-[#00a859]' : ''}`} />
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => handleFeedback(item, 'dislike')}
+                                                                className="p-1.5 hover:bg-[#ececec] dark:hover:bg-[#2f2f2f] active:scale-95 rounded-lg transition-all text-[#666666] dark:text-[#b4b4b4]"
+                                                                title="Bad response"
+                                                            >
+                                                                <ThumbsDown className={`w-4 h-4 ${feedback[item.id] === 'dislike' ? 'fill-current' : ''}`} />
+                                                            </button>
+                                                        </>
                                                     )}
-                                                    {copiedId === item.id ? 'Copied' : 'Copy'}
-                                                </button>
+                                                    {dbConversationId && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setShowShare(true)}
+                                                            className="p-1.5 hover:bg-[#ececec] dark:hover:bg-[#2f2f2f] active:scale-95 rounded-lg transition-all text-[#666666] dark:text-[#b4b4b4]"
+                                                            title="Share conversation"
+                                                        >
+                                                            <Share2 className="w-4 h-4" />
+                                                        </button>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
                                     </motion.div>
@@ -407,6 +443,15 @@ export default function LawAgentChat({
                         <div className="max-w-3xl mx-auto">{inputForm}</div>
                     </div>
                 </>
+            )}
+
+            {dbConversationId && (
+                <ShareModal
+                    isOpen={showShare}
+                    onClose={() => setShowShare(false)}
+                    conversationId={dbConversationId}
+                    conversationTitle={history[0] ? `${AGENT_META[agentType].name} Law: ${history[0].query.slice(0, 40)}` : title}
+                />
             )}
         </div>
     );

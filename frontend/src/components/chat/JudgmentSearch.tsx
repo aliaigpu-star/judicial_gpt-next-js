@@ -366,25 +366,6 @@ export default function JudgmentSearch() {
                 </button>
             </div>
 
-            {/* Search progress */}
-            <AnimatePresence>
-                {isSearching && searchProgress && (
-                    <motion.div
-                        initial={{ opacity: 0, y: -5 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0 }}
-                        className="flex items-center gap-2 mt-3 px-2"
-                    >
-                        <div className="flex gap-1">
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#00a859] animate-bounce" style={{ animationDelay: '0ms' }} />
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#00a859] animate-bounce" style={{ animationDelay: '150ms' }} />
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#00a859] animate-bounce" style={{ animationDelay: '300ms' }} />
-                        </div>
-                        <span className="text-sm text-[#00a859]">{searchProgress}</span>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
             {/* Error display */}
             <AnimatePresence>
                 {error && (

@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Loader2, BookOpen, CheckCircle2, XCircle, Clock,
-    Copy, Check, ArrowUp, Scale, Gavel, Users, ThumbsUp, ThumbsDown, Share2
+    Copy, Check, ArrowUp, Scale, Gavel, Users, ThumbsUp, ThumbsDown, Share2, RefreshCw
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -12,6 +12,7 @@ import { api } from '@/lib/api';
 import { copyCleanText } from '@/lib/textUtils';
 import { useChatLayout } from '@/app/chat/layout';
 import ShareModal from '@/components/modals/ShareModal';
+import TypedReveal from '@/components/ui/TypedReveal';
 
 /**
  * Removes the closing "Note: …" disclaimer the law agents append to answers
@@ -81,6 +82,8 @@ export default function LawAgentChat({
     const [progress, setProgress] = useState('');
     const [feedback, setFeedback] = useState<Record<string, 'like' | 'dislike' | null>>({});
     const [showShare, setShowShare] = useState(false);
+    // The answer currently being typed out on screen.
+    const [typingId, setTypingId] = useState<string | null>(null);
 
     const { setConversations } = useChatLayout();
     const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -99,11 +102,11 @@ export default function LawAgentChat({
         }
     }, [history]);
 
-    const handleAsk = async () => {
-        if (!query.trim() || isProcessing) return;
+    const handleAsk = async (regenerate?: HistoryItem) => {
+        if (isProcessing || typingId || (!regenerate && !query.trim())) return;
 
-        const searchQuery = query.trim();
-        setQuery('');
+        const searchQuery = regenerate ? regenerate.query : query.trim();
+        if (!regenerate) setQuery('');
         setIsProcessing(true);
         setError(null);
         setProgress('Consulting legal knowledge base...');
@@ -157,7 +160,22 @@ export default function LawAgentChat({
                 sources: data.sources || [],
                 timestamp: new Date(),
             };
+            // A regenerated answer replaces the old one and is saved as a new version.
+            if (regenerate) {
+                setHistory(prev => prev.map(h => (h.id === regenerate.id ? { ...h, answer: item.answer, sources: item.sources, timestamp: item.timestamp } : h)));
+                setTypingId(regenerate.id);
+                if (regenerate.messageId) {
+                    try {
+                        await api.updateMessage(regenerate.messageId, item.answer);
+                    } catch {
+                        // Non-blocking if saving the new version fails
+                    }
+                }
+                return;
+            }
+
             setHistory(prev => [...prev, item]);
+            setTypingId(item.id);
 
             try {
                 let convId = dbConversationId;
@@ -379,11 +397,16 @@ export default function LawAgentChat({
                                                 </div>
 
                                                 <div className="message-content text-[#0d0d0d] dark:text-[#ececec]">
-                                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                                        {item.answer}
-                                                    </ReactMarkdown>
+                                                    <TypedReveal text={item.answer} animate={typingId === item.id} onDone={() => setTypingId(null)}>
+                                                        {(shown) => (
+                                                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                                                {shown}
+                                                            </ReactMarkdown>
+                                                        )}
+                                                    </TypedReveal>
                                                 </div>
 
+                                                {typingId !== item.id && (
                                                 <div className="flex items-center gap-1 mt-3">
                                                     <button
                                                         type="button"
@@ -413,6 +436,15 @@ export default function LawAgentChat({
                                                             </button>
                                                         </>
                                                     )}
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleAsk(item)}
+                                                        disabled={isProcessing}
+                                                        className="p-1.5 hover:bg-[#ececec] dark:hover:bg-[#2f2f2f] active:scale-95 rounded-lg transition-all text-[#666666] dark:text-[#b4b4b4] disabled:opacity-40"
+                                                        title="Regenerate"
+                                                    >
+                                                        <RefreshCw className="w-4 h-4" />
+                                                    </button>
                                                     {dbConversationId && (
                                                         <button
                                                             type="button"
@@ -424,6 +456,7 @@ export default function LawAgentChat({
                                                         </button>
                                                     )}
                                                 </div>
+                                                )}
                                             </div>
                                         </div>
                                     </motion.div>

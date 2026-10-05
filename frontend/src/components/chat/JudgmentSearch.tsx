@@ -9,6 +9,7 @@ import {
     Edit3, ThumbsUp, ThumbsDown, RefreshCw, Share2
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import TypedReveal from '@/components/ui/TypedReveal';
 import remarkGfm from 'remark-gfm';
 import { api } from '@/lib/api';
 import { copyCleanText } from '@/lib/textUtils';
@@ -46,6 +47,8 @@ const JUDGMENT_API_URL = process.env.NEXT_PUBLIC_JUDGMENT_AGENT_URL || 'https://
 export default function JudgmentSearch() {
     const [query, setQuery] = useState('');
     const [isSearching, setIsSearching] = useState(false);
+    // The explanation currently being typed out on screen.
+    const [typingId, setTypingId] = useState<string | null>(null);
     const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [expandedSources, setExpandedSources] = useState<string | null>(null);
@@ -147,6 +150,7 @@ export default function JudgmentSearch() {
             };
 
             setSearchHistory(prev => [...prev, historyItem]);
+            setTypingId(historyItem.id);
 
             // SAVE TO DATABASE
             try {
@@ -231,6 +235,7 @@ export default function JudgmentSearch() {
             const result = await runSearchQuery(item.query);
 
             setSearchHistory(prev => prev.map(h => h.id === item.id ? { ...h, result } : h));
+            setTypingId(item.id);
 
             if (item.assistantMessageId) {
                 await api.updateMessage(item.assistantMessageId, result.explanation);
@@ -270,6 +275,7 @@ export default function JudgmentSearch() {
             setSearchHistory(prev => prev.map(h =>
                 h.id === item.id ? { ...h, query: newQuery, result } : h
             ));
+            setTypingId(item.id);
 
             if (item.userMessageId) {
                 await api.updateMessage(item.userMessageId, newQuery);
@@ -562,13 +568,17 @@ export default function JudgmentSearch() {
 
                                                 {/* Explanation content */}
                                                 <div className="message-content text-[#0d0d0d] dark:text-[#ececec]">
-                                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                                        {item.result.explanation}
-                                                    </ReactMarkdown>
+                                                    <TypedReveal text={item.result.explanation} animate={typingId === item.id} onDone={() => setTypingId(null)}>
+                                                        {(shown) => (
+                                                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                                                {shown}
+                                                            </ReactMarkdown>
+                                                        )}
+                                                    </TypedReveal>
                                                 </div>
 
-                                                {/* Action buttons */}
-                                                <div className="flex items-center gap-1 mt-3">
+                                                {/* Action buttons (once the explanation is fully shown) */}
+                                                <div className={`flex items-center gap-1 mt-3 ${typingId === item.id ? 'hidden' : ''}`}>
                                                     <button
                                                         onClick={() => handleCopy(item.id, item.result.explanation)}
                                                         className="p-1.5 rounded-lg hover:bg-[#f4f4f4] dark:hover:bg-[#2f2f2f] transition-colors"

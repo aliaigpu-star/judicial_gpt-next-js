@@ -8,6 +8,7 @@ import {
     FileUp, X, MessageSquare, Send, BookOpen, Search
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import TypedReveal from '@/components/ui/TypedReveal';
 import remarkGfm from 'remark-gfm';
 import { api } from '@/lib/api';
 import { copyCleanText } from '@/lib/textUtils';
@@ -30,6 +31,9 @@ export default function DocumentSummarizer() {
     const [dbConversationId, setDbConversationId] = useState<string | null>(null);
     const [filename, setFilename] = useState<string>('');
     const [summary, setSummary] = useState<string>('');
+    // Typing out the summary / the latest answer, like the general chat.
+    const [summaryTyping, setSummaryTyping] = useState(false);
+    const [typingQaId, setTypingQaId] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [progress, setProgress] = useState<string>('');
     const [copied, setCopied] = useState(false);
@@ -113,6 +117,7 @@ export default function DocumentSummarizer() {
                     setStatus('done');
                     const fullSummary = data.summary || '';
                     setSummary(fullSummary);
+                    setSummaryTyping(true);
                     setProgress('');
 
                     // Save summary to database as assistant message
@@ -253,12 +258,14 @@ export default function DocumentSummarizer() {
                 console.error('Failed to save answer to DB:', dbErr);
             }
 
+            const qaId = `qa_${Date.now()}`;
             setQaItems(prev => [...prev, {
-                id: `qa_${Date.now()}`,
+                id: qaId,
                 question,
                 answer: data.answer,
                 timestamp: new Date(),
             }]);
+            setTypingQaId(qaId);
         } catch (err: any) {
             setQaItems(prev => [...prev, {
                 id: `qa_${Date.now()}`,
@@ -461,9 +468,13 @@ export default function DocumentSummarizer() {
                             </div>
 
                             <div className="message-content text-[#0d0d0d] dark:text-[#ececec]">
-                                <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                    {summary}
-                                </ReactMarkdown>
+                                <TypedReveal text={summary} animate={summaryTyping} onDone={() => setSummaryTyping(false)}>
+                                    {(shown) => (
+                                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                            {shown}
+                                        </ReactMarkdown>
+                                    )}
+                                </TypedReveal>
                             </div>
 
                             <div className="flex items-center gap-1 mt-4 pt-3 border-t border-[#e5e5e5] dark:border-[#2f2f2f]">
@@ -553,9 +564,13 @@ export default function DocumentSummarizer() {
                                                 </div>
                                             </div>
                                             <div className="flex-1 min-w-0 message-content text-[#0d0d0d] dark:text-[#ececec]">
-                                                <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                                    {item.answer}
-                                                </ReactMarkdown>
+                                                <TypedReveal text={item.answer} animate={typingQaId === item.id} onDone={() => setTypingQaId(null)}>
+                                                    {(shown) => (
+                                                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                                            {shown}
+                                                        </ReactMarkdown>
+                                                    )}
+                                                </TypedReveal>
                                             </div>
                                         </div>
                                     </div>

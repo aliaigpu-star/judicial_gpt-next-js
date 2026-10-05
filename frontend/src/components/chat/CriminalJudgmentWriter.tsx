@@ -5,11 +5,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
     Search, Loader2, FileText, ExternalLink, CheckCircle2,
     XCircle, AlertTriangle, ShieldAlert, BookOpen, Clock,
-    ChevronDown, ChevronUp, Copy, Check, ArrowUp, Gavel, Download
+    ChevronDown, ChevronUp, Copy, Check, ArrowUp, Gavel, Download, ThumbsUp, ThumbsDown, RefreshCw, Share2
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { copyCleanText } from '@/lib/textUtils';
 import { useChatLayout } from '@/app/chat/layout';
+import ShareModal from '@/components/modals/ShareModal';
 
 interface SourceResult {
     source_name: string;
@@ -35,6 +36,8 @@ interface WriterResult {
 
 interface HistoryItem {
     id: string;
+    /** Id of the saved assistant message, once stored in the conversation. */
+    messageId?: string;
     query: string;
     result: WriterResult;
     timestamp: Date;
@@ -106,6 +109,10 @@ export default function CriminalJudgmentWriter() {
     const [history, setHistory] = useState<HistoryItem[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [copiedId, setCopiedId] = useState<string | null>(null);
+    const [feedback, setFeedback] = useState<Record<string, 'like' | 'dislike' | null>>({});
+    const [showShare, setShowShare] = useState(false);
+    // The draft being regenerated (hidden while its new version streams in).
+    const [regeneratingId, setRegeneratingId] = useState<string | null>(null);
     const [currentStreamingMessage, setCurrentStreamingMessage] = useState<{ id: string, query: string, response: string, sources: string[] } | null>(null);
     const [progress, setProgress] = useState('');
     const [dbConversationId, setDbConversationId] = useState<string | null>(null);
@@ -131,11 +138,12 @@ export default function CriminalJudgmentWriter() {
         }
     }, [history, currentStreamingMessage]);
 
-    const handleSearch = async () => {
-        if (!query.trim() || isProcessing) return;
+    const handleSearch = async (regenerate?: HistoryItem) => {
+        if (isProcessing || (!regenerate && !query.trim())) return;
 
-        const searchQuery = query.trim();
-        setQuery('');
+        const searchQuery = regenerate ? regenerate.query : query.trim();
+        if (!regenerate) setQuery('');
+        setRegeneratingId(regenerate?.id ?? null);
         setIsProcessing(true);
         setError(null);
         setProgress('Connecting to Criminal Judgment Writing Agent...');
@@ -223,8 +231,22 @@ export default function CriminalJudgmentWriter() {
                 timestamp: new Date(),
             };
 
-            setHistory(prev => [...prev, historyItem]);
+            setHistory(prev => regenerate
+                ? prev.map(h => (h.id === regenerate.id ? { ...h, result: historyItem.result } : h))
+                : [...prev, historyItem]);
             setCurrentStreamingMessage(null);
+
+            // A regenerated draft is saved as a new version of the same message.
+            if (regenerate) {
+                if (regenerate.messageId) {
+                    try {
+                        await api.updateMessage(regenerate.messageId, accumulatedResponse);
+                    } catch (saveErr) {
+                        console.error('Failed to save regenerated judgment:', saveErr);
+                    }
+                }
+                return;
+            }
 
             // SAVE TO DATABASE
             try {
@@ -246,7 +268,8 @@ export default function CriminalJudgmentWriter() {
                 await api.createMessage(convId!, 'user', searchQuery);
                 
                 // Create assistant message
-                await api.createMessage(convId!, 'assistant', accumulatedResponse);
+                const { message: saved } = await api.createMessage(convId!, 'assistant', accumulatedResponse);
+                setHistory(prev => prev.map(h => (h.id === historyItem.id ? { ...h, messageId: saved.id } : h)));
             } catch (saveErr) {
                 console.error('Failed to save civil judgment to DB:', saveErr);
             }
@@ -262,6 +285,18 @@ export default function CriminalJudgmentWriter() {
         } finally {
             setIsProcessing(false);
             setProgress('');
+            setRegeneratingId(null);
+        }
+    };
+
+    const handleFeedback = async (item: HistoryItem, rating: 'like' | 'dislike') => {
+        if (!item.messageId) return;
+        const next = feedback[item.id] === rating ? null : rating;
+        try {
+            await api.setMessageFeedback(item.messageId, next);
+            setFeedback(prev => ({ ...prev, [item.id]: next }));
+        } catch {
+            setError('Failed to save feedback');
         }
     };
 
@@ -404,7 +439,7 @@ export default function CriminalJudgmentWriter() {
                     >
                         <div className="max-w-4xl mx-auto py-6 px-4">
                             <AnimatePresence initial={false}>
-                                {history.map((item) => (
+                                {history.filter(h => h.id !== regeneratingId).map((item) => (
                                     <motion.div
                                         key={item.id}
                                         initial={{ opacity: 0, y: 15 }}
@@ -443,7 +478,7 @@ export default function CriminalJudgmentWriter() {
                                                     </span>
                                                 </div>
 
-                                                <div className="message-content font-serif text-[#0d0d0d] dark:text-[#ececec] bg-[#f9f9f9] dark:bg-[#171717] p-5 rounded-2xl border border-[#e5e5e5] dark:border-[#2f2f2f]">
+                                                <div className="message-content font-serif text-[#0d0d0d] dark:text-[#ececec]">
                                                     {renderJudgmentText(item.result.response)}
                                                 </div>
 
@@ -459,6 +494,41 @@ export default function CriminalJudgmentWriter() {
                                                             <Copy className="w-4 h-4 text-[#666666] dark:text-[#b4b4b4]" />
                                                         )}
                                                     </button>
+                                                    {item.messageId && (
+                                                        <>
+                                                            <button
+                                                                onClick={() => handleFeedback(item, 'like')}
+                                                                className="p-1.5 rounded-lg hover:bg-[#f4f4f4] dark:hover:bg-[#2f2f2f] transition-colors"
+                                                                title="Good response"
+                                                            >
+                                                                <ThumbsUp className={`w-4 h-4 ${feedback[item.id] === 'like' ? 'fill-current text-[#00a859]' : 'text-[#666666] dark:text-[#b4b4b4]'}`} />
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleFeedback(item, 'dislike')}
+                                                                className="p-1.5 rounded-lg hover:bg-[#f4f4f4] dark:hover:bg-[#2f2f2f] transition-colors"
+                                                                title="Bad response"
+                                                            >
+                                                                <ThumbsDown className={`w-4 h-4 ${feedback[item.id] === 'dislike' ? 'fill-current text-red-500' : 'text-[#666666] dark:text-[#b4b4b4]'}`} />
+                                                            </button>
+                                                        </>
+                                                    )}
+                                                    <button
+                                                        onClick={() => handleSearch(item)}
+                                                        disabled={isProcessing}
+                                                        className="p-1.5 rounded-lg hover:bg-[#f4f4f4] dark:hover:bg-[#2f2f2f] transition-colors disabled:opacity-40"
+                                                        title="Regenerate"
+                                                    >
+                                                        <RefreshCw className="w-4 h-4 text-[#666666] dark:text-[#b4b4b4]" />
+                                                    </button>
+                                                    {dbConversationId && (
+                                                        <button
+                                                            onClick={() => setShowShare(true)}
+                                                            className="p-1.5 rounded-lg hover:bg-[#f4f4f4] dark:hover:bg-[#2f2f2f] transition-colors"
+                                                            title="Share conversation"
+                                                        >
+                                                            <Share2 className="w-4 h-4 text-[#666666] dark:text-[#b4b4b4]" />
+                                                        </button>
+                                                    )}
 
                                                     {item.result.document && (
                                                         <a
@@ -529,7 +599,7 @@ export default function CriminalJudgmentWriter() {
                                                     </span>
                                                 </div>
 
-                                                <div className="message-content font-serif text-[#0d0d0d] dark:text-[#ececec] bg-[#f9f9f9] dark:bg-[#171717] p-5 rounded-2xl border border-[#e5e5e5] dark:border-[#2f2f2f]">
+                                                <div className="message-content font-serif text-[#0d0d0d] dark:text-[#ececec]">
                                                     {renderJudgmentText(currentStreamingMessage.response + ' ▌')}
                                                 </div>
                                             </div>
@@ -573,6 +643,15 @@ export default function CriminalJudgmentWriter() {
                         {inputForm}
                     </div>
                 </>
+            )}
+
+            {dbConversationId && (
+                <ShareModal
+                    isOpen={showShare}
+                    onClose={() => setShowShare(false)}
+                    conversationId={dbConversationId}
+                    conversationTitle={history[0]?.query.slice(0, 40) || 'Judgment draft'}
+                />
             )}
         </div>
     );

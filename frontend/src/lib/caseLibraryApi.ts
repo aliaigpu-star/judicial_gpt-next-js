@@ -1,9 +1,14 @@
 /**
  * Case Library API
- * Browse approved judgments from the LexIndex database via /api/case-library.
+ * Browse approved judgments served by the Judgment Search agent (/cases),
+ * reached the same way as Web Judgment Search: through the backend proxy
+ * (/api/ai/agent/judgment-search) or the agent's tunnel. The database
+ * itself stays on the agent's machine.
  */
 
-import { api, API_URL } from '@/lib/api';
+import { api } from '@/lib/api';
+
+const JUDGMENT_AGENT_URL = process.env.NEXT_PUBLIC_JUDGMENT_AGENT_URL || 'https://judgementsearch-judicial-gpt.in.ngrok.io';
 
 export interface CaseSummary {
     id: string;
@@ -45,12 +50,12 @@ export interface CasePage {
 }
 
 async function get<T>(path: string): Promise<T> {
-    const response = await api.authFetch(`${API_URL}${path}`, {
+    const response = await api.authFetch(`${JUDGMENT_AGENT_URL}${path}`, {
         headers: { 'ngrok-skip-browser-warning': 'true' }
     });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
-        throw new Error(data.error || `Request failed (${response.status})`);
+        throw new Error(data.detail || data.error || `Request failed (${response.status})`);
     }
     return data as T;
 }
@@ -58,11 +63,11 @@ async function get<T>(path: string): Promise<T> {
 export const caseLibraryApi = {
     list(page = 1, search = ''): Promise<CasePage> {
         const query = new URLSearchParams({ page: String(page), ...(search ? { search } : {}) });
-        return get(`/api/case-library?${query}`);
+        return get(`/cases?${query}`);
     },
 
     async get(id: string): Promise<CaseDetail> {
-        const data = await get<{ judgment: CaseDetail }>(`/api/case-library/${encodeURIComponent(id)}`);
+        const data = await get<{ judgment: CaseDetail }>(`/cases/${encodeURIComponent(id)}`);
         return data.judgment;
     }
 };

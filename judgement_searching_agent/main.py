@@ -189,6 +189,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Case Library: approved judgments from the local LexIndex database (case_library.py).
+from case_library import router as case_library_router
+app.include_router(case_library_router)
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Pydantic models

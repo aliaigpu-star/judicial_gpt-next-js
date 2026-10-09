@@ -27,7 +27,9 @@ import {
     FileText,
     Gavel,
     BookOpen,
-    Users
+    Users,
+    Globe,
+    Library
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
@@ -86,6 +88,8 @@ export default function ChatSidebar({
     const router = useRouter();
     const pathname = usePathname();
     const isJudgmentSearchActive = pathname === '/chat/judgment-search';
+    const isCaseLibraryActive = pathname === '/chat/case-library';
+    const isJudgmentSearchGroupActive = isJudgmentSearchActive || isCaseLibraryActive;
     const isSummarizeActive = pathname === '/chat/summarize';
     const isCivilJudgmentActive = pathname === '/chat/civil-judgment';
     const isCriminalJudgmentActive = pathname === '/chat/criminal-judgment';
@@ -101,7 +105,7 @@ export default function ChatSidebar({
     const [editTitle, setEditTitle] = useState('');
     const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
     const [showUserMenu, setShowUserMenu] = useState(false);
-    const [agentMenu, setAgentMenu] = useState<'judgment' | 'law' | null>(null);
+    const [agentMenu, setAgentMenu] = useState<'search' | 'judgment' | 'law' | null>(null);
 
     // Close menus when clicking outside
     useEffect(() => {
@@ -299,20 +303,73 @@ export default function ChatSidebar({
                         </svg>
                     </button>
 
-                    {/* Judgment Search Button - Collapsed */}
-                    <button
-                        onClick={() => router.push('/chat/judgment-search')}
-                        className={`w-10 h-10 flex items-center justify-center rounded-xl transition-colors ${isJudgmentSearchActive
-                            ? 'bg-[#00a859]/15 dark:bg-[#00a859]/10'
-                            : 'hover:bg-[#ececec] dark:hover:bg-[#2f2f2f]'
-                            }`}
-                        title="Judgment Search"
-                    >
-                        <Scale className={`w-5 h-5 ${isJudgmentSearchActive
-                            ? 'text-[#00a859]'
-                            : 'text-[#444444] dark:text-[#b4b4b4]'
-                            }`} />
-                    </button>
+                    {/* Judgment Search group - Collapsed */}
+                    <div className="relative">
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setAgentMenu(agentMenu === 'search' ? null : 'search');
+                            }}
+                            className={`w-10 h-10 flex items-center justify-center rounded-xl transition-colors ${isJudgmentSearchGroupActive || agentMenu === 'search'
+                                ? 'bg-[#00a859]/15 dark:bg-[#00a859]/10'
+                                : 'hover:bg-[#ececec] dark:hover:bg-[#2f2f2f]'
+                                }`}
+                            title="Judgment Search"
+                        >
+                            <Scale className={`w-5 h-5 ${isJudgmentSearchGroupActive || agentMenu === 'search'
+                                ? 'text-[#00a859]'
+                                : 'text-[#444444] dark:text-[#b4b4b4]'
+                                }`} />
+                        </button>
+                        <AnimatePresence>
+                            {agentMenu === 'search' && (
+                                <motion.div
+                                    initial={{ opacity: 0, x: -6, scale: 0.96 }}
+                                    animate={{ opacity: 1, x: 0, scale: 1 }}
+                                    exit={{ opacity: 0, x: -6, scale: 0.96 }}
+                                    transition={{ duration: 0.15 }}
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="absolute left-full top-0 ml-2 z-50 w-60 rounded-xl border border-[#e5e5e5] dark:border-[#424242] bg-white dark:bg-[#2f2f2f] shadow-lg overflow-hidden p-1.5"
+                                >
+                                    <p className="px-2.5 pt-1.5 pb-2 text-[11px] font-medium uppercase tracking-wide text-[#8e8e8e]">
+                                        Judgment Search
+                                    </p>
+                                    <button
+                                        onClick={() => {
+                                            setAgentMenu(null);
+                                            router.push('/chat/case-library');
+                                        }}
+                                        className={`w-full flex items-start gap-2.5 px-2.5 py-2 rounded-lg text-left transition-colors ${isCaseLibraryActive
+                                            ? 'bg-[#00a859]/10 text-[#00a859]'
+                                            : 'text-[#0d0d0d] dark:text-[#ececec] hover:bg-[#f4f4f4] dark:hover:bg-[#3a3a3a]'
+                                            }`}
+                                    >
+                                        <Library className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#00a859]" />
+                                        <span className="min-w-0">
+                                            <span className="block text-sm font-medium">Simple Judgment Search</span>
+                                            <span className="block text-[11px] text-[#8e8e8e] mt-0.5 leading-snug">Browse approved judgments</span>
+                                        </span>
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            setAgentMenu(null);
+                                            router.push('/chat/judgment-search');
+                                        }}
+                                        className={`w-full flex items-start gap-2.5 px-2.5 py-2 rounded-lg text-left transition-colors ${isJudgmentSearchActive
+                                            ? 'bg-[#00a859]/10 text-[#00a859]'
+                                            : 'text-[#0d0d0d] dark:text-[#ececec] hover:bg-[#f4f4f4] dark:hover:bg-[#3a3a3a]'
+                                            }`}
+                                    >
+                                        <Globe className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#00a859]" />
+                                        <span className="min-w-0">
+                                            <span className="block text-sm font-medium">Web Judgment Search</span>
+                                            <span className="block text-[11px] text-[#8e8e8e] mt-0.5 leading-snug">Search legal portals online</span>
+                                        </span>
+                                    </button>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
 
                     {/* Judgement Writing Button - Collapsed */}
                     <div className="relative">
@@ -645,18 +702,64 @@ export default function ChatSidebar({
                     New Chat
                 </button>
 
-                {/* Judgment Search Button - Expanded */}
-                <button
-                    onClick={() => router.push('/chat/judgment-search')}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-all duration-200 ${isJudgmentSearchActive
-                        ? 'bg-[#00a859]/10 dark:bg-[#00a859]/10 text-[#00a859]'
-                        : 'text-[#0d0d0d] dark:text-[#ececec] hover:bg-[#ececec] dark:hover:bg-[#2f2f2f]'
-                        }`}
-                >
-                    <Scale className={`w-4 h-4 ${isJudgmentSearchActive ? 'text-[#00a859]' : ''
-                        }`} />
-                    Judgment Search
-                </button>
+                {/* Judgment Search group - Expanded */}
+                <div className="relative">
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setAgentMenu(agentMenu === 'search' ? null : 'search');
+                        }}
+                        className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-all duration-200 ${isJudgmentSearchGroupActive || agentMenu === 'search'
+                            ? 'bg-[#00a859]/10 dark:bg-[#00a859]/10 text-[#00a859]'
+                            : 'text-[#0d0d0d] dark:text-[#ececec] hover:bg-[#ececec] dark:hover:bg-[#2f2f2f]'
+                            }`}
+                    >
+                        <Scale className={`w-4 h-4 ${isJudgmentSearchGroupActive || agentMenu === 'search' ? 'text-[#00a859]' : ''}`} />
+                        <span className="flex-1 text-left">Judgment Search</span>
+                        <ChevronDown className={`w-3.5 h-3.5 opacity-60 transition-transform ${agentMenu === 'search' ? 'rotate-180' : ''}`} />
+                    </button>
+                    <AnimatePresence>
+                        {agentMenu === 'search' && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -4, height: 0 }}
+                                animate={{ opacity: 1, y: 0, height: 'auto' }}
+                                exit={{ opacity: 0, y: -4, height: 0 }}
+                                transition={{ duration: 0.15 }}
+                                onClick={(e) => e.stopPropagation()}
+                                className="overflow-hidden"
+                            >
+                                <div className="mt-1 ml-2 pl-2 border-l border-[#e5e5e5] dark:border-[#424242] space-y-0.5">
+                                    <button
+                                        onClick={() => {
+                                            setAgentMenu(null);
+                                            router.push('/chat/case-library');
+                                        }}
+                                        className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-left text-sm transition-colors ${isCaseLibraryActive
+                                            ? 'bg-[#00a859]/10 text-[#00a859]'
+                                            : 'text-[#0d0d0d] dark:text-[#ececec] hover:bg-[#ececec] dark:hover:bg-[#2f2f2f]'
+                                            }`}
+                                    >
+                                        <Library className="w-3.5 h-3.5 text-[#00a859] flex-shrink-0" />
+                                        Simple Judgment Search
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            setAgentMenu(null);
+                                            router.push('/chat/judgment-search');
+                                        }}
+                                        className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-left text-sm transition-colors ${isJudgmentSearchActive
+                                            ? 'bg-[#00a859]/10 text-[#00a859]'
+                                            : 'text-[#0d0d0d] dark:text-[#ececec] hover:bg-[#ececec] dark:hover:bg-[#2f2f2f]'
+                                            }`}
+                                    >
+                                        <Globe className="w-3.5 h-3.5 text-[#00a859] flex-shrink-0" />
+                                        Web Judgment Search
+                                    </button>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
 
                 {/* Judgement Writing Button - Expanded */}
                 <div className="relative">

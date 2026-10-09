@@ -91,6 +91,7 @@ export default function ChatLayout({ children }: { children: React.ReactNode }) 
         ? pathname.split('/chat/')[1] || null
         : null;
     const isJudgmentSearchPage = pathSegment === 'judgment-search';
+    const isCaseLibraryPage = pathSegment === 'case-library';
     const isSummarizePage = pathSegment === 'summarize';
     const isCivilJudgmentPage = pathSegment === 'civil-judgment';
     const isCriminalJudgmentPage = pathSegment === 'criminal-judgment';
@@ -99,6 +100,7 @@ export default function ChatLayout({ children }: { children: React.ReactNode }) 
     const isFamilyLawPage = pathSegment === 'family-law';
     const isSpecialAgentPage =
         isJudgmentSearchPage ||
+        isCaseLibraryPage ||
         isSummarizePage ||
         isCivilJudgmentPage ||
         isCriminalJudgmentPage ||
@@ -337,7 +339,8 @@ export default function ChatLayout({ children }: { children: React.ReactNode }) 
                         onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
                         conversationId={currentConversationId}
                         conversationTitle={
-                            isJudgmentSearchPage ? 'Judgment Search' :
+                            isJudgmentSearchPage ? 'Web Judgment Search' :
+                            isCaseLibraryPage ? 'Case Library' :
                             isSummarizePage ? 'Summarize Document' :
                             isCivilJudgmentPage ? 'Civil Judgment Writing' :
                             isCriminalJudgmentPage ? 'Criminal Judgment Writing' :

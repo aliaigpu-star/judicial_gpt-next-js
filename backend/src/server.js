@@ -23,6 +23,7 @@ const aiRoutes = require('./routes/ai');
 const adminRoutes = require('./routes/admin');
 const serviceRoutes = require('./routes/services');
 const shareRoutes = require('./routes/share');
+const caseLibraryRoutes = require('./routes/caseLibrary');
 
 // Import middleware
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
@@ -132,6 +133,7 @@ const startServer = async () => {
         app.use('/api/admin', adminRoutes);
         app.use('/api/services', serviceRoutes);
         app.use('/api/share', shareRoutes);
+        app.use('/api/case-library', caseLibraryRoutes);
 
         // 4. Mount error handlers (Must be after routes)
         app.use(notFoundHandler);

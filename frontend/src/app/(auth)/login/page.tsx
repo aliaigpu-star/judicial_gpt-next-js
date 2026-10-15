@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useState, useMemo, useCallback, useEffect, Suspense } from 'react';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Turnstile } from '@marsidev/react-turnstile';
-import { Eye, EyeOff, FileText, X, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { Eye, EyeOff, FileText, X, AlertTriangle, CheckCircle, XCircle, ShieldCheck, Scale, Lock, ChevronRight, Sparkles } from 'lucide-react';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { api } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 
@@ -169,10 +170,11 @@ function evaluatePassword(pw: string, email: string) {
 
 function LoginContent() {
     const router = useRouter();
+    const pathname = usePathname();
     const searchParams = useSearchParams();
     const { signIn, user } = useAuth();
 
-    const [isLogin, setIsLogin] = useState(true);
+    const [isLogin, setIsLogin] = useState(!pathname?.includes('signup'));
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [firstName, setFirstName] = useState('');
@@ -188,6 +190,13 @@ function LoginContent() {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+    const [legalModalOpen, setLegalModalOpen] = useState(false);
+    const [legalActiveTab, setLegalActiveTab] = useState<'privacy' | 'terms'>('privacy');
+
+    const openLegalModal = (tab: 'privacy' | 'terms' = 'privacy') => {
+        setLegalActiveTab(tab);
+        setLegalModalOpen(true);
+    };
 
     const passwordEval = useMemo(() => evaluatePassword(password, email), [password, email]);
     const { strength, rules, hasNegativeKeyword } = passwordEval;
@@ -405,13 +414,15 @@ function LoginContent() {
                                     </div>
                                 </div>
 
-                                <div className="flex justify-center my-4">
-                                    <Turnstile 
-                                        siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ''} 
-                                        onSuccess={(token) => setCaptchaToken(token)}
-                                        options={{ theme: 'light' }}
-                                    />
-                                </div>
+                                {process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && (
+                                    <div className="flex justify-center my-4">
+                                        <Turnstile 
+                                            siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} 
+                                            onSuccess={(token) => setCaptchaToken(token)}
+                                            options={{ theme: 'light' }}
+                                        />
+                                    </div>
+                                )}
 
                                 <button
                                     type="submit"
@@ -428,11 +439,32 @@ function LoginContent() {
                                 Don&apos;t have an account?{" "}
                                 <button
                                     onClick={() => { setIsLogin(false); setError(''); setSuccess(''); setCaptchaToken(null); }}
-                                    className="text-[#00a859] hover:text-[#00a859] font-semibold hover:underline"
+                                    className="text-[#00a859] hover:text-[#00a859] font-semibold hover:underline cursor-pointer"
                                 >
                                     Sign up
                                 </button>
                             </p>
+
+                            {/* Privacy Policy | Terms & Conditions Links */}
+                            <div className="mt-3.5 pt-3 border-t border-gray-100 flex items-center justify-center gap-2.5 text-xs text-gray-500">
+                                <Link
+                                    href="/privacy"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="hover:text-[#00a859] hover:underline transition-colors cursor-pointer font-medium tracking-tight"
+                                >
+                                    Privacy Policy
+                                </Link>
+                                <span className="text-gray-300 font-light select-none">|</span>
+                                <Link
+                                    href="/terms"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="hover:text-[#00a859] hover:underline transition-colors cursor-pointer font-medium tracking-tight"
+                                >
+                                    Terms & Conditions
+                                </Link>
+                            </div>
                         </motion.div>
                     ) : (
                         // ================== SIGNUP CARD ==================
@@ -617,13 +649,15 @@ function LoginContent() {
                                     </div>
                                 )}
 
-                                <div className="flex justify-center my-4">
-                                    <Turnstile 
-                                        siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ''} 
-                                        onSuccess={(token) => setCaptchaToken(token)}
-                                        options={{ theme: 'light' }}
-                                    />
-                                </div>
+                                {process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && (
+                                    <div className="flex justify-center my-4">
+                                        <Turnstile 
+                                            siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} 
+                                            onSuccess={(token) => setCaptchaToken(token)}
+                                            options={{ theme: 'light' }}
+                                        />
+                                    </div>
+                                )}
 
                                 <button
                                     type="submit"
@@ -640,11 +674,32 @@ function LoginContent() {
                                 Already have an account?{" "}
                                 <button
                                     onClick={() => { setIsLogin(true); setError(''); setCaptchaToken(null); }}
-                                    className="text-[#00a859] hover:text-[#00a859] font-semibold hover:underline"
+                                    className="text-[#00a859] hover:text-[#00a859] font-semibold hover:underline cursor-pointer"
                                 >
                                     Sign in
                                 </button>
                             </p>
+
+                            {/* Privacy Policy | Terms & Conditions Links */}
+                            <div className="mt-3 pt-2.5 border-t border-gray-100 flex items-center justify-center gap-2.5 text-xs text-gray-500">
+                                <Link
+                                    href="/privacy"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="hover:text-[#00a859] hover:underline transition-colors cursor-pointer font-medium tracking-tight"
+                                >
+                                    Privacy Policy
+                                </Link>
+                                <span className="text-gray-300 font-light select-none">|</span>
+                                <Link
+                                    href="/terms"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="hover:text-[#00a859] hover:underline transition-colors cursor-pointer font-medium tracking-tight"
+                                >
+                                    Terms & Conditions
+                                </Link>
+                            </div>
                         </motion.div>
                     )}
                 </AnimatePresence>
@@ -751,6 +806,267 @@ function LoginContent() {
                                         Accept & Continue
                                     </button>
                                 </div>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Interactive Privacy & Terms Modal */}
+            <AnimatePresence>
+                {legalModalOpen && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-md"
+                        onClick={() => setLegalModalOpen(false)}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.94, opacity: 0, y: 15 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.94, opacity: 0, y: 15 }}
+                            transition={{ duration: 0.25, ease: "easeOut" }}
+                            className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col border border-emerald-500/20"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            {/* Modal Header */}
+                            <div className="relative bg-gradient-to-r from-gray-950 via-gray-900 to-emerald-950 text-white p-5 sm:p-6 border-b border-emerald-500/20 overflow-hidden">
+                                <div className="absolute -right-8 -top-8 w-36 h-36 bg-emerald-500/20 rounded-full blur-2xl pointer-events-none" />
+                                
+                                <div className="flex items-start justify-between relative z-10">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-400 shadow-inner">
+                                            {legalActiveTab === 'privacy' ? (
+                                                <ShieldCheck className="h-5 w-5" />
+                                            ) : (
+                                                <Scale className="h-5 w-5" />
+                                            )}
+                                        </div>
+                                        <div>
+                                            <div className="flex items-center gap-2">
+                                                <h3 className="text-lg sm:text-xl font-bold tracking-tight text-white">
+                                                    JudicialGPT Legal &amp; Privacy
+                                                </h3>
+                                                <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                                    <Sparkles className="w-2.5 h-2.5" /> Verified
+                                                </span>
+                                            </div>
+                                            <p className="text-xs text-gray-300 mt-0.5">
+                                                Data protection &amp; operational governance for judicial professionals
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => setLegalModalOpen(false)}
+                                        className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                                        aria-label="Close"
+                                    >
+                                        <X className="h-5 w-5" />
+                                    </button>
+                                </div>
+
+                                {/* Key Highlights Bar */}
+                                <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-white/10">
+                                    <div className="bg-white/5 rounded-lg p-2 border border-white/5 flex items-center gap-2">
+                                        <Lock className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                                        <div className="truncate">
+                                            <p className="text-[10px] text-gray-400">Security</p>
+                                            <p className="text-xs font-semibold text-white truncate">256-Bit TLS</p>
+                                        </div>
+                                    </div>
+                                    <div className="bg-white/5 rounded-lg p-2 border border-white/5 flex items-center gap-2">
+                                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                                        <div className="truncate">
+                                            <p className="text-[10px] text-gray-400">Confidentiality</p>
+                                            <p className="text-xs font-semibold text-white truncate">Zero AI Training</p>
+                                        </div>
+                                    </div>
+                                    <div className="bg-white/5 rounded-lg p-2 border border-white/5 flex items-center gap-2">
+                                        <Scale className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                                        <div className="truncate">
+                                            <p className="text-[10px] text-gray-400">Jurisdiction</p>
+                                            <p className="text-xs font-semibold text-white truncate">Lawful Research</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Tab Switcher */}
+                            <div className="flex border-b border-gray-200 bg-gray-50/80 px-5 pt-3 gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setLegalActiveTab('privacy')}
+                                    className={`pb-2.5 px-3 text-xs sm:text-sm font-semibold transition-all relative flex items-center gap-1.5 cursor-pointer ${
+                                        legalActiveTab === 'privacy'
+                                            ? 'text-[#00a859]'
+                                            : 'text-gray-500 hover:text-gray-800'
+                                    }`}
+                                >
+                                    <ShieldCheck className="w-4 h-4" />
+                                    <span>Privacy Policy</span>
+                                    {legalActiveTab === 'privacy' && (
+                                        <motion.div
+                                            layoutId="legalTabUnderline"
+                                            className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#00a859] rounded-full"
+                                        />
+                                    )}
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setLegalActiveTab('terms')}
+                                    className={`pb-2.5 px-3 text-xs sm:text-sm font-semibold transition-all relative flex items-center gap-1.5 cursor-pointer ${
+                                        legalActiveTab === 'terms'
+                                            ? 'text-[#00a859]'
+                                            : 'text-gray-500 hover:text-gray-800'
+                                    }`}
+                                >
+                                    <Scale className="w-4 h-4" />
+                                    <span>Terms of Service</span>
+                                    {legalActiveTab === 'terms' && (
+                                        <motion.div
+                                            layoutId="legalTabUnderline"
+                                            className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#00a859] rounded-full"
+                                        />
+                                    )}
+                                </button>
+                            </div>
+
+                            {/* Modal Body */}
+                            <div className="p-5 sm:p-6 overflow-y-auto max-h-[50vh] text-gray-700 space-y-4 text-xs sm:text-sm leading-relaxed">
+                                {legalActiveTab === 'privacy' ? (
+                                    <div className="space-y-4">
+                                        <div className="p-3.5 bg-emerald-50/70 border border-emerald-200/80 rounded-xl flex items-start gap-3">
+                                            <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                                            <div>
+                                                <h4 className="font-semibold text-emerald-900 text-xs sm:text-sm">
+                                                    Strict Legal Privilege &amp; Non-Disclosure
+                                                </h4>
+                                                <p className="text-emerald-800/90 text-xs mt-0.5">
+                                                    All drafted judgments, case references, advocate notes, and client briefs entered into JudicialGPT are treated as strictly confidential professional work product.
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="border border-gray-100 rounded-xl p-3.5 bg-gray-50/50">
+                                            <h4 className="font-semibold text-gray-900 mb-1 flex items-center gap-2">
+                                                <span className="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-100 text-[#00a859] text-xs font-bold">1</span>
+                                                Zero LLM Training Retention
+                                            </h4>
+                                            <p className="text-gray-600 text-xs sm:text-sm">
+                                                Your case facts, judgments, and legal queries are processed ephemerally. None of your confidential data is ever used to train, fine-tune, or calibrate public AI models or shared with outside model vendors.
+                                            </p>
+                                        </div>
+
+                                        <div className="border border-gray-100 rounded-xl p-3.5 bg-gray-50/50">
+                                            <h4 className="font-semibold text-gray-900 mb-1 flex items-center gap-2">
+                                                <span className="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-100 text-[#00a859] text-xs font-bold">2</span>
+                                                Enterprise Infrastructure &amp; Vault Encryption
+                                            </h4>
+                                            <p className="text-gray-600 text-xs sm:text-sm">
+                                                Session tokens, API communications, and database connections are guarded through automated HashiCorp Vault key storage. Passwords are salted and hashed using multi-round bcrypt.
+                                            </p>
+                                        </div>
+
+                                        <div className="border border-gray-100 rounded-xl p-3.5 bg-gray-50/50">
+                                            <h4 className="font-semibold text-gray-900 mb-1 flex items-center gap-2">
+                                                <span className="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-100 text-[#00a859] text-xs font-bold">3</span>
+                                                Authentication &amp; Cookies
+                                            </h4>
+                                            <p className="text-gray-600 text-xs sm:text-sm">
+                                                We only employ strictly necessary, HTTP-only, SameSite cookies for authentication security, CSRF protection, and rate limiting. No commercial marketing or third-party tracking cookies are deployed.
+                                            </p>
+                                        </div>
+
+                                        <div className="border border-gray-100 rounded-xl p-3.5 bg-gray-50/50">
+                                            <h4 className="font-semibold text-gray-900 mb-1 flex items-center gap-2">
+                                                <span className="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-100 text-[#00a859] text-xs font-bold">4</span>
+                                                Data Ownership &amp; Immediate Erasure
+                                            </h4>
+                                            <p className="text-gray-600 text-xs sm:text-sm">
+                                                You maintain total control of your workspace. You can purge conversation logs or terminate your account at any time, which irrevocably removes all associated records from our servers.
+                                            </p>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-4">
+                                        <div className="p-3.5 bg-amber-50/70 border border-amber-200/80 rounded-xl flex items-start gap-3">
+                                            <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                                            <div>
+                                                <h4 className="font-semibold text-amber-900 text-xs sm:text-sm">
+                                                    AI Advisory Scope &amp; Verification Disclaimer
+                                                </h4>
+                                                <p className="text-amber-800/90 text-xs mt-0.5">
+                                                    JudicialGPT is an AI-assisted legal research and drafting system. Outputs provide guidance and accelerate research but do not constitute formal legal counsel or replace judicial discretion.
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="border border-gray-100 rounded-xl p-3.5 bg-gray-50/50">
+                                            <h4 className="font-semibold text-gray-900 mb-1 flex items-center gap-2">
+                                                <span className="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-100 text-[#00a859] text-xs font-bold">1</span>
+                                                Permitted Use in Legal Research
+                                            </h4>
+                                            <p className="text-gray-600 text-xs sm:text-sm">
+                                                JudicialGPT is authorized for advocates, judges, legal scholars, and students for case analysis, civil/criminal drafting, and statute research in accordance with law and court procedure.
+                                            </p>
+                                        </div>
+
+                                        <div className="border border-gray-100 rounded-xl p-3.5 bg-gray-50/50">
+                                            <h4 className="font-semibold text-gray-900 mb-1 flex items-center gap-2">
+                                                <span className="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-100 text-[#00a859] text-xs font-bold">2</span>
+                                                100% Intellectual Property Ownership
+                                            </h4>
+                                            <p className="text-gray-600 text-xs sm:text-sm">
+                                                All documents, written judgments, civil decrees, summaries, and legal texts generated using JudicialGPT are owned exclusively by you. JudicialGPT claims zero copyright or rights to your work product.
+                                            </p>
+                                        </div>
+
+                                        <div className="border border-gray-100 rounded-xl p-3.5 bg-gray-50/50">
+                                            <h4 className="font-semibold text-gray-900 mb-1 flex items-center gap-2">
+                                                <span className="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-100 text-[#00a859] text-xs font-bold">3</span>
+                                                Account Security &amp; Fair Use
+                                            </h4>
+                                            <p className="text-gray-600 text-xs sm:text-sm">
+                                                You agree to keep credentials secure and prevent unauthorized access. Automated scrapers, denial-of-service abuse, or malicious prompt injection are strictly prohibited and subject to account suspension.
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Modal Footer */}
+                            <div className="p-4 sm:p-5 border-t border-gray-200 bg-gray-50 flex items-center justify-between gap-3">
+                                <div className="text-xs text-gray-500 hidden sm:block">
+                                    {legalActiveTab === 'privacy' ? (
+                                        <span>Looking for Terms?{' '}
+                                            <button
+                                                type="button"
+                                                onClick={() => setLegalActiveTab('terms')}
+                                                className="text-[#00a859] font-medium hover:underline cursor-pointer"
+                                            >
+                                                Switch to Terms of Service
+                                            </button>
+                                        </span>
+                                    ) : (
+                                        <span>Looking for Privacy?{' '}
+                                            <button
+                                                type="button"
+                                                onClick={() => setLegalActiveTab('privacy')}
+                                                className="text-[#00a859] font-medium hover:underline cursor-pointer"
+                                            >
+                                                Switch to Privacy Policy
+                                            </button>
+                                        </span>
+                                    )}
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setLegalModalOpen(false)}
+                                    className="w-full sm:w-auto px-5 py-2 rounded-lg font-semibold text-xs sm:text-sm bg-[#00a859] text-white hover:bg-[#00924d] transition-colors cursor-pointer shadow-xs"
+                                >
+                                    Understood &amp; Close
+                                </button>
                             </div>
                         </motion.div>
                     </motion.div>

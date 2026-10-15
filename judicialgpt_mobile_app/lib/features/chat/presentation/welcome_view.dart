@@ -24,7 +24,7 @@ class WelcomeView extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const BrandMark(size: 76, shadow: true),
+              const BrandMark(size: 84),
               const SizedBox(height: 28),
               Text(
                 'How can I help with Pakistani law today?',

@@ -3,10 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { MessageSquare, Eye, Clock, Loader2, ArrowRight, Scale, Link2, Check, CalendarDays } from 'lucide-react';
+import { MessageSquare, Eye, Clock, Loader2, ArrowRight, Link2, Check, CalendarDays } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Link from 'next/link';
+import BrandLogo from '@/components/ui/BrandLogo';
 import { isJudgmentDocument, renderJudgmentText } from '@/lib/judgmentText';
 
 interface Message {
@@ -39,13 +40,7 @@ const formatDate = (value?: string) => {
 
 /** The JudicialGPT logo used across the website header. */
 function BrandMark({ size = 'md' }: { size?: 'sm' | 'md' }) {
-    const box = size === 'sm' ? 'w-7 h-7 rounded-lg' : 'w-9 h-9 rounded-[10px]';
-    const icon = size === 'sm' ? 'w-3.5 h-3.5' : 'w-[18px] h-[18px]';
-    return (
-        <div className={`${box} bg-[#0c7a4b] flex items-center justify-center text-white shadow-sm shrink-0`}>
-            <Scale className={`${icon} stroke-[2.2]`} />
-        </div>
-    );
+    return <BrandLogo className={size === 'sm' ? 'h-7 w-auto' : 'h-9 w-auto'} />;
 }
 
 function Brand() {
@@ -237,8 +232,8 @@ export default function SharedChatPage() {
                 <div className="mt-14 relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0c7a4b] to-[#075b38] p-8 sm:p-10 text-center text-white shadow-xl">
                     <div className="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-white/10 blur-2xl" />
                     <div className="relative">
-                        <div className="w-12 h-12 mx-auto mb-4 rounded-2xl bg-white/15 flex items-center justify-center">
-                            <Scale className="w-6 h-6" />
+                        <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-white/15 flex items-center justify-center">
+                            <BrandLogo variant="light" className="h-9 w-auto" />
                         </div>
                         <h2 className="text-xl sm:text-2xl font-bold mb-2">Do your own legal research with JudicialGPT</h2>
                         <p className="text-white/80 max-w-lg mx-auto mb-6">

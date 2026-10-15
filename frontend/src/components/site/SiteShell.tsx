@@ -5,9 +5,16 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
-  Scale, Menu, X, Mail, Lock, Shield, ChevronRight, ArrowRight,
+    Menu,
+    X,
+    Mail,
+    Lock,
+    Shield,
+    ChevronRight,
+    ArrowRight
 } from 'lucide-react';
 import { FOOTER_LINKS, SITE } from '@/lib/site-content';
+import BrandLogo from '@/components/ui/BrandLogo';
 
 export const SCROLL_VIEWPORT = { once: true, amount: 0.28, margin: '0px 0px -12% 0px' } as const;
 
@@ -58,9 +65,7 @@ export function SiteHeader({ light = true }: { light?: boolean }) {
             className="flex items-center gap-2 sm:gap-2.5 cursor-pointer flex-shrink-0"
             onClick={() => router.push('/')}
           >
-            <div className="w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-[10px] bg-[#0c7a4b] flex items-center justify-center text-white shadow-sm shrink-0">
-              <Scale className="w-4.5 h-4.5 text-white stroke-[2.2]" />
-            </div>
+            <BrandLogo variant="dark" className="h-9 sm:h-10 w-auto" />
             <span className="text-lg sm:text-[19px] font-black tracking-tight text-slate-900">
               Judicial<span className="text-[#0c7a4b]">GPT</span>
             </span>
@@ -178,9 +183,7 @@ export function SiteFooter() {
           <div className="pb-8 grid grid-cols-2 md:grid-cols-6 gap-x-8 gap-y-8">
             <div className="col-span-2 pr-4">
               <Link href="/" className="flex items-center gap-2.5 mb-3 w-fit">
-                <div className="w-8 h-8 rounded-xl bg-[#0c9344] flex items-center justify-center shadow-sm shadow-[#0c9344]/25">
-                  <Scale className="w-4 h-4 text-white" />
-                </div>
+                <BrandLogo variant="dark" className="h-9 w-auto" />
                 <span className="text-lg font-extrabold text-slate-900 tracking-tight">
                   Judicial<span className="text-[#0c9344]">GPT</span>
                 </span>

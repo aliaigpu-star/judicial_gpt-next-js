@@ -17,7 +17,7 @@ class SidebarBrand extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
       child: Row(
         children: [
-          const BrandMark(size: 38),
+          const BrandMark(size: 36),
           const SizedBox(width: 12),
           Expanded(
             child: Column(

@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { SiteFooter } from '@/components/site/SiteShell';
+import BrandLogo from '@/components/ui/BrandLogo';
 
 // ============================================================================
 // TYPES
@@ -319,9 +320,7 @@ const Header = () => {
             whileHover={{ scale: 1.02 }}
             onClick={() => router.push('/')}
           >
-            <div className="w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-[10px] bg-[#0c7a4b] flex items-center justify-center text-white shadow-sm shrink-0">
-              <Scale className="w-4.5 h-4.5 text-white stroke-[2.2]" />
-            </div>
+            <BrandLogo variant="dark" className="h-9 sm:h-10 w-auto" />
             <span className="text-lg sm:text-[19px] font-black tracking-tight text-slate-900">
               Judicial<span className="text-[#0c7a4b]">GPT</span>
             </span>
@@ -640,9 +639,7 @@ const TiltedHeroSurfaceCard = () => {
           <div className="flex items-center justify-between gap-2 pb-3.5 sm:pb-4 border-b border-slate-100 shrink-0">
             {/* JudicialGPT brand on top left */}
             <div className="flex items-center gap-1.5 shrink-0">
-              <div className="w-6 h-6 rounded-lg bg-[#0c7a4b] flex items-center justify-center shadow-sm">
-                <Scale className="w-3.5 h-3.5 text-white" />
-              </div>
+              <BrandLogo variant="dark" className="h-6 w-auto" />
               <span className="text-xs sm:text-sm font-bold tracking-tight text-slate-900">
                 Judicial<span className="text-[#0c7a4b]">GPT</span>
               </span>
@@ -711,7 +708,7 @@ const TiltedHeroSurfaceCard = () => {
             <div className="flex items-start gap-3 sm:gap-3.5 h-full overflow-hidden" dir={isRtl ? 'rtl' : 'ltr'}>
               {/* Green Scale of Justice Floating Icon Badge */}
               <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl sm:rounded-2xl bg-[#0c7a4b] text-white flex items-center justify-center shadow-md shadow-emerald-900/15 shrink-0 mt-0.5">
-                <Scale className="w-4 h-4 sm:w-5 sm:h-5" />
+                <BrandLogo variant="light" className="h-4 sm:h-5 w-auto" />
               </div>
 
               {/* Answer Content - Fixed bounding container */}
@@ -1948,7 +1945,7 @@ const AnimatedMissionChatWidget = () => {
               >
                 <div className="flex items-start gap-5">
                   <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#00a859] to-[#00a859] flex items-center justify-center shrink-0 shadow-lg shadow-[#00a859]/30">
-                    <Scale className="w-6 h-6 text-white" />
+                    <BrandLogo variant="light" className="h-6 w-auto" />
                   </div>
                   <div className="bg-white/10 backdrop-blur-md border border-white/10 text-white text-lg md:text-xl leading-relaxed p-6 md:p-8 rounded-2xl rounded-tl-sm shadow-inner min-h-[6rem]">
                     {responseStream}
@@ -3000,7 +2997,7 @@ export default function HomePage() {
       <div className="min-h-screen flex items-center justify-center bg-[#080E1C]">
         <div className="relative">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#00a859]" />
-          <Scale className="absolute inset-0 m-auto w-5 h-5 text-[#00a859]" />
+          <BrandLogo variant="light" className="absolute inset-0 m-auto h-5 w-auto" />
         </div>
       </div>
     );

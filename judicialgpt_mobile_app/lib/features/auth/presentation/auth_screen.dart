@@ -76,7 +76,7 @@ class _BrandLockup extends StatelessWidget {
     padding: const EdgeInsets.only(top: 40, bottom: 22),
     child: Column(
       children: [
-        Semantics(label: 'JudicialGPT logo', child: const BrandMark(size: 72, shadow: true)),
+        const BrandMark(size: 76, onDark: false),
         const SizedBox(height: 16),
         const Text(
           'JudicialGPT',

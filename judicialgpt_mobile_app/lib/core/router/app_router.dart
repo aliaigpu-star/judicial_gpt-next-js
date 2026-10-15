@@ -110,7 +110,7 @@ class _SplashScreen extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const BrandMark(size: 88, shadow: true),
+            const BrandMark(size: 88, onDark: false),
             const SizedBox(height: 24),
             const CircularProgressIndicator(color: JudicialColors.green),
           ],

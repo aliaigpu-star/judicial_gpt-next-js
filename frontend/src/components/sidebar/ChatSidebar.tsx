@@ -33,6 +33,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
+import BrandLogo from '@/components/ui/BrandLogo';
 
 interface Conversation {
     id: string;
@@ -280,12 +281,8 @@ export default function ChatSidebar({
                         title="Open sidebar"
                     >
                         <div className="relative w-6 h-6 flex items-center justify-center">
-                            <div className="absolute inset-0 rounded-full overflow-hidden transition-opacity duration-200 group-hover:opacity-0">
-                                <img
-                                    src="/judicial-logo.png"
-                                    alt="Judicial GPT"
-                                    className="object-cover w-full h-full"
-                                />
+                            <div className="absolute inset-0 flex items-center justify-center transition-opacity duration-200 group-hover:opacity-0">
+                                <BrandLogo className="h-5 w-auto" />
                             </div>
                             <PanelLeft className="w-5 h-5 text-[#444444] dark:text-[#b4b4b4] opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute" />
                         </div>
@@ -667,14 +664,10 @@ export default function ChatSidebar({
                 <div className="flex items-center gap-2 pl-2">
                     <button
                         onClick={onNewChat}
-                        className="relative w-8 h-8 rounded-full overflow-hidden hover:opacity-80 transition-opacity cursor-pointer"
+                        className="relative h-9 flex items-center hover:opacity-80 transition-opacity cursor-pointer"
                         title="New chat"
                     >
-                        <img
-                            src="/judicial-logo.png"
-                            alt="Judicial GPT"
-                            className="object-cover w-full h-full"
-                        />
+                        <BrandLogo className="h-8 w-auto" />
                     </button>
                 </div>
 

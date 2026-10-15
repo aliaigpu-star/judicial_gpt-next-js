@@ -31,9 +31,12 @@ export const metadata: Metadata = {
   description: "Advanced AI legal assistant for judicial research and analysis",
   keywords: ["legal", "AI", "judicial", "chat", "research", "law"],
   icons: {
-    icon: "/judicial-logo.png",
-    shortcut: "/judicial-logo.png",
-    apple: "/judicial-logo.png",
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon.png", sizes: "512x512", type: "image/png" },
+    ],
+    shortcut: "/favicon.png",
+    apple: "/apple-touch-icon.png",
   },
 };
 

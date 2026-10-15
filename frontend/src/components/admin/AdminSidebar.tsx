@@ -14,10 +14,10 @@ import {
     FileText,
     Sun,
     Moon,
-    ThumbsUp,
-    Scale
+    ThumbsUp
 } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
+import BrandLogo from '@/components/ui/BrandLogo';
 
 interface AdminSidebarProps {
     user: {
@@ -69,9 +69,7 @@ export default function AdminSidebar({ user, onLogout, onClose }: AdminSidebarPr
         <div className="h-screen w-64 fixed left-0 top-0 flex flex-col bg-[#0a0a0a] border-r border-gray-800/80">
             {/* Brand */}
             <div className="h-16 px-5 flex items-center gap-3 border-b border-gray-800/80">
-                <div className="w-9 h-9 rounded-[10px] bg-[#0c7a4b] flex items-center justify-center shadow-sm shadow-[#0c7a4b]/40">
-                    <Scale className="w-[18px] h-[18px] text-white stroke-[2.2]" />
-                </div>
+                <BrandLogo variant="light" className="h-10 w-auto" />
                 <div className="leading-tight">
                     <p className="text-[15px] font-black tracking-tight text-white">
                         Judicial<span className="text-[#00a859]">GPT</span>

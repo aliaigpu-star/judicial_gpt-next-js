@@ -553,6 +553,23 @@ export default function ChatView({
         if (file) attachFile(file);
     };
 
+    // Paste: screenshots, copied images and copied files are attached like uploads.
+    // Plain text always pastes normally (copying from Word puts both text and an
+    // image on the clipboard, and the text is what the user wants there).
+    const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+        const files = Array.from(e.clipboardData.files);
+        if (files.length === 0 || e.clipboardData.getData('text/plain')) return;
+        e.preventDefault();
+        if (isProcessingMessage || isProcessingFile) return;
+
+        const [file] = files;
+        // Screenshots arrive with the generic name "image.png"; give them a clearer one.
+        const named = /^image\.\w+$/i.test(file.name)
+            ? new File([file], file.name.replace(/^image/i, `pasted-image-${Date.now()}`), { type: file.type })
+            : file;
+        attachFile(named);
+    };
+
     // Voice recording
     const startRecording = async () => {
         try {
@@ -761,6 +778,7 @@ export default function ChatView({
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={handleKeyDown}
+                        onPaste={handlePaste}
                         placeholder={
                             isTranscribing ? 'Converting your voice to text…' :
                             isRecording ? 'Listening…' :

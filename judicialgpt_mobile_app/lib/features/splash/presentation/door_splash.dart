@@ -116,6 +116,9 @@ class _Door extends StatelessWidget {
     alignment: side,
     child: FractionallySizedBox(
       widthFactor: 0.5,
+      // Full height, so BoxFit.cover crops the artwork to fill tall phones
+      // instead of leaving the app visible above and below the doors.
+      heightFactor: 1,
       child: SlideTransition(
         position: Tween(begin: Offset.zero, end: Offset(1.01 * side.x, 0)).animate(swing),
         child: ColoredBox(

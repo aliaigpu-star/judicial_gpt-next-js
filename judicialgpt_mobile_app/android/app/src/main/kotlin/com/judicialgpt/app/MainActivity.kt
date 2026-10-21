@@ -1,4 +1,4 @@
-package com.example.judicialgpt_mobile_app
+package com.judicialgpt.app
 
 import io.flutter.embedding.android.FlutterActivity
 

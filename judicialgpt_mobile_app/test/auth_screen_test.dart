@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:judicialgpt_mobile_app/core/theme/app_colors.dart';
 import 'package:judicialgpt_mobile_app/features/auth/domain/app_user.dart';
 import 'package:judicialgpt_mobile_app/features/auth/presentation/auth_screen.dart';
 import 'package:judicialgpt_mobile_app/features/auth/state/auth_controller.dart';
@@ -56,5 +57,26 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(Image), findsNothing);
     expect(find.text('app'), findsOneWidget);
+  });
+
+  testWidgets('splash doors cover the whole screen on a tall phone', (tester) async {
+    tester.view.physicalSize = const Size(720, 1600); // 20:9, taller than the door artwork
+    tester.view.devicePixelRatio = 2;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [authControllerProvider.overrideWith(_SignedOut.new)],
+        child: const MaterialApp(home: DoorSplash(child: Text('app'))),
+      ),
+    );
+
+    final doors = find.byWidgetPredicate((w) => w is ColoredBox && w.color == JudicialColors.marble);
+    expect(doors, findsNWidgets(2));
+    for (final door in doors.evaluate()) {
+      final size = tester.getSize(find.byWidget(door.widget));
+      expect(size, const Size(180, 800), reason: 'each door is half the width and the full height');
+    }
+    await tester.pumpAndSettle(const Duration(seconds: 6)); // let the timers finish
   });
 }

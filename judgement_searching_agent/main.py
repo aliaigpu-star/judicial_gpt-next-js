@@ -1,7 +1,7 @@
 import os
 import requests
 from bs4 import BeautifulSoup
-from langchain_groq import ChatGroq
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
@@ -74,12 +74,16 @@ os.environ["USER_AGENT"] = (
 # ─────────────────────────────────────────────────────────────────────────────
 # Environment / API Keys
 # ─────────────────────────────────────────────────────────────────────────────
-GROQ_API_KEY    = os.getenv("GROQ_API_KEY")
 GOOGLE_API_KEY  = os.getenv("GOOGLE_API_KEY")
 GOOGLE_CSE_ID   = os.getenv("GOOGLE_CSE_ID")
 
-if not GROQ_API_KEY:
-    raise ValueError("GROQ_API_KEY is not set.")
+# Gemini answers the search explanations. GEMINI_API_KEY (agent .env) is used
+# if set, otherwise the Google key from Vault.
+GEMINI_API_KEY  = os.getenv("GEMINI_API_KEY") or GOOGLE_API_KEY
+GEMINI_MODEL    = os.getenv("GEMINI_MODEL", "gemini-3.6-flash")
+
+if not GEMINI_API_KEY:
+    raise ValueError("GEMINI_API_KEY (or GOOGLE_API_KEY) is not set.")
 if not GOOGLE_API_KEY or not GOOGLE_CSE_ID:
     raise ValueError("GOOGLE_API_KEY and GOOGLE_CSE_ID must be set.")
 
@@ -168,7 +172,7 @@ ALL_DOMAINS = [s["domain"] for s in JUDGMENT_SOURCES]
 # ─────────────────────────────────────────────────────────────────────────────
 # LLM & Embeddings
 # ─────────────────────────────────────────────────────────────────────────────
-llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.2)
+llm = ChatGoogleGenerativeAI(model=GEMINI_MODEL, temperature=0.2, api_key=GEMINI_API_KEY)
 embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
 # ─────────────────────────────────────────────────────────────────────────────

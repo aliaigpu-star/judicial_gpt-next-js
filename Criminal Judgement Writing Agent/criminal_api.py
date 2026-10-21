@@ -21,6 +21,7 @@ ENDPOINTS:
 """
 
 import os
+import json
 import asyncio
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
@@ -990,6 +991,26 @@ def run_document_export(query: str, response_markdown: str) -> DocumentInfo | No
         return None
 
 
+def _extract_token_text(content) -> str:
+    """
+    Normalize an astream() chunk's `.content` to plain text.
+
+    Depending on the langchain-google-genai version, streaming chunks come
+    back either as a plain string or as a list of content blocks like
+    [{"type": "text", "text": "...", "index": 0}]. Without this, the list
+    form is sent as its raw Python repr and shows up in the chat.
+    """
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        return "".join(
+            block.get("text", "")
+            for block in content
+            if isinstance(block, dict) and block.get("type") == "text"
+        )
+    return str(content) if content else ""
+
+
 async def stream_rag_response(query: str) -> AsyncGenerator[str, None]:
     """Yield SSE-formatted tokens from the RAG chain."""
     if rag_engine.rag_chain is None:
@@ -1020,9 +1041,12 @@ async def stream_rag_response(query: str) -> AsyncGenerator[str, None]:
     messages = await prompt.ainvoke({"context": context, "question": query})
 
     async for chunk in rag_engine.llm.astream(messages):
-        token = chunk.content
+        token = _extract_token_text(chunk.content)
         if token:
-            yield f"data: {token}\n\n"
+            # JSON-encode so whitespace-only tokens (spaces, newlines) and
+            # tokens containing embedded newlines survive SSE's line-based
+            # framing intact.
+            yield f"data: {json.dumps({'text': token})}\n\n"
 
     yield "data: [DONE]\n\n"
 

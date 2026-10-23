@@ -38,7 +38,10 @@ export interface CaseDetail extends Omit<CaseSummary, 'summary'> {
     ratio_decidendi: string | null;
     source_url: string | null;
     pdf_url: string | null;
+    /** Plain text of the judgment (for copying and as a fallback). */
     fullText: string;
+    /** The judgment as published, with its formatting (cleaned of scripts). */
+    fullHtml: string | null;
 }
 
 export interface CasePage {

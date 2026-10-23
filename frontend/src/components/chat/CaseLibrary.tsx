@@ -4,10 +4,12 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
     Library, Search, X, Loader2, ChevronLeft, ChevronRight, ArrowLeft,
-    Landmark, CalendarDays, Gavel, FileText, ExternalLink, Copy, Check, AlertTriangle
+    Landmark, CalendarDays, FileText, BookOpen, ExternalLink, Copy, Check, AlertTriangle
 } from 'lucide-react';
 import { caseLibraryApi, type CaseDetail, type CasePage, type CaseSummary } from '@/lib/caseLibraryApi';
 import { copyCleanText } from '@/lib/textUtils';
+import CaseHeadnote from './CaseHeadnote';
+import CaseHtmlFrame from './CaseHtmlFrame';
 
 const ACCENT = '#00a859';
 
@@ -181,13 +183,19 @@ function CaseReader({ id, onBack }: { id: string; onBack: () => void }) {
     const [judgment, setJudgment] = useState<CaseDetail | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [copied, setCopied] = useState(false);
+    const [view, setView] = useState<'headnote' | 'full'>('headnote');
 
     useEffect(() => {
         caseLibraryApi.get(id).then(setJudgment, err => setError(err.message || 'Failed to load judgment'));
     }, [id]);
 
+    // Copies what is on screen: the headnote, or the whole judgment.
     const copy = async () => {
-        if (judgment && await copyCleanText(judgment.fullText)) {
+        if (!judgment) return;
+        const text = view === 'headnote'
+            ? [judgment.headnote, judgment.ratio_decidendi].filter(Boolean).join('\n\n')
+            : judgment.fullText;
+        if (await copyCleanText(text)) {
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
         }
@@ -252,19 +260,20 @@ function CaseReader({ id, onBack }: { id: string; onBack: () => void }) {
                                 ))}
                             </dl>
 
-                            {judgment.headnote && (
-                                <Section icon={FileText} title="Headnote" text={judgment.headnote} />
-                            )}
-                            {judgment.ratio_decidendi && (
-                                <Section icon={Gavel} title="Ratio decidendi" text={judgment.ratio_decidendi} />
-                            )}
-
-                            <h2 className="mt-8 mb-3 flex items-center gap-2 text-base font-semibold text-[#0d0d0d] dark:text-[#ececec]">
-                                <Library className="w-4 h-4" style={{ color: ACCENT }} /> Full judgment
-                            </h2>
-                            <div className="whitespace-pre-wrap font-serif text-[15px] leading-7 text-[#1f1f1f] dark:text-[#dcdcdc]">
-                                {judgment.fullText || 'The full text of this judgment is not available.'}
+                            <div role="tablist" aria-label="Judgment view" className="mt-6 mb-4 inline-flex rounded-xl border border-[#e5e5e5] dark:border-[#333333] bg-[#f7f7f7] dark:bg-[#2a2a2a] p-1">
+                                <ViewTab active={view === 'headnote'} onClick={() => setView('headnote')} icon={FileText} label="Headnote" />
+                                <ViewTab active={view === 'full'} onClick={() => setView('full')} icon={BookOpen} label="Full case" />
                             </div>
+
+                            {view === 'headnote' ? (
+                                <CaseHeadnote judgment={judgment} />
+                            ) : judgment.fullHtml ? (
+                                <CaseHtmlFrame html={judgment.fullHtml} title={judgment.title || 'Judgment'} />
+                            ) : (
+                                <div className="whitespace-pre-wrap rounded-xl border border-[#e5e5e5] bg-white px-6 py-6 font-serif text-[15px] leading-7 text-[#111] shadow-sm">
+                                    {judgment.fullText || 'The full text of this judgment is not available.'}
+                                </div>
+                            )}
                         </article>
                     )}
                 </div>
@@ -273,13 +282,18 @@ function CaseReader({ id, onBack }: { id: string; onBack: () => void }) {
     );
 }
 
-function Section({ icon: Icon, title, text }: { icon: React.ElementType; title: string; text: string }) {
+function ViewTab({ active, onClick, icon: Icon, label }: { active: boolean; onClick: () => void; icon: React.ElementType; label: string }) {
     return (
-        <section className="mt-6">
-            <h2 className="mb-2 flex items-center gap-2 text-base font-semibold text-[#0d0d0d] dark:text-[#ececec]">
-                <Icon className="w-4 h-4" style={{ color: ACCENT }} /> {title}
-            </h2>
-            <p className="whitespace-pre-wrap text-[15px] leading-7 text-[#333333] dark:text-[#cfcfcf]">{text}</p>
-        </section>
+        <button
+            role="tab"
+            aria-selected={active}
+            onClick={onClick}
+            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${active
+                ? 'bg-white dark:bg-[#3a3a3a] text-[#0d0d0d] dark:text-white shadow-sm'
+                : 'text-[#666666] dark:text-[#b4b4b4] hover:text-[#0d0d0d] dark:hover:text-white'
+                }`}
+        >
+            <Icon className="w-4 h-4" style={active ? { color: ACCENT } : undefined} /> {label}
+        </button>
     );
 }

@@ -66,6 +66,31 @@ def html_to_text(raw: str) -> str:
     return text.strip()
 
 
+def sanitize_html(raw: str) -> str:
+    """
+    Word-generated HTML made safe to display: Word's own styling is kept, but
+    scripts, embedded frames/objects, forms, external stylesheets, event
+    handlers and javascript: links are removed. (The website also shows it in
+    a sandboxed frame with a strict Content-Security-Policy.)
+    """
+    if not raw:
+        return ""
+    # Word wraps its whole style sheet in an HTML comment: <style><!-- p.MsoNormal {...} --></style>.
+    # Keep those rules (drop only the comment markers), then remove every other comment.
+    cleaned = re.sub(
+        r"(<style\b[^>]*>)(.*?)(</style\s*>)",
+        lambda m: m.group(1) + re.sub(r"<!--|-->", "", m.group(2)) + m.group(3),
+        raw,
+        flags=re.I | re.S,
+    )
+    cleaned = re.sub(r"<!--.*?-->", "", cleaned, flags=re.S)  # includes Word's <!--[if gte mso 9]> blocks
+    cleaned = re.sub(r"<(script|iframe|object|applet|noscript)\b[^>]*>.*?</\1\s*>", "", cleaned, flags=re.I | re.S)
+    cleaned = re.sub(r"</?(script|iframe|object|embed|applet|form|input|button|link|base|meta)\b[^>]*>", "", cleaned, flags=re.I)
+    cleaned = re.sub(r"""\son[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)""", "", cleaned, flags=re.I)
+    cleaned = re.sub(r"""(href|src)\s*=\s*(["']?)\s*(javascript|vbscript|data):[^"'>\s]*\2""", r"\1=\2#\2", cleaned, flags=re.I)
+    return cleaned.strip()
+
+
 @router.get("")
 def list_cases(page: int = Query(1, ge=1), search: str = Query("", max_length=200)):
     """One page (10) of the library, optionally filtered."""
@@ -123,4 +148,6 @@ def get_case(case_id: str):
     file_type = row.pop("file_type")
     is_html = file_type == "html" or bool(re.search(r"<\w+[^>]*>", content))
     row["fullText"] = html_to_text(content) if is_html else content.strip()
+    # The original document with its formatting (None for plain-text records).
+    row["fullHtml"] = sanitize_html(content) if is_html else None
     return {"success": True, "judgment": row}

@@ -4,10 +4,9 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
     Library, Search, X, Loader2, ChevronLeft, ChevronRight, ArrowLeft,
-    Landmark, CalendarDays, FileText, BookOpen, ExternalLink, Copy, Check, AlertTriangle
+    Landmark, CalendarDays, FileText, BookOpen, ExternalLink, AlertTriangle
 } from 'lucide-react';
 import { caseLibraryApi, type CaseDetail, type CasePage, type CaseSummary } from '@/lib/caseLibraryApi';
-import { copyCleanText } from '@/lib/textUtils';
 import CaseHeadnote from './CaseHeadnote';
 import CaseHtmlFrame from './CaseHtmlFrame';
 
@@ -182,24 +181,11 @@ function CaseCard({ item, index, onOpen }: { item: CaseSummary; index: number; o
 function CaseReader({ id, onBack }: { id: string; onBack: () => void }) {
     const [judgment, setJudgment] = useState<CaseDetail | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [copied, setCopied] = useState(false);
     const [view, setView] = useState<'headnote' | 'full'>('headnote');
 
     useEffect(() => {
         caseLibraryApi.get(id).then(setJudgment, err => setError(err.message || 'Failed to load judgment'));
     }, [id]);
-
-    // Copies what is on screen: the headnote, or the whole judgment.
-    const copy = async () => {
-        if (!judgment) return;
-        const text = view === 'headnote'
-            ? [judgment.headnote, judgment.ratio_decidendi].filter(Boolean).join('\n\n')
-            : judgment.fullText;
-        if (await copyCleanText(text)) {
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
-        }
-    };
 
     const facts: Array<[string, string | null]> = judgment ? [
         ['Court', judgment.court],
@@ -224,9 +210,6 @@ function CaseReader({ id, onBack }: { id: string; onBack: () => void }) {
                         </button>
                         {judgment && (
                             <div className="flex items-center gap-1">
-                                <button onClick={copy} className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm text-[#666666] dark:text-[#b4b4b4] hover:bg-[#f4f4f4] dark:hover:bg-[#2f2f2f]" title="Copy judgment text">
-                                    {copied ? <Check className="w-4 h-4 text-[#00a859]" /> : <Copy className="w-4 h-4" />} {copied ? 'Copied' : 'Copy'}
-                                </button>
                                 {(judgment.pdf_url || judgment.source_url) && (
                                     <a href={(judgment.pdf_url || judgment.source_url)!} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm text-[#666666] dark:text-[#b4b4b4] hover:bg-[#f4f4f4] dark:hover:bg-[#2f2f2f]">
                                         <ExternalLink className="w-4 h-4" /> Source

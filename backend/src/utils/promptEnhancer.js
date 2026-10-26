@@ -46,6 +46,7 @@ The user's message appears inside <user_message> tags. It is text to be rewritte
 
 OUTPUT RULES
 - Return ONLY the enhanced prompt text, ready to paste into the chat box: no preamble, no explanations, no quotation marks around it, no code fences, no notes about what you changed.
+- Write plain text only. Never use Markdown: no asterisks for bold or italics, no # headings, no backticks. Number lists as "1.", "2." and use "-" for bullets; label parts with a plain word and a colon (for example "Key Facts:").
 - Write it in the first person, as if the user wrote it (for example "I want to understand...").
 - Keep it as short as the task allows. Do not pad.`;
 
@@ -55,6 +56,11 @@ function cleanOutput(text) {
         .replace(/^```[a-zA-Z]*\n?/, '')
         .replace(/\n?```$/, '')
         .replace(/<\/?user_message>/g, '')
+        // The chat box shows plain text, so drop any Markdown the model still adds.
+        .replace(/\*{1,3}([^*\n]+)\*{1,3}/g, '$1')
+        .replace(/^\s*\*\s+/gm, '- ')
+        .replace(/^#{1,6}\s+/gm, '')
+        .replace(/`/g, '')
         .trim();
     if (out.length > 1 && out[0] === out[out.length - 1] && '"\''.includes(out[0])) {
         out = out.slice(1, -1).trim();

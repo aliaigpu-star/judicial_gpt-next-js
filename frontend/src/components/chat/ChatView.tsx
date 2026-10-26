@@ -272,7 +272,7 @@ export default function ChatView({
     useEffect(() => {
         if (inputRef.current) {
             inputRef.current.style.height = 'auto';
-            inputRef.current.style.height = Math.min(inputRef.current.scrollHeight, 200) + 'px';
+            inputRef.current.style.height = Math.min(inputRef.current.scrollHeight, 320) + 'px';
         }
     }, [input]);
 
@@ -807,7 +807,7 @@ export default function ChatView({
                         }
                         rows={1}
                         disabled={isProcessingFile}
-                        className={`flex-1 bg-transparent resize-none outline-none max-h-[200px] disabled:opacity-50 text-base leading-6 py-0.5 ${isTemporaryMode
+                        className={`flex-1 bg-transparent resize-none outline-none max-h-[320px] disabled:opacity-50 text-base leading-6 py-0.5 ${isTemporaryMode
                             ? 'text-[#ececec] placeholder-[#b4b4b4]'
                             : 'text-[#0d0d0d] dark:text-[#ececec] placeholder-[#666666] dark:placeholder-[#8e8e8e]'
                             }`}

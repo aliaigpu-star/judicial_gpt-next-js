@@ -306,7 +306,7 @@ export default function DocumentSummarizer() {
     useEffect(() => {
         if (qaInputRef.current) {
             qaInputRef.current.style.height = 'auto';
-            qaInputRef.current.style.height = Math.min(qaInputRef.current.scrollHeight, 120) + 'px';
+            qaInputRef.current.style.height = Math.min(qaInputRef.current.scrollHeight, 320) + 'px';
         }
     }, [qaQuestion]);
 
@@ -651,7 +651,7 @@ export default function DocumentSummarizer() {
                         placeholder="Ask a question about the document..."
                         rows={1}
                         disabled={isAskingQuestion}
-                        className="flex-1 bg-transparent resize-none outline-none max-h-[120px] disabled:opacity-50 text-base leading-6 py-0.5 text-[#0d0d0d] dark:text-[#ececec] placeholder-[#666666] dark:placeholder-[#8e8e8e]"
+                        className="flex-1 bg-transparent resize-none outline-none max-h-[320px] disabled:opacity-50 text-base leading-6 py-0.5 text-[#0d0d0d] dark:text-[#ececec] placeholder-[#666666] dark:placeholder-[#8e8e8e]"
                     />
                     <EnhanceButton value={qaQuestion} onChange={setQaQuestion} disabled={isAskingQuestion} />
                     <button

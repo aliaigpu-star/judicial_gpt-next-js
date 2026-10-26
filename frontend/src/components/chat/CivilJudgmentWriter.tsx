@@ -121,7 +121,7 @@ export default function CivilJudgmentWriter() {
     useEffect(() => {
         if (inputRef.current) {
             inputRef.current.style.height = 'auto';
-            inputRef.current.style.height = Math.min(inputRef.current.scrollHeight, 150) + 'px';
+            inputRef.current.style.height = Math.min(inputRef.current.scrollHeight, 320) + 'px';
         }
     }, [query]);
 
@@ -326,7 +326,7 @@ export default function CivilJudgmentWriter() {
                     placeholder="Provide case details or ask to draft a judgment section..."
                     rows={1}
                     disabled={isProcessing}
-                    className="flex-1 bg-transparent resize-none outline-none max-h-[150px] disabled:opacity-50 text-base leading-6 py-0.5 text-[#0d0d0d] dark:text-[#ececec] placeholder-[#666666] dark:placeholder-[#8e8e8e]"
+                    className="flex-1 bg-transparent resize-none outline-none max-h-[320px] disabled:opacity-50 text-base leading-6 py-0.5 text-[#0d0d0d] dark:text-[#ececec] placeholder-[#666666] dark:placeholder-[#8e8e8e]"
                 />
 
                 <EnhanceButton value={query} onChange={setQuery} disabled={isProcessing} />

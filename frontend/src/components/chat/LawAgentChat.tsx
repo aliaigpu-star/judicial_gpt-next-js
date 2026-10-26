@@ -93,7 +93,7 @@ export default function LawAgentChat({
     useEffect(() => {
         if (inputRef.current) {
             inputRef.current.style.height = 'auto';
-            inputRef.current.style.height = Math.min(inputRef.current.scrollHeight, 150) + 'px';
+            inputRef.current.style.height = Math.min(inputRef.current.scrollHeight, 320) + 'px';
         }
     }, [query]);
 
@@ -247,7 +247,7 @@ export default function LawAgentChat({
                     }}
                     placeholder={`Ask ${title}...`}
                     rows={1}
-                    className="flex-1 bg-transparent resize-none outline-none text-[#0d0d0d] dark:text-[#ececec] text-base max-h-[150px] py-1"
+                    className="flex-1 bg-transparent resize-none outline-none text-[#0d0d0d] dark:text-[#ececec] text-base max-h-[320px] py-1"
                     disabled={isProcessing}
                 />
                 <EnhanceButton value={query} onChange={setQuery} disabled={isProcessing} />

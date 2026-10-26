@@ -715,7 +715,7 @@ export default function ChatView({
                 )}
 
                 {/* ChatGPT-style input container */}
-                <div className={`relative flex items-center gap-2 rounded-3xl px-3 py-2 transition-colors shadow-sm ${isTemporaryMode
+                <div className={`relative flex items-end gap-2 rounded-3xl px-3 py-2 transition-colors shadow-sm ${isTemporaryMode
                     ? 'bg-[#383838] border border-transparent'
                     : 'bg-[#f4f4f4] dark:bg-[#2f2f2f] border border-[#e5e5e5] dark:border-[#424242] focus-within:border-[#b4b4b4] dark:focus-within:border-[#666666]'
                     }`}>
@@ -807,7 +807,7 @@ export default function ChatView({
                         }
                         rows={1}
                         disabled={isProcessingFile}
-                        className={`flex-1 bg-transparent resize-none outline-none max-h-[320px] disabled:opacity-50 text-base leading-6 py-0.5 ${isTemporaryMode
+                        className={`flex-1 bg-transparent resize-none outline-none mb-1 max-h-[320px] disabled:opacity-50 text-base leading-6 py-0.5 ${isTemporaryMode
                             ? 'text-[#ececec] placeholder-[#b4b4b4]'
                             : 'text-[#0d0d0d] dark:text-[#ececec] placeholder-[#666666] dark:placeholder-[#8e8e8e]'
                             }`}

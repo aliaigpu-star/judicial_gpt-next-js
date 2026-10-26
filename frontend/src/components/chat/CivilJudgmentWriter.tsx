@@ -313,7 +313,7 @@ export default function CivilJudgmentWriter() {
 
     const inputForm = (
         <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }} className="max-w-3xl mx-auto">
-            <div className="relative flex items-center gap-2 rounded-3xl px-3 py-2 transition-colors shadow-sm bg-[#f4f4f4] dark:bg-[#2f2f2f] border border-[#e5e5e5] dark:border-[#424242] focus-within:border-[#3b82f6]/50 dark:focus-within:border-[#3b82f6]/40">
+            <div className="relative flex items-end gap-2 rounded-3xl px-3 py-2 transition-colors shadow-sm bg-[#f4f4f4] dark:bg-[#2f2f2f] border border-[#e5e5e5] dark:border-[#424242] focus-within:border-[#3b82f6]/50 dark:focus-within:border-[#3b82f6]/40">
                 <div className="p-1.5">
                     <Gavel className="w-5 h-5 text-[#3b82f6]" />
                 </div>
@@ -326,7 +326,7 @@ export default function CivilJudgmentWriter() {
                     placeholder="Provide case details or ask to draft a judgment section..."
                     rows={1}
                     disabled={isProcessing}
-                    className="flex-1 bg-transparent resize-none outline-none max-h-[320px] disabled:opacity-50 text-base leading-6 py-0.5 text-[#0d0d0d] dark:text-[#ececec] placeholder-[#666666] dark:placeholder-[#8e8e8e]"
+                    className="flex-1 bg-transparent resize-none outline-none mb-1 max-h-[320px] disabled:opacity-50 text-base leading-6 py-0.5 text-[#0d0d0d] dark:text-[#ececec] placeholder-[#666666] dark:placeholder-[#8e8e8e]"
                 />
 
                 <EnhanceButton value={query} onChange={setQuery} disabled={isProcessing} />

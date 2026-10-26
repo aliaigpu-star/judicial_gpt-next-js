@@ -6,7 +6,9 @@ import React from 'react';
 // code blocks. Detect that format by its distinctive markers and render it
 // as preserved plain text instead, while leaving genuine markdown (from the
 // general chat / Law Agent / other flows sharing this component) untouched.
-export const isJudgmentDocument = (text: string) => text.includes('IN THE COURT OF') || text.includes('─────');
+// Markdown tables always go through ReactMarkdown, which scrolls them inside their own box.
+export const isJudgmentDocument = (text: string) =>
+    !/^\s*\|.*\|\s*$/m.test(text) && (text.includes('IN THE COURT OF') || text.includes('─────'));
 
 // Strip stray lone-underscore artifact lines the model occasionally emits
 // around section separators, without touching the real "─────" dividers.

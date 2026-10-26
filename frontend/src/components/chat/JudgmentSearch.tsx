@@ -456,7 +456,7 @@ export default function JudgmentSearch() {
                     {/* Results area */}
                     <div
                         ref={resultsContainerRef}
-                        className="flex-1 overflow-y-auto"
+                        className="flex-1 overflow-y-auto overflow-x-hidden"
                     >
                         <div className="max-w-3xl mx-auto py-6 px-4">
                             <AnimatePresence initial={false}>

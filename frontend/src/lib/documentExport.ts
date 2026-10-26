@@ -28,6 +28,15 @@ export function detectDocumentFormat(userText: string): DocumentFormat | null {
     return null;
 }
 
+const REFERS_TO_REPLY = /\b(?:this|that|above|previous|last|it|same|these|those|answer|response|reply|conversation)\b/i;
+
+/** True for a short "make this a pdf" request about the reply already on screen, which needs no new answer. */
+export function isConversionRequest(userText: string): boolean {
+    return detectDocumentFormat(userText) !== null
+        && userText.trim().split(/\s+/).length <= 12
+        && REFERS_TO_REPLY.test(userText);
+}
+
 /** Appended to the request (never shown) so the reply is a clean document. */
 export const DOCUMENT_INSTRUCTION =
     '\n\n[Format instruction: The user wants this as a downloadable document. Write the complete ' +

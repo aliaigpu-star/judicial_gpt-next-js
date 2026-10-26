@@ -116,7 +116,8 @@ body {
 .message-content {
   line-height: 1.75;
   font-size: 1rem;
-  word-wrap: break-word;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
 .message-content h1,
@@ -248,7 +249,8 @@ body {
 .message-content {
   line-height: 1.75;
   font-size: 1rem;
-  word-wrap: break-word;
+  max-width: 100%;
+  overflow-wrap: anywhere;
   contain: content;
   overflow-wrap: break-word;
 }

@@ -26,7 +26,7 @@ const DISLIKE_REASONS: [string, string][] = [
 ];
 import { fileToChatImage, type ChatImage } from '@/lib/chatImage';
 import { copyCleanText } from '@/lib/textUtils';
-import { DOCUMENT_INSTRUCTION, detectDocumentFormat } from '@/lib/documentExport';
+import { DOCUMENT_INSTRUCTION, detectDocumentFormat, exportDocument, isConversionRequest } from '@/lib/documentExport';
 import DocumentCard from '@/components/chat/DocumentCard';
 import ShareModal from '@/components/modals/ShareModal';
 import TypingAnimation from '@/components/ui/TypingAnimation';
@@ -427,6 +427,15 @@ export default function ChatView({
         e?.preventDefault();
         if (isProcessingMessage || isProcessingFile) return;
         if (!input.trim() && !selectedFile && !selectedImage) return;
+
+        // "Make this a PDF" about a reply already on screen: build the file from it directly, no new answer.
+        const format = detectDocumentFormat(input);
+        const lastReply = [...messages].reverse().find(m => m.role === 'assistant' && !m.isStreaming && m.content.trim());
+        if (format && lastReply && !selectedFile && !selectedImage && isConversionRequest(input)) {
+            setInput('');
+            exportDocument(lastReply.content, format).catch(() => showNotification('Could not create the document', 'error'));
+            return;
+        }
 
         let messageToSend = input.trim();
         let displayMessage = input.trim();
@@ -962,7 +971,7 @@ export default function ChatView({
                     ref={messagesContainerRef}
                     onScroll={handleScroll}
                     onWheel={handleWheel}
-                    className="flex-1 overflow-y-auto"
+                    className="flex-1 overflow-y-auto overflow-x-hidden"
                 >
                     <div className="max-w-4xl mx-auto py-6 px-4">
                         <AnimatePresence initial={false}>

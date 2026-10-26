@@ -443,7 +443,7 @@ export default function DocumentSummarizer() {
 
     // ── DONE STATE ───────────────────────────────
     const doneState = (
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden">
             <div className="max-w-3xl mx-auto py-6 px-4" ref={summaryRef}>
                 <motion.div
                     initial={{ opacity: 0, y: 15 }}

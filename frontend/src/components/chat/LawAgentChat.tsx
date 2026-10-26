@@ -13,6 +13,7 @@ import { copyCleanText } from '@/lib/textUtils';
 import { useChatLayout } from '@/app/chat/layout';
 import ShareModal from '@/components/modals/ShareModal';
 import TypedReveal from '@/components/ui/TypedReveal';
+import EnhanceButton from '@/components/chat/EnhanceButton';
 
 /**
  * Removes the closing "Note: …" disclaimer the law agents append to answers
@@ -249,6 +250,7 @@ export default function LawAgentChat({
                     className="flex-1 bg-transparent resize-none outline-none text-[#0d0d0d] dark:text-[#ececec] text-base max-h-[150px] py-1"
                     disabled={isProcessing}
                 />
+                <EnhanceButton value={query} onChange={setQuery} disabled={isProcessing} />
                 <button
                     type="submit"
                     disabled={!query.trim() || isProcessing}

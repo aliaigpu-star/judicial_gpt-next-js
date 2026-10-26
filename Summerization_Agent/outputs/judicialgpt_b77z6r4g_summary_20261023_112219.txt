@@ -1,0 +1,147 @@
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                     ⚖  JUDICIAL DOCUMENT SUMMARY  ⚖
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+### SECTION 1 — DOCUMENT PROFILE
+- **Document Type:** Non-legal Academic Scientific Research Article (*Applied Sciences*, MDPI; Citation: *Appl. Sci.* 2023, 13, 3640; DOI: `10.3390/app13063640`) Title: *"A Reinforcement Learning-Based Congestion Control Approach for V2V Communication in VANET"*
+- **Court / Authority:** Not applicable (Academic research publication; no court, tribunal, or judicial authority)
+- **Jurisdiction:** Not applicable
+- **Case / File Reference Number:** DOI: `10.3390/app13063640` / Article Citation: `Appl. Sci. 2023, 13, 3640`
+- **Date of Instrument / Judgment / Filing:** 
+  - Received: 16 January 2023
+  - Revised: 8 March 2023
+  - Accepted: 11 March 2023
+  - Published: 13 March 2023
+- **Total Pages / Segments Processed:** 2 Partial Summaries / Segments
+
+---
+
+### SECTION 2 — PARTIES
+*Note: No legal litigants, accused persons, or legal counsel are involved in this document.*
+
+| Role | Name / Designation | Counsel (if any) |
+|------|--------------------|------------------|
+| **Authors** | Xiaofeng Liu, Ben St. Amour, Arunita Jaekel (School of Computer Science, University of Windsor, Windsor, ON N9B 3P4, Canada) | Not applicable |
+| **Academic Editors** | Pedro Rito, Susana Sargento | Not applicable |
+| **Publisher / Licensee** | MDPI, Basel, Switzerland | Not applicable |
+| **Funding Agency** | Natural Sciences and Engineering Research Council of Canada (NSERC) | Not applicable |
+
+---
+
+### SECTION 3 — EXECUTIVE SUMMARY
+**Notice to the Court:** The document submitted for analysis is not a judicial instrument, pleading, or court order. It is an open-access scientific research paper from the computer science journal *Applied Sciences* (MDPI, March 2023) addressing channel congestion control in Vehicular Ad-hoc Networks (VANETs).
+
+The study proposes a machine learning algorithm termed **Q-Learning-based Adaptive Congestion Control (QBACC)** designed to optimize Vehicle-to-Vehicle (V2V) communications. In high-density vehicular environments, periodic Basic Safety Messages (BSMs) can saturate the 5.9 GHz communication spectrum, elevating the Channel Busy Ratio (CBR) and causing packet dropouts. QBACC dynamically adjusts the transmission rate of BSMs (between 1 and 10 BSMs per second) based on localized vehicle density to maintain the target CBR below an operational threshold of $\eta = 0.6$. Tested via simulation software (Veins, OMNeT++, SUMO) on a 20 km four-lane highway with up to 500 vehicles traveling at 80–130 km/h, QBACC maintained CBR below 0.6 and achieved a Packet Delivery Ratio (PDR) of 98.7%, outperforming static 10 Hz/5 Hz transmission rates and existing baseline algorithms (MDPRP).
+
+---
+
+### SECTION 4 — DETAILED FACTUAL BACKGROUND
+
+#### 1. Context & Technological Framework
+- **Road Safety Problem:** Motor vehicle safety remains a long-standing research area; in 2020, an estimated 38,680 individuals lost their lives in motor vehicle crashes. Intelligent Transportation Systems (ITS) utilize VANETs to mitigate traffic risks.
+- **Spectrum Allocation & Communications:** The 5.9 GHz band reserves 75 MHz of spectrum for V2V communication via Dedicated Short-Range Communications / Wireless Access in Vehicular Environments (DSRC/WAVE). An additional 30 MHz is allocated for Cellular Vehicle-to-Everything (C-V2X). Channel 172 (10 MHz bandwidth) is assigned to vehicle safety using the IEEE 802.11p protocol. DSRC specifies seven data rates ranging from 3 Mbps to 27 Mbps across 10 MHz channels.
+- **Message Transmission:** Onboard Units (OBUs) transmit Basic Safety Messages (BSMs) / Cooperative Awareness Messages (CAMs) containing location, speed, acceleration, and heading at a nominal rate of 10 packets per second (10 Hz).
+
+#### 2. System Architecture & Reinforcement Learning Formulation (QBACC)
+- **Problem Formulation:** Formulated as a Markov Decision Process (MDP) adhering to the Markov Property ($P[S_{t+1}|S_t] = P[S_{t+1}|S_1, \dots, S_t]$).
+- **State Space:** 500 distinct states derived from combining 50 vehicle density values (`maxVD` = 50 vehicles within a 100 m radius) with 10 discrete CBR values corresponding to 10 BSM transmission rates (1 to 10 BSMs/s).
+- **Target Threshold & Policy:** Target operational threshold is set at $\eta = 0.6$ CBR.
+- **Reward Function:** 
+  $$r(CBR, BR) = BR \cdot CBR \cdot \text{sign}(\eta - CBR)$$
+  *(where $BR$ is beacon rate/transmission rate, and $\text{sign}(\cdot)$ penalizes state transitions that exceed the $\eta = 0.6$ threshold).*
+- **Q-Value Update Equation:** Uses discount factor $\gamma = 0.9$ and learning rate $\alpha$:
+  $$Q(s_t, a_t) \leftarrow Q(s_t, a_t) + \alpha \left( r(s_t, a_t) + \gamma \max_a Q(s_{t+1}, a) - Q(s_t, a_t) \right)$$
+
+#### 3. Experimental Setup & Simulation Results
+- **Simulation Environment:** Evaluated using Vehicles in Network Simulation (**Veins**), integrating **OMNeT++** (network simulator) and **SUMO** (Simulation of Urban MObility).
+- **Scenario Parameters:**
+  - Highway distance: 20 km (4 lanes; 2 in each direction). Evaluation performed on a 4 km middle section over 1000 seconds.
+  - Vehicle densities: 300 and 500 vehicles.
+  - Vehicle speeds: 80 km/h to 130 km/h.
+- **Performance Outcomes:**
+  - **Packet Delivery Ratio (PDR):** Reached **98.7%** under high-density conditions.
+  - **Channel Load Control:** Successfully constrained average CBR below the 0.6 target threshold, significantly lowering Bit/Beacon Error Rate (BER) compared to fixed 10 Hz and 5 Hz transmissions and the MDPRP algorithm.
+
+---
+
+### SECTION 5 — LEGAL ISSUES FRAMED
+*Not applicable. (This document is a technical computer science research paper and raises no legal or procedural issues).*
+
+---
+
+### SECTION 6 — STATUTORY PROVISIONS & CASE LAW CITED
+
+| # | Statute / Case / Standard | Section / Citation | Relevance / How Invoked |
+|---|---------------------------|--------------------|-------------------------|
+| 1 | **Creative Commons License** | CC BY 4.0 (`https://creativecommons.org/licenses/by/4.0/`) | Open access copyright licensing terms under which the paper is published. |
+| 2 | **IEEE Standard** | IEEE 802.11p / IEEE 1609 | Technical PHY/MAC standards cited for vehicular wireless access. |
+| 3 | **ETSI Standard** | ETSI EN 302 637-2 | European standard for Intelligent Transport Systems / CAM specification. |
+| 4 | **DSRC Standard** | 5.9 GHz Band / Channel 172 | Spectrum allocation rule allocating 75 MHz for DSRC/WAVE and 30 MHz for C-V2X. |
+
+---
+
+### SECTION 7 — ARGUMENTS & CONTENTIONS
+
+#### 7A — Arguments of the Petitioner / Plaintiff / Prosecution
+*Not applicable.*
+
+#### 7B — Arguments of the Respondent / Defendant / Defence
+*Not applicable.*
+
+#### 7C — Technical Contentions / Hypotheses of Authors (Xiaofeng Liu et al.)
+- **Inadequacy of Static Transmission Rates:** Transmitting BSMs at a constant 10 Hz rate creates extreme channel congestion in high vehicle density scenarios, leading to severe packet collisions and high Beacon Error Rates (BER).
+- **Superiority of Adaptive RL (QBACC):** By utilizing model-free Q-learning to map local vehicle density and current CBR to optimal transmission rates, QBACC maintains the CBR under 0.6 without requiring global centralized coordination, yielding a 98.7% Packet Delivery Ratio (PDR).
+
+---
+
+### SECTION 8 — COURT'S ANALYSIS & FINDINGS
+*Not applicable. (No judicial analysis or court findings exist in this document).*
+
+---
+
+### SECTION 9 — DECISION / ORDER / OPERATIVE CLAUSE
+*Not applicable.*
+
+---
+
+### SECTION 10 — RELIEFS & REMEDIES
+- **Relief Sought:** Not applicable.
+- **Relief Granted / Refused:** Not applicable.
+- **Costs Awarded / Waived:** Not applicable.
+- **Any Interim / Ad-Interim Orders:** Not applicable.
+
+---
+
+### SECTION 11 — CRITICAL LEGAL OBSERVATIONS
+*Not applicable.*
+
+---
+
+### SECTION 12 — COMPLIANCE CHECKLIST FOR JUDGE
+*Not applicable. (No administrative or judicial compliance actions are required).*
+
+---
+
+### SECTION 13 — FLAGS & ANOMALIES
+
+- **Complete Subject Matter Misalignment:** The processed document consists entirely of an academic research paper in the domain of vehicular networks, wireless communications, and computer science (*Applied Sciences*, MDPI, 2023). It contains no legal claims, statutory enactments, criminal/civil facts, judicial orders, or references relevant to any legal proceeding or court system.
+- **Text Truncation & Sentence Fragments:** Several partial summary excerpts cut off mid-sentence (e.g., *"...As the number of vehicles increases, the"*, *"...where"*, *"...rather than moving through intermediate"*, *"...The objective of"*, *"...The state (observation): The state of the environment in the V2V communication"*).
+
+---
+
+### SECTION 14 — GLOSSARY OF KEY TERMS
+
+- **BER (Beacon Error Rate / Bit Error Rate):** The percentage of transmitted packets lost or corrupted during wireless transmission.
+- **BSM (Basic Safety Message):** A periodic wireless packet containing vehicular status information (position, velocity, acceleration, heading).
+- **CBR (Channel Busy Ratio):** The ratio of time the wireless communications channel is detected as busy relative to total observation time.
+- **DSRC (Dedicated Short-Range Communications):** A wireless communication channel designed specifically for automotive use in the 5.9 GHz band.
+- **MDP (Markov Decision Process):** A mathematical framework for modeling decision-making where outcomes are partly random and partly under the control of a decision maker.
+- **PDR (Packet Delivery Ratio):** The percentage of sent packets successfully received by destination vehicles.
+- **QBACC (Q-Learning-based Adaptive Congestion Control):** The specific reinforcement learning framework introduced in this paper to control VANET channel congestion.
+- **VANET (Vehicular Ad-hoc Network):** A dynamic wireless network formed spontaneously between moving vehicles.
+- **Veins (Vehicles in Network Simulation):** An open-source vehicular network simulation framework running OMNeT++ alongside SUMO.
+- **V2V (Vehicle-to-Vehicle):** Direct wireless communication between motor vehicles.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   END OF SUMMARY  |  Generated by JudicialGPT  |  CONFIDENTIAL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

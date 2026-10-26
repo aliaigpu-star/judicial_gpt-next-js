@@ -26,9 +26,12 @@ const DISLIKE_REASONS: [string, string][] = [
 ];
 import { fileToChatImage, type ChatImage } from '@/lib/chatImage';
 import { copyCleanText } from '@/lib/textUtils';
+import { DOCUMENT_INSTRUCTION, detectDocumentFormat } from '@/lib/documentExport';
+import DocumentCard from '@/components/chat/DocumentCard';
 import ShareModal from '@/components/modals/ShareModal';
 import TypingAnimation from '@/components/ui/TypingAnimation';
 import VoiceAgent from '@/components/chat/VoiceAgent';
+import EnhanceButton from '@/components/chat/EnhanceButton';
 
 interface SourceResult {
     source_name: string;
@@ -474,7 +477,14 @@ export default function ChatView({
             setInput('');
             shouldAutoScrollRef.current = true;
             setShowScrollButton(false);
-            await onSend(messageToSend, displayMessage, webSearchEnabled, images);
+            // A request for a PDF/Word file makes the model write the answer as a document.
+            const wantsDocument = detectDocumentFormat(userQuestion) !== null;
+            await onSend(
+                wantsDocument ? messageToSend + DOCUMENT_INSTRUCTION : messageToSend,
+                displayMessage,
+                webSearchEnabled && !wantsDocument,
+                images,
+            );
         }
     };
 
@@ -794,6 +804,7 @@ export default function ChatView({
                             }`}
                     />
 
+                    <EnhanceButton value={input} onChange={setInput} disabled={isProcessingFile} />
                     {/* Voice recording button */}
                     <button
                         type="button"
@@ -1086,6 +1097,16 @@ export default function ChatView({
                                                             {message.content}
                                                         </div>
                                                     )}
+
+                                                    {/* Download card when the user asked for a PDF/Word file */}
+                                                    {message.role === 'assistant' && !message.isStreaming
+                                                        && !(isProcessingMessage && index === messages.length - 1)
+                                                        && message.content.trim() && (() => {
+                                                            const format = index > 0 && messages[index - 1].role === 'user'
+                                                                ? detectDocumentFormat(messages[index - 1].content)
+                                                                : null;
+                                                            return format ? <DocumentCard markdown={message.content} format={format} /> : null;
+                                                        })()}
                                                 </>
                                             )}
 

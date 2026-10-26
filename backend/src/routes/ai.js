@@ -13,6 +13,7 @@ const config = require('../config/env');
 const ApiRequestLogger = require('../services/apiRequestLogger');
 const { truncateMessages } = require('../utils/ai');
 const { validateImages, streamGeminiReply, generateGeminiReply } = require('../utils/gemini');
+const { enhancePrompt } = require('../utils/promptEnhancer');
 
 // API Key Manager for load balancing
 class ApiKeyManager {
@@ -697,6 +698,35 @@ Title: Apartment Rental Contract`
         // Fallback to simple title
         const fallbackTitle = message.slice(0, 40) + (message.length > 40 ? '...' : '');
         res.json({ success: true, title: fallbackTitle });
+    }
+}));
+
+/**
+ * POST /api/ai/enhance-prompt
+ * Rewrite the text a user typed into a clearer, better structured prompt
+ */
+router.post('/enhance-prompt', authenticate, aiRateLimiter, asyncHandler(async (req, res) => {
+    const { prompt } = req.body || {};
+    if (typeof prompt !== 'string' || !prompt.trim()) {
+        throw new ApiError(400, 'Prompt is required', 'MISSING_PROMPT');
+    }
+
+    const apiKey = req.app.locals.secrets?.GEMINI_API_KEY || config.GEMINI_API_KEY;
+    if (!apiKey) {
+        throw new ApiError(503, 'Prompt enhancement is not available: GEMINI_API_KEY is not configured.', 'ENHANCER_UNAVAILABLE');
+    }
+
+    try {
+        const enhanced = await enhancePrompt({
+            apiKey,
+            model: config.GEMINI_MODEL,
+            targetPrompt: JUDICIAL_SYSTEM_PROMPT,
+            prompt
+        });
+        res.json({ success: true, enhanced });
+    } catch (error) {
+        console.error('Prompt enhancement error:', error.message);
+        throw new ApiError(502, 'Could not enhance the prompt. Please try again.', 'ENHANCER_FAILED');
     }
 }));
 

@@ -582,6 +582,13 @@ class ApiClient {
         });
     }
 
+    async enhancePrompt(prompt: string): Promise<{ success: boolean; enhanced: string }> {
+        return this.request<{ success: boolean; enhanced: string }>('/api/ai/enhance-prompt', {
+            method: 'POST',
+            body: JSON.stringify({ prompt })
+        });
+    }
+
     // Service endpoints
     async transcribeAudio(audioBlob: Blob) {
         const formData = new FormData();

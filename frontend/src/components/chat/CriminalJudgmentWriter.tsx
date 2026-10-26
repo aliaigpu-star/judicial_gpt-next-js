@@ -11,6 +11,7 @@ import { api } from '@/lib/api';
 import { copyCleanText } from '@/lib/textUtils';
 import { useChatLayout } from '@/app/chat/layout';
 import ShareModal from '@/components/modals/ShareModal';
+import EnhanceButton from '@/components/chat/EnhanceButton';
 
 interface SourceResult {
     source_name: string;
@@ -339,6 +340,8 @@ export default function CriminalJudgmentWriter() {
                     disabled={isProcessing}
                     className="flex-1 bg-transparent resize-none outline-none max-h-[150px] disabled:opacity-50 text-base leading-6 py-0.5 text-[#0d0d0d] dark:text-[#ececec] placeholder-[#666666] dark:placeholder-[#8e8e8e]"
                 />
+
+                <EnhanceButton value={query} onChange={setQuery} disabled={isProcessing} />
 
                 <button
                     type="submit"

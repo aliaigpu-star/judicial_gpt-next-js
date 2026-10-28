@@ -7,13 +7,13 @@ import {
     Copy, Check, ArrowUp, Clock, AlertTriangle,
     FileUp, X, MessageSquare, Send, BookOpen, Search
 } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
 import TypedReveal from '@/components/ui/TypedReveal';
-import remarkGfm from 'remark-gfm';
 import { api } from '@/lib/api';
 import { copyCleanText } from '@/lib/textUtils';
 import { useChatLayout } from '@/app/chat/layout';
 import EnhanceButton from '@/components/chat/EnhanceButton';
+import AnswerContent from '@/components/chat/AnswerContent';
+import PendingQuestion from '@/components/chat/PendingQuestion';
 
 type JobStatus = 'idle' | 'uploading' | 'pending' | 'processing' | 'done' | 'failed';
 
@@ -37,6 +37,7 @@ export default function DocumentSummarizer() {
     const [typingQaId, setTypingQaId] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [progress, setProgress] = useState<string>('');
+    const [pendingQa, setPendingQa] = useState('');
     const [copied, setCopied] = useState(false);
     const [elapsedTime, setElapsedTime] = useState(0);
 
@@ -238,6 +239,7 @@ export default function DocumentSummarizer() {
 
         const question = qaQuestion.trim();
         setQaQuestion('');
+        setPendingQa(question);
         setIsAskingQuestion(true);
 
         // Save question to DB
@@ -276,6 +278,7 @@ export default function DocumentSummarizer() {
             }]);
         } finally {
             setIsAskingQuestion(false);
+            setPendingQa('');
         }
     };
 
@@ -468,15 +471,11 @@ export default function DocumentSummarizer() {
                                 </span>
                             </div>
 
-                            <div className="message-content text-[#0d0d0d] dark:text-[#ececec]">
-                                <TypedReveal text={summary} animate={summaryTyping} onDone={() => setSummaryTyping(false)}>
-                                    {(shown) => (
-                                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                            {shown}
-                                        </ReactMarkdown>
-                                    )}
-                                </TypedReveal>
-                            </div>
+                            <div>
+<TypedReveal text={summary} animate={summaryTyping} onDone={() => setSummaryTyping(false)}>
+{(shown) => <AnswerContent content={shown} />}
+</TypedReveal>
+</div>
 
                             <div className="flex items-center gap-1 mt-4 pt-3 border-t border-[#e5e5e5] dark:border-[#2f2f2f]">
                                 <button
@@ -564,18 +563,18 @@ export default function DocumentSummarizer() {
                                                     <FileText className="w-4 h-4 text-white" />
                                                 </div>
                                             </div>
-                                            <div className="flex-1 min-w-0 message-content text-[#0d0d0d] dark:text-[#ececec]">
-                                                <TypedReveal text={item.answer} animate={typingQaId === item.id} onDone={() => setTypingQaId(null)}>
-                                                    {(shown) => (
-                                                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                                            {shown}
-                                                        </ReactMarkdown>
-                                                    )}
-                                                </TypedReveal>
-                                            </div>
+                                            <div className="flex-1 min-w-0">
+<TypedReveal text={item.answer} animate={typingQaId === item.id} onDone={() => setTypingQaId(null)}>
+{(shown) => <AnswerContent content={shown} />}
+</TypedReveal>
+</div>
                                         </div>
                                     </div>
                                 ))}
+
+                                {isAskingQuestion && pendingQa && (
+<PendingQuestion text={pendingQa} color="#00a859" icon={MessageSquare} />
+)}
 
                                 {isAskingQuestion && (
                                     <motion.div
@@ -592,7 +591,7 @@ export default function DocumentSummarizer() {
                                             <div className="flex items-center gap-3">
                                                 <Loader2 className="w-4 h-4 text-[#00a859] animate-spin" />
                                                 <span className="text-sm text-[#666666] dark:text-[#b4b4b4]">
-                                                    Retrieving and reasoning...
+                                                    Thinking...
                                                 </span>
                                             </div>
                                         </div>

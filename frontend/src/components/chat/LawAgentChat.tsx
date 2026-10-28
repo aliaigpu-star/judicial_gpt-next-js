@@ -3,17 +3,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    Loader2, BookOpen, CheckCircle2, XCircle, Clock,
+    Loader2, BookOpen, XCircle, Clock,
     Copy, Check, ArrowUp, Scale, Gavel, Users, ThumbsUp, ThumbsDown, Share2, RefreshCw
 } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 import { api } from '@/lib/api';
 import { copyCleanText } from '@/lib/textUtils';
 import { useChatLayout } from '@/app/chat/layout';
 import ShareModal from '@/components/modals/ShareModal';
 import TypedReveal from '@/components/ui/TypedReveal';
 import EnhanceButton from '@/components/chat/EnhanceButton';
+import AnswerContent from '@/components/chat/AnswerContent';
+import PendingQuestion from '@/components/chat/PendingQuestion';
 
 /**
  * Removes the closing "Note: …" disclaimer the law agents append to answers
@@ -58,10 +58,10 @@ export interface LawAgentChatProps {
 // Per-agent display metadata and the API shape each backend actually expects.
 // Civil/Criminal Law Agents expose POST /query (form-encoded); the Family Law
 // Agent exposes POST /ask (JSON) — see api_family.py's AskRequest/AskResponse.
-const AGENT_META: Record<LawAgentChatProps['agentType'], { name: string; ragLabel: string; icon: typeof Scale; endpoint: string }> = {
-    civil: { name: 'Civil', ragLabel: 'Civil Law RAG', icon: Scale, endpoint: '/query' },
-    criminal: { name: 'Criminal', ragLabel: 'Criminal Law RAG', icon: Gavel, endpoint: '/query' },
-    family: { name: 'Family', ragLabel: 'Family Law RAG', icon: Users, endpoint: '/ask' },
+const AGENT_META: Record<LawAgentChatProps['agentType'], { name: string; icon: typeof Scale; endpoint: string }> = {
+    civil: { name: 'Civil', icon: Scale, endpoint: '/query' },
+    criminal: { name: 'Criminal', icon: Gavel, endpoint: '/query' },
+    family: { name: 'Family', icon: Users, endpoint: '/ask' },
 };
 
 export default function LawAgentChat({
@@ -80,7 +80,7 @@ export default function LawAgentChat({
     const [copiedId, setCopiedId] = useState<string | null>(null);
     const [sessionId, setSessionId] = useState<string | null>(null);
     const [dbConversationId, setDbConversationId] = useState<string | null>(null);
-    const [progress, setProgress] = useState('');
+    const [pendingQuery, setPendingQuery] = useState('');
     const [feedback, setFeedback] = useState<Record<string, 'like' | 'dislike' | null>>({});
     const [showShare, setShowShare] = useState(false);
     // The answer currently being typed out on screen.
@@ -110,7 +110,7 @@ export default function LawAgentChat({
         if (!regenerate) setQuery('');
         setIsProcessing(true);
         setError(null);
-        setProgress('Consulting legal knowledge base...');
+        if (!regenerate) setPendingQuery(searchQuery);
 
         try {
             const meta = AGENT_META[agentType];
@@ -201,7 +201,7 @@ export default function LawAgentChat({
             );
         } finally {
             setIsProcessing(false);
-            setProgress('');
+            setPendingQuery('');
         }
     };
 
@@ -283,7 +283,7 @@ export default function LawAgentChat({
                             <Loader2 className="w-4 h-4 mt-0.5 flex-shrink-0 animate-spin" style={{ color: accentColor }} />
                         )}
                         <span className={`text-sm ${error ? 'text-red-600 dark:text-red-400' : 'text-[#666666] dark:text-[#b4b4b4]'}`}>
-                            {error || progress}
+                            {error}
                         </span>
                     </motion.div>
                 )}
@@ -381,32 +381,17 @@ export default function LawAgentChat({
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex flex-wrap items-center gap-2 mb-3">
-                                                    <span
-                                                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border"
-                                                        style={{
-                                                            backgroundColor: `${accentColor}1a`,
-                                                            color: accentColor,
-                                                            borderColor: `${accentColor}33`,
-                                                        }}
-                                                    >
-                                                        <CheckCircle2 className="w-3 h-3" />
-                                                        {AGENT_META[agentType].ragLabel}
-                                                    </span>
                                                     <span className="inline-flex items-center gap-1.5 px-2 py-1 text-xs text-[#999999] dark:text-[#666666]">
                                                         <Clock className="w-3 h-3" />
                                                         {item.timestamp.toLocaleTimeString()}
                                                     </span>
                                                 </div>
 
-                                                <div className="message-content text-[#0d0d0d] dark:text-[#ececec]">
-                                                    <TypedReveal text={item.answer} animate={typingId === item.id} onDone={() => setTypingId(null)}>
-                                                        {(shown) => (
-                                                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                                                {shown}
-                                                            </ReactMarkdown>
-                                                        )}
-                                                    </TypedReveal>
-                                                </div>
+                                                <div>
+<TypedReveal text={item.answer} animate={typingId === item.id} onDone={() => setTypingId(null)}>
+{(shown) => <AnswerContent content={shown} />}
+</TypedReveal>
+</div>
 
                                                 {typingId !== item.id && (
                                                 <div className="flex items-center gap-1 mt-3">
@@ -465,10 +450,14 @@ export default function LawAgentChat({
                                 ))}
                             </AnimatePresence>
 
+                            {isProcessing && pendingQuery && (
+<PendingQuestion text={pendingQuery} color={accentColor} icon={BookOpen} />
+)}
+
                             {isProcessing && (
                                 <div className="flex items-center gap-3 py-4 text-sm text-[#666666] dark:text-[#b4b4b4]">
                                     <Loader2 className="w-4 h-4 animate-spin" style={{ color: accentColor }} />
-                                    {progress || 'Thinking...'}
+                                    Thinking...
                                 </div>
                             )}
                             <div ref={resultsEndRef} />

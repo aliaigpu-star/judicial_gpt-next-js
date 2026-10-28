@@ -8,14 +8,14 @@ import {
     ChevronDown, ChevronUp, Copy, Check, ArrowUp,
     Edit3, ThumbsUp, ThumbsDown, RefreshCw, Share2
 } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
 import TypedReveal from '@/components/ui/TypedReveal';
-import remarkGfm from 'remark-gfm';
 import { api } from '@/lib/api';
 import { copyCleanText } from '@/lib/textUtils';
 import { useChatLayout } from '@/app/chat/layout';
 import ShareModal from '@/components/modals/ShareModal';
 import EnhanceButton from '@/components/chat/EnhanceButton';
+import AnswerContent from '@/components/chat/AnswerContent';
+import PendingQuestion from '@/components/chat/PendingQuestion';
 
 interface SourceResult {
     source_name: string;
@@ -54,7 +54,7 @@ export default function JudgmentSearch() {
     const [error, setError] = useState<string | null>(null);
     const [expandedSources, setExpandedSources] = useState<string | null>(null);
     const [copiedId, setCopiedId] = useState<string | null>(null);
-    const [searchProgress, setSearchProgress] = useState('');
+    const [pendingQuery, setPendingQuery] = useState('');
     const [dbConversationId, setDbConversationId] = useState<string | null>(null);
     const [feedbackState, setFeedbackState] = useState<Record<string, 'like' | 'dislike' | null>>({});
     const [showShareModal, setShowShareModal] = useState(false);
@@ -86,20 +86,6 @@ export default function JudgmentSearch() {
     // Fetch a search result from the agent. Shared by new searches,
     // regenerate, and edit-and-resubmit so all three behave identically.
     const runSearchQuery = async (searchQuery: string): Promise<JudgmentResult> => {
-        const progressSteps = [
-            'Querying Supreme Court, High Courts...',
-            'Searching law libraries & statute portals...',
-            'Analyzing retrieved content with AI...',
-            'Building legal analysis...'
-        ];
-        let stepIndex = 0;
-        const progressInterval = setInterval(() => {
-            if (stepIndex < progressSteps.length) {
-                setSearchProgress(progressSteps[stepIndex]);
-                stepIndex++;
-            }
-        }, 3000);
-
         // Without a timeout, a slow/unresponsive agent leaves this fetch
         // pending forever, which keeps regeneratingId/isSearching stuck true
         // and the regenerate/search spinner spinning indefinitely.
@@ -127,7 +113,6 @@ export default function JudgmentSearch() {
             throw err;
         } finally {
             clearTimeout(timeoutId);
-            clearInterval(progressInterval);
         }
     };
 
@@ -138,7 +123,7 @@ export default function JudgmentSearch() {
         setQuery('');
         setIsSearching(true);
         setError(null);
-        setSearchProgress('Searching Pakistani legal portals...');
+        setPendingQuery(searchQuery);
 
         try {
             const result = await runSearchQuery(searchQuery);
@@ -201,7 +186,7 @@ export default function JudgmentSearch() {
             }
         } finally {
             setIsSearching(false);
-            setSearchProgress('');
+            setPendingQuery('');
         }
     };
 
@@ -230,7 +215,6 @@ export default function JudgmentSearch() {
         if (regeneratingId) return;
         setRegeneratingId(item.id);
         setError(null);
-        setSearchProgress('Searching Pakistani legal portals...');
 
         try {
             const result = await runSearchQuery(item.query);
@@ -246,7 +230,6 @@ export default function JudgmentSearch() {
             setError(err.message || 'Regenerate failed. Please try again.');
         } finally {
             setRegeneratingId(null);
-            setSearchProgress('');
         }
     };
 
@@ -268,7 +251,6 @@ export default function JudgmentSearch() {
         setEditingId(null);
         setRegeneratingId(item.id);
         setError(null);
-        setSearchProgress('Searching Pakistani legal portals...');
 
         try {
             const result = await runSearchQuery(newQuery);
@@ -289,7 +271,6 @@ export default function JudgmentSearch() {
             setError(err.message || 'Search failed. Please try again.');
         } finally {
             setRegeneratingId(null);
-            setSearchProgress('');
         }
     };
 
@@ -569,15 +550,11 @@ export default function JudgmentSearch() {
                                                 </div>
 
                                                 {/* Explanation content */}
-                                                <div className="message-content text-[#0d0d0d] dark:text-[#ececec]">
-                                                    <TypedReveal text={item.result.explanation} animate={typingId === item.id} onDone={() => setTypingId(null)}>
-                                                        {(shown) => (
-                                                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                                                {shown}
-                                                            </ReactMarkdown>
-                                                        )}
-                                                    </TypedReveal>
-                                                </div>
+                                                <div>
+<TypedReveal text={item.result.explanation} animate={typingId === item.id} onDone={() => setTypingId(null)}>
+{(shown) => <AnswerContent content={shown} />}
+</TypedReveal>
+</div>
 
                                                 {/* Action buttons (once the explanation is fully shown) */}
                                                 <div className={`flex items-center gap-1 mt-3 ${typingId === item.id ? 'hidden' : ''}`}>
@@ -695,6 +672,10 @@ export default function JudgmentSearch() {
                                 ))}
                             </AnimatePresence>
 
+                            {isSearching && pendingQuery && (
+<PendingQuestion text={pendingQuery} color="#00a859" icon={Search} />
+)}
+
                             {/* Searching indicator */}
                             {isSearching && (
                                 <motion.div
@@ -711,7 +692,7 @@ export default function JudgmentSearch() {
                                         <div className="flex items-center gap-3">
                                             <Loader2 className="w-4 h-4 text-[#00a859] animate-spin" />
                                             <span className="text-sm text-[#666666] dark:text-[#b4b4b4]">
-                                                {searchProgress || 'Searching...'}
+                                                Thinking...
                                             </span>
                                         </div>
                                         <div className="mt-3 space-y-2">

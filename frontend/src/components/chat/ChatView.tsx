@@ -8,11 +8,8 @@ import {
     Copy, Edit3, ThumbsUp, ThumbsDown, RefreshCw, ChevronLeft, ChevronRight, Check, Upload, Clock, Share2,
     Phone, ShieldAlert, CheckCircle2, ChevronDown, ChevronUp, ExternalLink, AlertTriangle, Paperclip, Square, AudioLines
 } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import rehypeRaw from 'rehype-raw';
 import { api } from '@/lib/api';
-import { isJudgmentDocument, renderJudgmentText } from '@/lib/judgmentText';
+import AnswerContent from '@/components/chat/AnswerContent';
 
 // Reasons offered after a dislike (keys match the backend's DISLIKE_REASONS).
 const DISLIKE_REASONS: [string, string][] = [
@@ -1077,28 +1074,8 @@ export default function ChatView({
                                                     )}
 
                                                     {message.role === 'assistant' ? (
-                                                        isJudgmentDocument(message.content) ? (
-                                                            <div className="message-content font-serif text-[#0d0d0d] dark:text-[#ececec]">
-                                                                {renderJudgmentText(message.content.replace(/^Answer:\s*/i, '').replace(/^Answer\s*/i, '') + (message.isStreaming ? ' ●' : ''))}
-                                                            </div>
-                                                        ) : (
-                                                        <div className="message-content text-[#0d0d0d] dark:text-[#ececec]">
-                                                        <ReactMarkdown
-                                                            remarkPlugins={[remarkGfm]}
-                                                            rehypePlugins={[rehypeRaw]}
-                                                            components={{
-                                                                table: ({ children, ...props }) => (
-                                                                    <div style={{ overflowX: 'auto', margin: '1rem 0' }}>
-                                                                        <table {...props}>{children}</table>
-                                                                    </div>
-                                                                )
-                                                            }}
-                                                        >
-                                                            {message.content.replace(/^Answer:\s*/i, '').replace(/^Answer\s*/i, '') + (message.isStreaming ? ' ●' : '')}
-                                                        </ReactMarkdown>
-                                                        </div>
-                                                        )
-                                                    ) : (
+<AnswerContent content={message.content} streaming={message.isStreaming} />
+) : (
                                                         <div className={`text-base leading-7 whitespace-pre-wrap ${message.role === 'user'
                                                             ? 'bg-[#f4f4f4] dark:bg-[#383838] px-4 py-2.5 rounded-2xl rounded-tr-sm inline-block text-[#0d0d0d] dark:text-[#ececec]'
                                                             : 'text-[#0d0d0d] dark:text-[#ececec]'

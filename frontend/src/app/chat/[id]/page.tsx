@@ -6,6 +6,8 @@ import { api } from '@/lib/api';
 import type { ChatImage } from '@/lib/chatImage';
 import { createStreamBuffer } from '@/lib/streamBuffer';
 import ChatView from '@/components/chat/ChatView';
+import LawAgentChat from '@/components/chat/LawAgentChat';
+import { LAW_AGENTS, agentTypeFromTitle } from '@/lib/lawAgents';
 import { useChatLayout } from '../layout';
 
 interface Message {
@@ -443,6 +445,18 @@ export default function ConversationPage() {
                     </button>
                 </div>
             </div>
+        );
+    }
+
+    // A saved Law Agent conversation reopens in the same agent view it was created in.
+    const agentType = agentTypeFromTitle(currentConversation?.title);
+    if (agentType && currentConversation) {
+        return (
+            <LawAgentChat
+                key={currentConversation.id}
+                {...LAW_AGENTS[agentType]}
+                initialConversation={{ id: currentConversation.id, messages: currentConversation.messages }}
+            />
         );
     }
 

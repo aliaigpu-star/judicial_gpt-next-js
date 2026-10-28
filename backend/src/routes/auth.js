@@ -6,6 +6,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
+const UserProfile = require('../models/UserProfile');
 const { authenticate } = require('../middleware/auth');
 const { authRateLimiter } = require('../middleware/rateLimit');
 const { asyncHandler, ApiError } = require('../middleware/errorHandler');
@@ -15,6 +16,8 @@ const emailService = require('../services/emailService');
 const { query } = require('../config/database');
 const crypto = require('crypto');
 const { OAuth2Client } = require('google-auth-library');
+
+const DELETED_ACCOUNT_MESSAGE = 'This account has been deleted. To recover it, email the administrator.';
 
 // Google OAuth Client
 console.log('🔑 Initializing Google OAuth Client with:');
@@ -145,6 +148,14 @@ router.get('/google/callback', asyncHandler(async (req, res) => {
             avatarUrl: googleUser.picture
         });
         console.log('✅ User upserted:', user);
+
+        const profile = await UserProfile.findByUserId(user.id);
+        if (profile?.status === 'deleted') {
+            const frontendUrl = config.FRONTEND_URL || 'http://localhost:3000';
+            return res.redirect(isMobile
+                ? `${MOBILE_CALLBACK_URL}?error=account_deleted`
+                : `${frontendUrl}/login?error=account_deleted`);
+        }
 
         // Generate tokens
         console.log('🔄 Generating JWT tokens...');
@@ -341,6 +352,11 @@ router.post('/login', authRateLimiter, asyncHandler(async (req, res) => {
     const isValidPassword = await User.verifyPassword(user, password);
     if (!isValidPassword) {
         throw new ApiError(401, 'Invalid email or password', 'INVALID_CREDENTIALS');
+    }
+
+    // Checked after the password so the message is only shown to the account's owner
+    if (user.status === 'deleted') {
+        throw new ApiError(403, DELETED_ACCOUNT_MESSAGE, 'ACCOUNT_DELETED');
     }
 
     // Check if account is suspended

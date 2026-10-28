@@ -356,6 +356,7 @@ export default function UsersPage() {
                         <option value="inactive">Inactive</option>
                         <option value="suspended">Suspended</option>
                         <option value="banned">Banned</option>
+                        <option value="deleted">Deleted (by user)</option>
                     </select>
 
                     {/* Clear Filters */}
@@ -431,6 +432,7 @@ export default function UsersPage() {
                                 <option value="inactive">Inactive</option>
                                 <option value="suspended">Suspended</option>
                                 <option value="banned">Banned</option>
+                                <option value="deleted">Deleted (by user)</option>
                             </select>
                             <button
                                 onClick={handleBulkStatusUpdate}

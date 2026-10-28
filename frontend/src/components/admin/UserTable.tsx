@@ -46,14 +46,16 @@ const statusColors: Record<string, string> = {
     active: 'bg-[#00a859]/10 text-[#00a859]',
     inactive: 'bg-gray-500/10 text-gray-400',
     suspended: 'bg-orange-500/10 text-orange-400',
-    banned: 'bg-red-500/10 text-red-400'
+    banned: 'bg-red-500/10 text-red-400',
+    deleted: 'bg-red-500/10 text-red-400'
 };
 
 const statusIcons: Record<string, React.ElementType> = {
     active: CheckCircle,
     inactive: XCircle,
     suspended: Ban,
-    banned: Ban
+    banned: Ban,
+    deleted: XCircle
 };
 
 function formatDate(dateString: string): string {

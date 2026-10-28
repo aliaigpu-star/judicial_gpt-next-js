@@ -3,9 +3,19 @@
  * Database operations for user profiles
  */
 
+const fs = require('fs');
+const path = require('path');
 const { query } = require('../config/database');
 
 class UserProfile {
+    /** Allows the 'deleted' status on older databases (same SQL as migration 005). */
+    static async ensureSchema() {
+        await query(fs.readFileSync(
+            path.join(__dirname, '../../database/migrations/005_add_deleted_user_status.sql'),
+            'utf8'
+        ));
+    }
+
     /**
      * Get profile by user ID
      */
@@ -75,7 +85,7 @@ class UserProfile {
      * Update status (admin only)
      */
     static async updateStatus(userId, status) {
-        const validStatuses = ['active', 'inactive', 'suspended', 'banned'];
+        const validStatuses = ['active', 'inactive', 'suspended', 'banned', 'deleted'];
         if (!validStatuses.includes(status)) {
             throw new Error('Invalid status');
         }

@@ -257,6 +257,7 @@ export default function UserModal({ user, mode, onClose, onUserUpdated, onUserCr
                             <option value="inactive">Inactive</option>
                             <option value="suspended">Suspended</option>
                             <option value="banned">Banned</option>
+                            <option value="deleted">Deleted (by user)</option>
                         </select>
                     </div>
 

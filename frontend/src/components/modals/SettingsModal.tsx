@@ -9,6 +9,7 @@ import { useTheme } from '@/context/ThemeContext';
 import { useAccentColor, AccentColor, accentColorMap } from '@/context/AccentColorContext';
 import { useAuth } from '@/context/AuthContext';
 import { api } from '@/lib/api';
+import ConfirmModal from '@/components/modals/ConfirmModal';
 
 interface SettingsModalProps {
     isOpen: boolean;
@@ -176,7 +177,7 @@ function ColorDropdown({ value, onChange }: ColorDropdownProps) {
 export default function SettingsModal({ isOpen, onClose, showArchived, onToggleArchived, initialTab = 'General' }: SettingsModalProps) {
     const { themeMode, setThemeMode } = useTheme();
     const { accentColor, setAccentColor } = useAccentColor();
-    const { user, refreshUser } = useAuth();
+    const { user, refreshUser, signOut } = useAuth();
     const [activeTab, setActiveTab] = useState('General');
     const [inactivityTimeout, setInactivityTimeout] = useState('60');
     const [notifications, setNotifications] = useState(true);
@@ -191,6 +192,9 @@ export default function SettingsModal({ isOpen, onClose, showArchived, onToggleA
     const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
     const [profileMessage, setProfileMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const [showDeleteAccount, setShowDeleteAccount] = useState(false);
+    const [isDeletingAccount, setIsDeletingAccount] = useState(false);
 
     // Data controls state
     const [isArchivingAll, setIsArchivingAll] = useState(false);
@@ -650,6 +654,23 @@ export default function SettingsModal({ isOpen, onClose, showArchived, onToggleA
                             {isSavingProfile ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
                             Save Changes
                         </button>
+
+                        {/* Delete account */}
+                        <div className="flex items-center justify-between gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                            <div>
+                                <div className="text-sm text-red-600">Delete account</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                                    You will be signed out and can no longer log in
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => setShowDeleteAccount(true)}
+                                className="flex items-center gap-2 px-3 py-1.5 text-sm bg-red-50 dark:bg-red-900/20 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                            >
+                                <Trash2 className="w-4 h-4" />
+                                Delete
+                            </button>
+                        </div>
                     </div>
                 );
             default:
@@ -660,6 +681,7 @@ export default function SettingsModal({ isOpen, onClose, showArchived, onToggleA
     if (!isOpen) return null;
 
     return (
+        <>
         <AnimatePresence>
             <motion.div
                 initial={{ opacity: 0 }}
@@ -734,5 +756,27 @@ export default function SettingsModal({ isOpen, onClose, showArchived, onToggleA
                 </motion.div>
             </motion.div>
         </AnimatePresence>
+
+        <ConfirmModal
+            isOpen={showDeleteAccount}
+            onClose={() => setShowDeleteAccount(false)}
+            onConfirm={async () => {
+                setIsDeletingAccount(true);
+                try {
+                    await api.deleteAccount();
+                    await signOut();
+                    window.location.href = '/login';
+                } catch (err: any) {
+                    setShowDeleteAccount(false);
+                    setProfileMessage({ type: 'error', text: err.message || 'Could not delete the account' });
+                    setIsDeletingAccount(false);
+                }
+            }}
+            title="Delete your account?"
+            message="You will be signed out and will no longer be able to log in. Your chats are kept, and an administrator can restore your account if you email them."
+            confirmText="Delete account"
+            isLoading={isDeletingAccount}
+        />
+        </>
     );
 }

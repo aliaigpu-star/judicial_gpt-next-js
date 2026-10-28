@@ -13,6 +13,7 @@ const config = require('./config/env');
 const { testConnection } = require('./config/database');
 const { loadBackendSecrets } = require('./vault');
 const { MessageFeedback } = require('./models/MessageFeedback');
+const UserProfile = require('./models/UserProfile');
 
 // Import routes
 const authRoutes = require('./routes/auth');
@@ -152,6 +153,13 @@ const startServer = async () => {
             await MessageFeedback.ensureSchema();
         } catch (err) {
             console.error('⚠️ Could not prepare message_feedback table:', err.message);
+        }
+
+        // Allow the 'deleted' account status on databases created before it existed.
+        try {
+            await UserProfile.ensureSchema();
+        } catch (err) {
+            console.error('⚠️ Could not update the user status constraint:', err.message);
         }
 
         // Start listening

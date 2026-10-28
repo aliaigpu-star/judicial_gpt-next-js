@@ -214,6 +214,9 @@ function LoginContent() {
         if (message === 'verified') {
             setSuccess('Email verified successfully! You can now log in.');
         }
+        if (searchParams.get('error') === 'account_deleted') {
+            setError('This account has been deleted. To recover it, email the administrator.');
+        }
     }, [searchParams]);
 
     // Google Sign In

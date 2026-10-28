@@ -14,7 +14,7 @@ interface AdminUser {
     email: string;
     name: string;
     role: 'user' | 'admin' | 'moderator';
-    status: 'active' | 'inactive' | 'suspended' | 'banned';
+    status: 'active' | 'inactive' | 'suspended' | 'banned' | 'deleted';
     emailVerified: boolean;
     avatarUrl?: string;
     conversationCount: number;

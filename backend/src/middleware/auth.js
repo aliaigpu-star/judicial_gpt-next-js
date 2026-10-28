@@ -50,6 +50,14 @@ const authenticate = async (req, res, next) => {
 
         const user = result.rows[0];
 
+        // Accounts the user deleted stay in the database but can no longer be used
+        if (user.status === 'deleted') {
+            return res.status(403).json({
+                error: 'This account has been deleted. Contact the administrator to recover it.',
+                code: 'ACCOUNT_DELETED'
+            });
+        }
+
         // Check if user is active
         if (user.status === 'suspended' || user.status === 'banned') {
             return res.status(403).json({
@@ -123,7 +131,7 @@ const optionalAuth = async (req, res, next) => {
             [decoded.userId]
         );
 
-        if (result.rows.length > 0) {
+        if (result.rows.length > 0 && result.rows[0].status !== 'deleted') {
             const user = result.rows[0];
             req.user = {
                 id: user.id,

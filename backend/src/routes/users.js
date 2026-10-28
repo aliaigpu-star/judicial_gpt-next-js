@@ -8,7 +8,9 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const User = require('../models/User');
 const UserProfile = require('../models/UserProfile');
+const ActivityLogger = require('../services/activityLogger');
 const { authenticate } = require('../middleware/auth');
 const { asyncHandler, ApiError } = require('../middleware/errorHandler');
 const config = require('../config/env');
@@ -171,6 +173,32 @@ router.delete('/avatar', authenticate, asyncHandler(async (req, res) => {
         success: true,
         message: 'Avatar removed'
     });
+}));
+
+/**
+ * DELETE /api/users/account
+ * Disable the current user's account. Nothing is erased: the user is signed
+ * out everywhere and can no longer log in, and an admin can restore the account.
+ */
+router.delete('/account', authenticate, asyncHandler(async (req, res) => {
+    // Keeps the last admin from locking everyone out of the admin panel
+    if (req.user.role === 'admin') {
+        throw new ApiError(403, 'Admin accounts cannot be deleted here.', 'ADMIN_CANNOT_DELETE');
+    }
+
+    await UserProfile.updateStatus(req.user.id, 'deleted');
+    await User.deleteAllSessions(req.user.id);
+    res.clearCookie('refreshToken');
+
+    ActivityLogger.logUserUpdate(
+        req.user.id,
+        req.user.id,
+        { status: { from: req.user.status, to: 'deleted' } },
+        req.ip || req.connection.remoteAddress,
+        req.headers['user-agent']
+    );
+
+    res.json({ success: true, message: 'Account deleted' });
 }));
 
 /**

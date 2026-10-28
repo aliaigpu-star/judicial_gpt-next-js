@@ -296,6 +296,11 @@ class ApiClient {
         return response.json();
     }
 
+    /** Disables the account (kept for an admin to restore) and ends every session. */
+    async deleteAccount() {
+        return this.request('/api/users/account', { method: 'DELETE' });
+    }
+
     async deleteAvatar() {
         return this.request('/api/users/avatar', { method: 'DELETE' });
     }

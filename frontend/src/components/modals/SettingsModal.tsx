@@ -773,7 +773,7 @@ export default function SettingsModal({ isOpen, onClose, showArchived, onToggleA
                 }
             }}
             title="Delete your account?"
-            message="You will be signed out and will no longer be able to log in."
+            message="You will be signed out and will no longer be able to log in. Your chats are kept, and an administrator can restore your account if you email them."
             confirmText="Delete account"
             isLoading={isDeletingAccount}
         />

@@ -41,7 +41,7 @@ interface SourceResult {
     content_preview?: string;
 }
 
-export interface Message {
+interface Message {
     id: string;
     role: 'user' | 'assistant' | 'system';
     content: string;
@@ -83,15 +83,6 @@ interface ChatViewProps {
     onEditMessage?: (messageId: string, newContent: string) => Promise<void>;
     onUpdateMessages?: (messages: Message[]) => void;
     isTemporaryMode?: boolean;
-    /** Set by the Law Agent pages: their header, suggested questions and "RAG" badge. */
-    agent?: {
-        title: string;
-        description: string;
-        accentColor: string;
-        icon: React.ElementType;
-        badge: string;
-        suggestions: string[];
-    };
 }
 
 // Status styling for the Judgment Search sources list (mirrors JudgmentSearch.tsx)
@@ -133,8 +124,7 @@ export default function ChatView({
     onRegenerate,
     onEditMessage,
     onUpdateMessages,
-    isTemporaryMode,
-    agent
+    isTemporaryMode
 }: ChatViewProps) {
     const [input, setInput] = useState('');
     const [isRecording, setIsRecording] = useState(false);
@@ -766,7 +756,6 @@ export default function ChatView({
                                             </span>
                                             Add photos & files
                                         </button>
-                                        {!agent && (
                                         <button
                                             type="button"
                                             onClick={() => {
@@ -783,7 +772,6 @@ export default function ChatView({
                                                 <span className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${webSearchEnabled ? 'translate-x-4' : ''}`} />
                                             </span>
                                         </button>
-                                        )}
                                     </div>
                                 </motion.div>
                             )}
@@ -815,7 +803,7 @@ export default function ChatView({
                             isRecording ? 'Listening…' :
                             isProcessingFile ? 'Processing...' :
                                 webSearchEnabled ? 'Search the web...' :
-                                    agent ? `Ask ${agent.title}...` : 'Message JudicialGPT'
+                                    'Message JudicialGPT'
                         }
                         rows={1}
                         disabled={isProcessingFile}
@@ -964,46 +952,17 @@ export default function ChatView({
                                         exit={{ opacity: 0, y: -10 }}
                                         transition={{ duration: 0.2 }}
                                     >
-                                        {agent ? (
-                                            <>
-                                                <div
-                                                    className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full"
-                                                    style={{ backgroundColor: `${agent.accentColor}1a` }}
-                                                >
-                                                    <agent.icon className="h-6 w-6" style={{ color: agent.accentColor }} />
-                                                </div>
-                                                <h1 className="text-3xl font-semibold text-[#0d0d0d] dark:text-[#ececec] mb-2">{agent.title}</h1>
-                                                <p className="mx-auto max-w-md text-sm text-[#666666] dark:text-[#b4b4b4]">{agent.description}</p>
-                                            </>
-                                        ) : (
                                         <h1 className="text-3xl font-semibold text-[#0d0d0d] dark:text-[#ececec]">
                                             {user?.firstName || user?.name?.split(' ')[0]
                                                 ? `Hi ${user?.firstName || user?.name?.split(' ')[0]}, how can I help?`
                                                 : 'How can I help you today?'}
                                         </h1>
-                                        )}
                                     </motion.div>
                                 )}
                             </AnimatePresence>
                         </div>
 
                         {inputForm}
-
-                        {agent && (
-                            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                                {agent.suggestions.map((suggestion) => (
-                                    <button
-                                        key={suggestion}
-                                        type="button"
-                                        onClick={() => { setInput(suggestion); inputRef.current?.focus(); }}
-                                        className="flex items-center gap-2 rounded-xl border border-[#e5e5e5] dark:border-[#424242] px-4 py-2.5 text-left text-xs text-[#666666] dark:text-[#b4b4b4] shadow-sm transition-all hover:bg-[#f4f4f4] dark:hover:bg-[#2f2f2f] hover:text-[#0d0d0d] dark:hover:text-[#ececec]"
-                                    >
-                                        <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full" style={{ backgroundColor: `${agent.accentColor}a6` }} />
-                                        <span className="line-clamp-2">{suggestion}</span>
-                                    </button>
-                                ))}
-                            </div>
-                        )}
                     </div>
                 </div>
             ) : (
@@ -1101,16 +1060,6 @@ export default function ChatView({
                                             ) : (
                                                 // Display mode
                                                 <>
-                                                    {agent && message.role === 'assistant' && !message.content.startsWith('⚠️') && (
-                                                        <span
-                                                            className="mb-3 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium"
-                                                            style={{ backgroundColor: `${agent.accentColor}1a`, color: agent.accentColor, borderColor: `${agent.accentColor}33` }}
-                                                        >
-                                                            <CheckCircle2 className="h-3 w-3" />
-                                                            {agent.badge}
-                                                        </span>
-                                                    )}
-
                                                     {/* Judgment Search sources summary (persisted via message.metadata) */}
                                                     {message.role === 'assistant' && message.metadata?.judgmentSearch && (
                                                         <div className="flex flex-wrap items-center gap-2 mb-3">
@@ -1196,7 +1145,7 @@ export default function ChatView({
                                                     </button>
 
                                                     {/* Edit button (for user messages) */}
-                                                    {message.role === 'user' && onEditMessage && (
+                                                    {message.role === 'user' && (
                                                         <button
                                                             type="button"
                                                             onClick={(e) => {

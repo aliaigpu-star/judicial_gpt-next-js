@@ -285,10 +285,9 @@ export default function VoiceAgent({ onClose, onGetAIResponse, isOpen }: VoiceAg
                 if (onGetAIResponse) {
                     aiResponse = await onGetAIResponse(spokenPrompt);
                 } else {
-                    // Fallback: call API directly - use openai/gpt-oss-120b (Groq supported model)
+                    // Fallback: call API directly
                     const result = await api.sendChatMessage(
-                        [...conversationHistory.map(m => ({ role: m.role, content: m.text })), { role: 'user', content: spokenPrompt }],
-                        { model: 'openai/gpt-oss-120b' }
+                        [...conversationHistory.map(m => ({ role: m.role, content: m.text })), { role: 'user', content: spokenPrompt }]
                     );
                     aiResponse = result.message?.content || result.message || 'Sorry, I could not understand.';
                 }

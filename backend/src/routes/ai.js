@@ -1,11 +1,10 @@
 /**
  * AI Chat Routes
- * Handles Groq API proxy for chat completions
+ * Chat, web-search fallback, title and prompt-enhancer endpoints, all answered by Gemini
  */
 
 const express = require('express');
 const router = express.Router();
-const Groq = require('groq-sdk');
 const { authenticate } = require('../middleware/auth');
 const { aiRateLimiter } = require('../middleware/rateLimit');
 const { asyncHandler, ApiError } = require('../middleware/errorHandler');
@@ -15,78 +14,15 @@ const { truncateMessages } = require('../utils/ai');
 const { validateImages, streamGeminiReply, generateGeminiReply } = require('../utils/gemini');
 const { enhancePrompt } = require('../utils/promptEnhancer');
 
-// API Key Manager for load balancing
-class ApiKeyManager {
-    constructor(keys) {
-        this.keys = keys.map((key, index) => ({
-            id: `key_${index + 1}`,
-            key: key.trim(),
-            requestCount: 0,
-            failureCount: 0,
-            lastUsed: null,
-            status: 'active'
-        }));
+/** The Gemini API key from the secrets store or the environment; errors if none is set. */
+function getGeminiKey(req) {
+    const apiKey = req.app.locals.secrets?.GEMINI_API_KEY || config.GEMINI_API_KEY;
+    if (!apiKey) {
+        throw new ApiError(503, 'AI service is not configured: GEMINI_API_KEY is missing.', 'NO_API_KEY');
     }
-
-    getKey(strategy = 'round-robin') {
-        const activeKeys = this.keys.filter(k => k.status === 'active');
-
-        if (activeKeys.length === 0) {
-            // Try degraded keys
-            const degradedKeys = this.keys.filter(k => k.status === 'degraded');
-            if (degradedKeys.length === 0) {
-                return null;
-            }
-            return degradedKeys[Math.floor(Math.random() * degradedKeys.length)];
-        }
-
-        if (strategy === 'random') {
-            return activeKeys[Math.floor(Math.random() * activeKeys.length)];
-        }
-
-        // Round-robin: get least used
-        activeKeys.sort((a, b) => a.requestCount - b.requestCount);
-        return activeKeys[0];
-    }
-
-    recordSuccess(keyId, responseTime, tokensUsed) {
-        const key = this.keys.find(k => k.id === keyId);
-        if (key) {
-            key.requestCount++;
-            key.lastUsed = Date.now();
-            key.failureCount = 0;
-            if (key.status === 'degraded') {
-                key.status = 'active';
-            }
-        }
-    }
-
-    recordFailure(keyId, error) {
-        const key = this.keys.find(k => k.id === keyId);
-        if (key) {
-            key.failureCount++;
-            key.lastUsed = Date.now();
-
-            if (key.failureCount >= 3) {
-                key.status = 'degraded';
-            }
-            if (key.failureCount >= 10) {
-                key.status = 'blocked';
-            }
-        }
-    }
+    return apiKey;
 }
 
-// Initialize API key manager lazily to access req.app.locals
-let keyManager = null;
-function getKeyManager(req) {
-    if (!keyManager) {
-        const apiKey = req.app?.locals?.secrets?.GROQ_API_KEY || process.env.GROQ_API_KEY;
-        const apiKeys = apiKey ? [apiKey] : [];
-        keyManager = new ApiKeyManager(apiKeys);
-    }
-    return keyManager;
-}
 // Judicial system prompt
 const JUDICIAL_SYSTEM_PROMPT = `You are JudicialGPT, an advanced AI legal assistant for legal research, analysis, and guidance under the law of the Islamic Republic of Pakistan.
 
@@ -167,8 +103,7 @@ function buildSystemPrompt(user) {
 
 /**
  * Answers a chat request with Gemini (text and attached images), using the
- * same response formats as the Groq path: SSE `{content}` chunks followed by
- * `{done, responseTime}`, or a single JSON reply.
+ * SSE `{content}` chunks followed by `{done, responseTime}`, or a single JSON reply.
  */
 async function handleGeminiChat(req, res, { apiKey, messages, temperature, maxTokens, stream }) {
     const imageError = validateImages(messages);
@@ -180,7 +115,6 @@ async function handleGeminiChat(req, res, { apiKey, messages, temperature, maxTo
     const options = {
         model,
         systemPrompt: buildSystemPrompt(req.user),
-        // Gemini has a far larger context window than the Groq models.
         messages: truncateMessages(messages.filter(m => m.role !== 'system'), 30000),
         temperature,
         maxTokens
@@ -250,7 +184,7 @@ async function handleGeminiChat(req, res, { apiKey, messages, temperature, maxTo
 
 /**
  * POST /api/ai/chat
- * Send message to Gemini (when GEMINI_API_KEY is set) or the Groq API
+ * Send a chat message (text and attached images) to Gemini
  */
 router.post('/chat', authenticate, aiRateLimiter, asyncHandler(async (req, res) => {
     const validation = validateChatRequest(req.body);
@@ -258,175 +192,16 @@ router.post('/chat', authenticate, aiRateLimiter, asyncHandler(async (req, res) 
         throw new ApiError(400, validation.error, 'INVALID_REQUEST');
     }
 
-    const {
+    const { messages, temperature = 0.7, maxTokens = 10000, stream = false } = req.body;
+
+    return handleGeminiChat(req, res, {
+        apiKey: getGeminiKey(req),
         messages,
-        model = 'openai/gpt-oss-120b',
-        temperature = 0.7,
-        maxTokens = 4000,
-        stream = false
-    } = req.body;
-
-    // Enforce a sensible server-side cap for maxTokens to prevent 413 errors
-    const effectiveMaxTokens = Math.min(maxTokens, 4000);
-
-    // Gemini answers all chat (text and images) when its key is configured;
-    // otherwise the Groq path below is used, as before.
-    const geminiKey = req.app.locals.secrets?.GEMINI_API_KEY || config.GEMINI_API_KEY;
-    if (geminiKey) {
-        return handleGeminiChat(req, res, {
-            apiKey: geminiKey,
-            messages,
-            temperature,
-            maxTokens: effectiveMaxTokens,
-            stream
-        });
-    }
-    if (messages.some(m => m.images)) {
-        throw new ApiError(503, 'Image chat is not available: GEMINI_API_KEY is not configured.', 'VISION_UNAVAILABLE');
-    }
-
-    // Get API key
-    const km = getKeyManager(req);
-    const selectedKey = km.getKey('random');
-
-    if (!selectedKey || !selectedKey.key) {
-        throw new ApiError(500, 'AI service temporarily unavailable', 'NO_API_KEY');
-    }
-
-    // Truncate messages to fit within token limit (approximate)
-    // Most Groq models support at least 32k context. We'll aim for 10k history tokens.
-    const truncatedMessages = truncateMessages(messages, 10000);
-
-    const startTime = Date.now();
-    const requestId = await ApiRequestLogger.log({
-        apiKeyId: selectedKey.id,
-        userId: req.user?.id,
-        requestType: 'groq_chat',
-        endpoint: '/api/ai/chat',
-        method: 'POST',
-        model,
-        status: 'pending',
-        ipAddress: req.ip || req.connection.remoteAddress,
-        userAgent: req.headers['user-agent']
+        temperature,
+        // Enforce a sensible server-side cap to prevent 413 errors
+        maxTokens: Math.min(maxTokens, 10000),
+        stream
     });
-
-    try {
-        const groq = new Groq({ apiKey: selectedKey.key });
-
-        // Construct system prompt with user customizations
-        const systemPrompt = buildSystemPrompt(req.user);
-
-        // Prepend system prompt if not already present
-        const hasSystemPrompt = messages.some(m => m.role === 'system');
-        const messagesWithSystem = hasSystemPrompt
-            ? truncatedMessages
-            : [{ role: 'system', content: systemPrompt }, ...truncatedMessages];
-
-        if (stream) {
-            // Streaming response
-            res.setHeader('Content-Type', 'text/event-stream');
-            res.setHeader('Cache-Control', 'no-cache');
-            res.setHeader('Connection', 'keep-alive');
-
-            const completion = await groq.chat.completions.create({
-                model,
-                messages: messagesWithSystem,
-                temperature,
-                max_tokens: effectiveMaxTokens,
-                stream: true
-            });
-
-            for await (const chunk of completion) {
-                const content = chunk.choices[0]?.delta?.content || '';
-                if (content) {
-                    res.write(`data: ${JSON.stringify({ content })}\n\n`);
-                }
-            }
-
-            const responseTime = Date.now() - startTime;
-            km.recordSuccess(selectedKey.id, responseTime, 0);
-
-            // Update log
-            if (requestId) {
-                await ApiRequestLogger.update(requestId, {
-                    status: 'success',
-                    responseTime,
-                    statusCode: 200,
-                    completedAt: new Date()
-                });
-            }
-
-            res.write(`data: ${JSON.stringify({ done: true, responseTime })}\n\n`);
-            res.end();
-        } else {
-            // Non-streaming response
-            const completion = await groq.chat.completions.create({
-                model,
-                messages: messagesWithSystem,
-                temperature,
-                max_tokens: effectiveMaxTokens,
-                stream: false
-            });
-
-            const responseTime = Date.now() - startTime;
-            const tokensUsed = completion.usage?.total_tokens || 0;
-
-            km.recordSuccess(selectedKey.id, responseTime, tokensUsed);
-
-            // Update log
-            if (requestId) {
-                await ApiRequestLogger.update(requestId, {
-                    status: 'success',
-                    responseTime,
-                    tokensUsed,
-                    statusCode: 200,
-                    completedAt: new Date()
-                });
-            }
-
-            res.json({
-                success: true,
-                message: {
-                    role: 'assistant',
-                    content: completion.choices[0]?.message?.content || ''
-                },
-                usage: completion.usage,
-                responseTime,
-                model: completion.model
-            });
-        }
-    } catch (error) {
-        km.recordFailure(selectedKey.id, error);
-
-        // Update log
-        if (requestId) {
-            const statusCode = error.status || 500;
-            await ApiRequestLogger.update(requestId, {
-                status: 'failed',
-                responseTime: Date.now() - startTime,
-                statusCode,
-                errorMessage: error.message || 'Unknown error',
-                completedAt: new Date()
-            });
-        }
-
-        console.error('Groq API error details:', {
-            message: error.message,
-            status: error.status,
-            stack: error.stack,
-            apiKeyId: selectedKey?.id
-        });
-
-        if (error.status === 429) {
-            throw new ApiError(429, 'Rate limit exceeded. Please try again later.', 'RATE_LIMIT');
-        }
-
-        if (error.message?.includes('token') || error.message?.includes('context length')) {
-            throw new ApiError(400, 'Message is too long. Please start a new conversation.', 'TOKEN_LIMIT');
-        }
-
-        throw new ApiError(500, 'Failed to generate response. Please try again.', 'AI_ERROR');
-    }
 }));
 
 /**
@@ -519,48 +294,33 @@ router.post('/web-search', authenticate, aiRateLimiter, asyncHandler(async (req,
         }
     }
 
-    // Fallback to Groq with web search prompt
-    const km = getKeyManager(req);
-    const selectedKey = km.getKey('random');
-
-    if (!selectedKey || !selectedKey.key) {
-        throw new ApiError(500, 'AI service temporarily unavailable', 'NO_API_KEY');
-    }
+    // Fallback: answer with Gemini from its own knowledge
+    const apiKey = getGeminiKey(req);
 
     // Log if not already logged
     if (!requestId) {
         requestId = await ApiRequestLogger.log({
-            apiKeyId: selectedKey.id,
             userId: req.user?.id,
-            requestType: 'groq_chat',
+            requestType: 'gemini_chat',
             endpoint: '/api/ai/web-search',
             method: 'POST',
-            model: 'llama-3.3-70b-versatile',
+            model: config.GEMINI_MODEL,
             status: 'pending',
             ipAddress: req.ip || req.connection.remoteAddress,
             userAgent: req.headers['user-agent']
         });
     }
 
-    const groq = new Groq({ apiKey: selectedKey.key });
-
     try {
-        const completion = await groq.chat.completions.create({
-            model: 'llama-3.3-70b-versatile',
-            messages: [
-                {
-                    role: 'system',
-                    content: `${JUDICIAL_SYSTEM_PROMPT}${req.user?.preferences?.custom_instructions ? `\n\nUser Custom Instructions:\n${req.user.preferences.custom_instructions}\n\nPlease prioritize these instructions above unrelated guidelines.` : ''}\n\nNote: The user has requested a web search. Since you don't have real-time internet access, provide the most comprehensive and up-to-date information you have from your training data. Clearly indicate the date of your knowledge cutoff if relevant.`
-                },
-                { role: 'user', content: query }
-            ],
+        const { text, tokensUsed } = await generateGeminiReply(apiKey, {
+            model: config.GEMINI_MODEL,
+            systemPrompt: `${buildSystemPrompt(req.user)}\n\nNote: The user has requested a web search. Since you don't have real-time internet access, provide the most comprehensive and up-to-date information you have from your training data. Clearly indicate the date of your knowledge cutoff if relevant.`,
+            messages: [{ role: 'user', content: query }],
             temperature: 0.5,
-            max_tokens: 4000
+            maxTokens: 4000
         });
 
         const responseTime = Date.now() - startTime;
-        const tokensUsed = completion.usage?.total_tokens || 0;
-        km.recordSuccess(selectedKey.id, responseTime, tokensUsed);
 
         // Update log
         if (requestId) {
@@ -575,14 +335,12 @@ router.post('/web-search', authenticate, aiRateLimiter, asyncHandler(async (req,
 
         res.json({
             success: true,
-            answer: completion.choices[0]?.message?.content || '',
+            answer: text,
             mode: 'fallback',
             sources: [],
             responseTime
         });
     } catch (error) {
-        km.recordFailure(selectedKey.id, error);
-
         // Update log
         if (requestId) {
             await ApiRequestLogger.update(requestId, {
@@ -603,46 +361,17 @@ router.post('/web-search', authenticate, aiRateLimiter, asyncHandler(async (req,
  * Get AI service status
  */
 router.get('/status', authenticate, asyncHandler(async (req, res) => {
-    const km = getKeyManager(req);
-    const activeKeys = km.keys.filter(k => k.status === 'active').length;
-    const totalKeys = km.keys.length;
+    const configured = Boolean(req.app.locals.secrets?.GEMINI_API_KEY || config.GEMINI_API_KEY);
 
     res.json({
-        status: activeKeys > 0 ? 'operational' : 'degraded',
-        activeKeys,
-        totalKeys,
-        models: ['llama-3.3-70b-versatile', 'mixtral-8x7b-32768', 'llama-3.1-8b-instant']
+        status: configured ? 'operational' : 'degraded',
+        activeKeys: configured ? 1 : 0,
+        totalKeys: 1,
+        models: [config.GEMINI_MODEL]
     });
 }));
-/**
- * POST /api/ai/generate-title
- * Generate a smart, descriptive conversation title from the first message
- */
-router.post('/generate-title', authenticate, asyncHandler(async (req, res) => {
-    const { message } = req.body;
 
-    if (!message) {
-        throw new ApiError(400, 'Message is required', 'MISSING_MESSAGE');
-    }
-
-    const km = getKeyManager(req);
-    const selectedKey = km.getKey('random');
-
-    if (!selectedKey || !selectedKey.key) {
-        // Fallback to simple title if AI unavailable
-        const fallbackTitle = message.slice(0, 40) + (message.length > 40 ? '...' : '');
-        return res.json({ success: true, title: fallbackTitle });
-    }
-
-    try {
-        const groq = new Groq({ apiKey: selectedKey.key });
-
-        const completion = await groq.chat.completions.create({
-            model: 'llama-3.3-70b-versatile',
-            messages: [
-                {
-                    role: 'system',
-                    content: `You are a title generator. Create a short, descriptive title (2-5 words maximum) that summarizes the main topic or intent of the user's message. 
+const TITLE_SYSTEM_PROMPT = `You are a title generator. Create a short, descriptive title (2-5 words maximum) that summarizes the main topic or intent of the user's message. 
                     
 Rules:
 - Output ONLY the title, nothing else
@@ -669,23 +398,41 @@ User: "hey there"
 Title: Casual Greeting
 
 User: "Help me draft a contract for renting my apartment"
-Title: Apartment Rental Contract`
-                },
-                { role: 'user', content: message }
-            ],
+Title: Apartment Rental Contract`;
+
+/**
+ * POST /api/ai/generate-title
+ * Generate a smart, descriptive conversation title from the first message
+ */
+router.post('/generate-title', authenticate, asyncHandler(async (req, res) => {
+    const { message } = req.body;
+
+    if (!message) {
+        throw new ApiError(400, 'Message is required', 'MISSING_MESSAGE');
+    }
+
+    // Simple title used when the AI is unavailable
+    const fallbackTitle = message.slice(0, 40) + (message.length > 40 ? '...' : '');
+
+    const apiKey = req.app.locals.secrets?.GEMINI_API_KEY || config.GEMINI_API_KEY;
+    if (!apiKey) {
+        return res.json({ success: true, title: fallbackTitle });
+    }
+
+    try {
+        const { text } = await generateGeminiReply(apiKey, {
+            model: config.GEMINI_MODEL,
+            systemPrompt: TITLE_SYSTEM_PROMPT,
+            messages: [{ role: 'user', content: message }],
             temperature: 0.3,
-            max_tokens: 50
+            maxTokens: 256
         });
 
-        const title = completion.choices[0]?.message?.content?.trim() || message.slice(0, 40);
-
         // Clean up the title - remove quotes and limit length
-        const cleanTitle = title
+        const cleanTitle = (text.trim() || message.slice(0, 40))
             .replace(/^["']|["']$/g, '') // Remove surrounding quotes
             .replace(/[.!?]$/, '') // Remove trailing punctuation
             .slice(0, 60); // Max 60 chars
-
-        km.recordSuccess(selectedKey.id, Date.now(), completion.usage?.total_tokens || 0);
 
         res.json({
             success: true,
@@ -693,10 +440,6 @@ Title: Apartment Rental Contract`
         });
     } catch (error) {
         console.error('Title generation error:', error.message);
-        km.recordFailure(selectedKey.id, error);
-
-        // Fallback to simple title
-        const fallbackTitle = message.slice(0, 40) + (message.length > 40 ? '...' : '');
         res.json({ success: true, title: fallbackTitle });
     }
 }));

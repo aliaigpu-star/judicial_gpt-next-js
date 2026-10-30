@@ -10,6 +10,7 @@ const { authenticate } = require('../middleware/auth');
 const { asyncHandler, ApiError } = require('../middleware/errorHandler');
 const config = require('../config/env');
 const ApiRequestLogger = require('../services/apiRequestLogger');
+const { generateGeminiReply } = require('../utils/gemini');
 
 // Helper to validate file signatures (Magic Numbers)
 const validateFileSignature = (buffer, mimetype) => {
@@ -768,28 +769,18 @@ router.post('/voice-to-voice', authenticate, upload.single('audio'), asyncHandle
         }
 
         // Step 2: Send to AI model
-        const messages = [
-            { role: 'system', content: 'You are JudicialGPT, a helpful legal AI assistant. Provide clear, concise answers.' },
-            { role: 'user', content: transcription }
-        ];
-
-        let aiResponse = '';
-        
-        if (config.GROQ_API_KEY) {
-            const Groq = require('groq-sdk');
-            const groq = new Groq({ apiKey: config.GROQ_API_KEY });
-
-            const chatResponse = await groq.chat.completions.create({
-                messages,
-                model: 'mixtral-8x7b-32768',
-                temperature: 0.7,
-                max_tokens: 1024
-            });
-
-            aiResponse = chatResponse.choices[0]?.message?.content || '';
-        } else {
+        const geminiKey = req.app.locals.secrets?.GEMINI_API_KEY || config.GEMINI_API_KEY;
+        if (!geminiKey) {
             throw new ApiError(503, 'AI service not configured', 'AI_SERVICE_UNAVAILABLE');
         }
+
+        const { text: aiResponse } = await generateGeminiReply(geminiKey, {
+            model: config.GEMINI_MODEL,
+            systemPrompt: 'You are JudicialGPT, a helpful legal AI assistant. Provide clear, concise answers.',
+            messages: [{ role: 'user', content: transcription }],
+            temperature: 0.7,
+            maxTokens: 1024
+        });
 
         if (!aiResponse) {
             throw new ApiError(500, 'AI response generation failed', 'AI_FAILED');

@@ -696,18 +696,12 @@ export default function SettingsModal({ isOpen, onClose, showArchived, onToggleA
                     exit={{ opacity: 0, scale: 0.95, y: 10 }}
                     transition={{ duration: 0.2, ease: 'easeOut' }}
                     onClick={(e) => e.stopPropagation()}
-                    className="bg-white dark:bg-[#2f2f2f] rounded-2xl shadow-2xl w-full max-w-[720px] h-[520px] flex overflow-hidden border border-gray-200/50 dark:border-gray-700/30"
+                    className="bg-white dark:bg-[#2f2f2f] rounded-2xl shadow-2xl w-full max-w-[720px] h-[520px] flex overflow-hidden relative border border-gray-200/50 dark:border-gray-700/30"
                 >
                     {/* Sidebar */}
                     <div className="w-[220px] bg-gray-50/80 dark:bg-[#1a1a1a] flex flex-col border-r border-gray-200/50 dark:border-gray-700/30">
                         <div className="p-4 flex items-center justify-between">
                             <span className="text-sm font-semibold text-gray-900 dark:text-white">Settings</span>
-                            <button
-                                onClick={() => { handleSave(); onClose(); }}
-                                className="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors text-gray-500 dark:text-gray-400"
-                            >
-                                <X className="w-4 h-4" />
-                            </button>
                         </div>
 
                         <nav className="flex-1 px-3 space-y-1">
@@ -753,6 +747,14 @@ export default function SettingsModal({ isOpen, onClose, showArchived, onToggleA
                             {renderContent()}
                         </div>
                     </div>
+
+                    <button
+                        onClick={() => { handleSave(); onClose(); }}
+                        className="absolute top-4 right-4 p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors text-gray-500 dark:text-gray-400"
+                        aria-label="Close settings"
+                    >
+                        <X className="w-4 h-4" />
+                    </button>
                 </motion.div>
             </motion.div>
         </AnimatePresence>

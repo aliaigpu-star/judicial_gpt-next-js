@@ -412,11 +412,8 @@ export default function ChatView({
 
     // Handle voice agent AI response - returns AI response WITHOUT saving to chat
     const handleVoiceAgentAIResponse = async (content: string): Promise<string> => {
-        // Call AI directly without saving to chat history - use Groq supported model
-        const result = await api.sendChatMessage(
-            [{ role: 'user', content }],
-            { model: 'openai/gpt-oss-120b' }
-        );
+        // Call AI directly without saving to chat history
+        const result = await api.sendChatMessage([{ role: 'user', content }]);
         return result.message?.content || result.message || 'Sorry, I could not understand.';
     };
 

@@ -278,7 +278,6 @@ router.post('/:id/feedback', authenticate, asyncHandler(async (req, res) => {
     // The feedback record is secondary: never fail the user's click because of it.
     try {
         if (feedback && message.role === 'assistant') {
-            const geminiConfigured = req.app.locals.secrets?.GEMINI_API_KEY || config.GEMINI_API_KEY;
             await MessageFeedback.upsert({
                 message: { ...message, content: updatedMessage?.content ?? message.content },
                 conversation,
@@ -286,7 +285,7 @@ router.post('/:id/feedback', authenticate, asyncHandler(async (req, res) => {
                 rating: feedback,
                 reasons,
                 comment,
-                model: geminiConfigured ? config.GEMINI_MODEL : 'openai/gpt-oss-120b'
+                model: config.GEMINI_MODEL
             });
         } else if (!feedback) {
             await MessageFeedback.remove(message.id, req.user.id);

@@ -504,13 +504,25 @@ export default function ChatView({
         'application/pdf',
         'application/msword',
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'text/plain'
+        'text/plain',
+        'text/csv',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.ms-powerpoint',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        'application/rtf',
+        'text/rtf',
+        'text/html',
+        'text/markdown',
+        'application/json',
+        'application/xml',
+        'text/xml'
     ];
 
     const attachFile = (file: File) => {
         if (file.type.startsWith('image/')) {
-            if (file.size > 10 * 1024 * 1024) {
-                showNotification('Image must be smaller than 10MB', 'error');
+            if (file.size > 15 * 1024 * 1024) {
+                showNotification('Image must be smaller than 15MB', 'error');
                 return;
             }
             setSelectedImage(file);
@@ -518,12 +530,14 @@ export default function ChatView({
             return;
         }
 
-        if (!DOCUMENT_TYPES.includes(file.type)) {
-            showNotification('Please select an image, PDF, Word, or Text file', 'error');
+        const ext = file.name.split('.').pop()?.toLowerCase() || '';
+        const allowedExts = ['pdf','doc','docx','txt','csv','xls','xlsx','ppt','pptx','rtf','html','htm','md','json','xml'];
+        if (!DOCUMENT_TYPES.includes(file.type) && !allowedExts.includes(ext)) {
+            showNotification('Unsupported file type', 'error');
             return;
         }
-        if (file.size > 5 * 1024 * 1024) {
-            showNotification('File must be smaller than 5MB', 'error');
+        if (file.size > 25 * 1024 * 1024) {
+            showNotification('File must be smaller than 25MB', 'error');
             return;
         }
         setSelectedFile(file);
@@ -646,7 +660,7 @@ export default function ChatView({
             <input
                 ref={fileInputRef}
                 type="file"
-                accept="image/*,.pdf,.doc,.docx,.txt,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
+                accept="image/*,.pdf,.doc,.docx,.txt,.csv,.xls,.xlsx,.ppt,.pptx,.rtf,.html,.htm,.md,.json,.xml"
                 onChange={handleFileSelect}
                 className="hidden"
             />
@@ -895,7 +909,7 @@ export default function ChatView({
                 <div className="pointer-events-none absolute inset-0 z-50 m-3 flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-[#00a859] bg-[#00a859]/10 backdrop-blur-sm">
                     <Upload className="w-8 h-8 text-[#00a859]" />
                     <p className="text-base font-medium text-[#0d0d0d] dark:text-[#ececec]">Drop your file or image here</p>
-                    <p className="text-sm text-[#666666] dark:text-[#b4b4b4]">PDF, Word, TXT up to 5MB · Images up to 10MB</p>
+                    <p className="text-sm text-[#666666] dark:text-[#b4b4b4]">PDF, Word, Excel, PPT, TXT, CSV, JSON, XML, HTML, MD up to 25MB · Images up to 15MB</p>
                 </div>
             )}
             {/* Notification */}

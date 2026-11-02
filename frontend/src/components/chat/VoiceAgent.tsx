@@ -113,8 +113,19 @@ export default function VoiceAgent({ onClose, onGetAIResponse, isOpen }: VoiceAg
             const utterance = new SpeechSynthesisUtterance(text);
             const lang = selectedVoice.split('-').slice(0, 2).join('-');
             utterance.lang = lang;
-            const voice = window.speechSynthesis.getVoices().find(v => v.lang === lang);
-            if (voice) utterance.voice = voice;
+            // Detect gender from the selected voice name
+            const femaleVoices = ['Jenny', 'Sonia', 'Natasha', 'Neerja'];
+            const isFemale = femaleVoices.some(n => selectedVoice.includes(n));
+            const allVoices = window.speechSynthesis.getVoices();
+            // 1. Try exact language + gender match
+            let match = allVoices.find(v => v.lang.startsWith(lang) && (isFemale ? /female/i.test(v.name) : /male/i.test(v.name)));
+            // 2. Fallback: any voice for this language
+            if (!match) match = allVoices.find(v => v.lang.startsWith(lang));
+            if (match) utterance.voice = match;
+            // Natural-sounding rate and pitch
+            utterance.rate = 0.93;
+            utterance.pitch = isFemale ? 1.1 : 0.9;
+            utterance.volume = 1.0;
             utterance.onend = () => resolve();
             utterance.onerror = () => resolve();
             window.speechSynthesis.cancel();

@@ -10,7 +10,7 @@ except ImportError:
 
 import edge_tts
 
-async def text_to_speech_and_play(text, voice="en-US-JennyNeural"):
+async def text_to_speech_and_play(text, voice="en-IN-NeerjaNeural"):
     """
     Convert text to speech using edge-tts and play it with pygame.
     """
@@ -47,12 +47,13 @@ async def text_to_speech_and_play(text, voice="en-US-JennyNeural"):
         if os.path.exists(tmp_path):
             os.unlink(tmp_path)
 
-async def text_to_speech_to_file(text, output_path, voice="en-US-JennyNeural"):
+async def text_to_speech_to_file(text, output_path, voice="en-IN-NeerjaNeural"):
     """
     Convert text to speech and save to a file (for backend API use).
+    Slightly slower rate (-5%) and boosted volume (+10%) make Neural voices
+    sound more natural and less robotic.
     """
-    # Generate speech
-    communicate = edge_tts.Communicate(text, voice)
+    communicate = edge_tts.Communicate(text, voice, rate="-5%", volume="+10%")
     await communicate.save(output_path)
     print(f"Audio saved to: {output_path}")
 

@@ -192,14 +192,14 @@ router.post('/chat', authenticate, aiRateLimiter, asyncHandler(async (req, res) 
         throw new ApiError(400, validation.error, 'INVALID_REQUEST');
     }
 
-    const { messages, temperature = 0.7, maxTokens = 10000, stream = false } = req.body;
+    const { messages, temperature = 0.7, maxTokens = 20000, stream = false } = req.body;
 
     return handleGeminiChat(req, res, {
         apiKey: getGeminiKey(req),
         messages,
         temperature,
         // Enforce a sensible server-side cap to prevent 413 errors
-        maxTokens: Math.min(maxTokens, 10000),
+        maxTokens: Math.min(maxTokens, 20000),
         stream
     });
 }));

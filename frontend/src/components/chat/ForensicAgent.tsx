@@ -262,23 +262,6 @@ export default function ForensicAgent() {
                                     </div>
                                 </div>
 
-                                {/* Details */}
-                                <div className="p-4 rounded-xl bg-white dark:bg-[#1f1f1f] border border-[#e5e5e5] dark:border-[#2f2f2f] space-y-2 text-sm">
-                                    <p className="text-xs font-medium uppercase tracking-wide text-[#8e8e8e] mb-3">Details</p>
-                                    <div className="flex justify-between">
-                                        <span className="text-[#666666] dark:text-[#8e8e8e]">Model</span>
-                                        <span className="text-[#0d0d0d] dark:text-[#ececec] font-medium text-xs">{result.model?.split('/').pop()}</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-[#666666] dark:text-[#8e8e8e]">Processing time</span>
-                                        <span className="text-[#0d0d0d] dark:text-[#ececec]">{result.runtime_ms} ms</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-[#666666] dark:text-[#8e8e8e]">Request ID</span>
-                                        <span className="text-[#0d0d0d] dark:text-[#ececec] font-mono text-xs">{result.request_id}</span>
-                                    </div>
-                                </div>
-
                                 {/* Disclaimer */}
                                 {result.disclaimer && (
                                     <p className="text-xs text-[#8e8e8e] text-center leading-relaxed px-2">{result.disclaimer}</p>

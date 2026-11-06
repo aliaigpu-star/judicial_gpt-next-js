@@ -29,7 +29,8 @@ import {
     BookOpen,
     Users,
     Globe,
-    Library
+    Library,
+    ScanSearch
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
@@ -99,6 +100,7 @@ export default function ChatSidebar({
     const isCriminalLawActive = pathname === '/chat/criminal-law';
     const isFamilyLawActive = pathname === '/chat/family-law';
     const isLawAgentsActive = isCivilLawActive || isCriminalLawActive || isFamilyLawActive;
+    const isForensicActive = pathname === '/chat/forensic-agent';
 
     const [searchQuery, setSearchQuery] = useState('');
     const [showSearchInput, setShowSearchInput] = useState(false);
@@ -536,6 +538,18 @@ export default function ChatSidebar({
                             }`} />
                     </button>
 
+                    {/* Forensic Agent Button - Collapsed */}
+                    <button
+                        onClick={() => router.push('/chat/forensic-agent')}
+                        className={`w-10 h-10 flex items-center justify-center rounded-xl transition-colors ${isForensicActive
+                            ? 'bg-[#f97316]/15 dark:bg-[#f97316]/10'
+                            : 'hover:bg-[#ececec] dark:hover:bg-[#2f2f2f]'
+                            }`}
+                        title="Forensic Agent"
+                    >
+                        <ScanSearch className={`w-5 h-5 ${isForensicActive ? 'text-[#f97316]' : 'text-[#444444] dark:text-[#b4b4b4]'}`} />
+                    </button>
+
                     {/* Search Button */}
                     <button
                         onClick={() => {
@@ -893,9 +907,20 @@ export default function ChatSidebar({
                         : 'text-[#0d0d0d] dark:text-[#ececec] hover:bg-[#ececec] dark:hover:bg-[#2f2f2f]'
                         }`}
                 >
-                    <FileText className={`w-4 h-4 ${isSummarizeActive ? 'text-[#7c3aed]' : ''
-                        }`} />
+                    <FileText className={`w-4 h-4 ${isSummarizeActive ? 'text-[#7c3aed]' : ''}`} />
                     Summarize
+                </button>
+
+                {/* Forensic Agent Button - Expanded */}
+                <button
+                    onClick={() => router.push('/chat/forensic-agent')}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-all duration-200 ${isForensicActive
+                        ? 'bg-[#f97316]/10 dark:bg-[#f97316]/10 text-[#f97316]'
+                        : 'text-[#0d0d0d] dark:text-[#ececec] hover:bg-[#ececec] dark:hover:bg-[#2f2f2f]'
+                        }`}
+                >
+                    <ScanSearch className={`w-4 h-4 ${isForensicActive ? 'text-[#f97316]' : ''}`} />
+                    Forensic Agent
                 </button>
 
                 {/* Search Button */}

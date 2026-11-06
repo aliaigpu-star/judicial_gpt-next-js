@@ -69,7 +69,7 @@ $started = @()
 foreach ($agent in $agents) {
     $dir = Join-Path $root $agent.Folder
     $label = '{0} (:{1})' -f $agent.Name, $agent.Port
-    $command = "uvicorn $($agent.App) --host 0.0.0.0 --port $($agent.Port) --reload"
+    $command = "python -m uvicorn $($agent.App) --host 0.0.0.0 --port $($agent.Port) --reload"
 
     if (-not (Test-Path $dir)) {
         Write-Host "SKIP   $label - folder not found: $($agent.Folder)" -ForegroundColor Red

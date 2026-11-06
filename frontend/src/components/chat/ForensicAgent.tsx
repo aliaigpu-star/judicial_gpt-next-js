@@ -4,7 +4,7 @@ import React, { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ScanSearch, Upload, X, AlertTriangle, CheckCircle, Loader2, Image as ImageIcon } from 'lucide-react';
 
-const FORENSIC_API = 'https://forensicsagent-judicial-gpt.in.ngrok.io';
+const FORENSIC_API = process.env.NEXT_PUBLIC_FORENSIC_AGENT_URL || 'https://forensicsagent-judicial-gpt.in.ngrok.io';
 
 interface DetectionResult {
     is_ai_generated: boolean;
@@ -70,9 +70,10 @@ export default function ForensicAgent() {
             const form = new FormData();
             form.append('file', image);
 
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token') || '';
             const res = await fetch(`${FORENSIC_API}/v1/detect`, {
                 method: 'POST',
-                headers: { 'ngrok-skip-browser-warning': 'true' },
+                headers: { 'Authorization': `Bearer ${token}` },
                 body: form,
             });
 

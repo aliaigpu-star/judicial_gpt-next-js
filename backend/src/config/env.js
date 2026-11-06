@@ -61,6 +61,7 @@ const config = {
     CRIMINAL_JUDGEMENT_AGENT_URL: process.env.CRIMINAL_JUDGEMENT_AGENT_URL || 'https://criminaljudgement-judicial-gpt.in.ngrok.io',
     CIVIL_LAW_AGENT_URL: process.env.CIVIL_LAW_AGENT_URL || 'https://civillaw-judicial-gpt.in.ngrok.io',
     CRIMINAL_LAW_AGENT_URL: process.env.CRIMINAL_LAW_AGENT_URL || 'https://criminallaw-judicial-gpt.in.ngrok.io',
+    FORENSIC_AGENT_URL: process.env.FORENSIC_AGENT_URL || 'https://forensicsagent-judicial-gpt.in.ngrok.io',
 
     // Cloudflare Turnstile (CAPTCHA)
     TURNSTILE_SECRET_KEY: process.env.TURNSTILE_SECRET_KEY || '',

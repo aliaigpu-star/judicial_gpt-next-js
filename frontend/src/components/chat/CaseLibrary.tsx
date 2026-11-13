@@ -109,33 +109,58 @@ export default function CaseLibrary() {
 
                     {/* Pagination */}
                     {data && data.totalPages > 1 && (
-                        <div className="mt-6 flex items-center justify-between gap-3">
+                        <div className="mt-6 flex items-center justify-center gap-1.5">
+                            {/* Previous */}
                             <button
                                 disabled={page <= 1 || loading}
                                 onClick={() => setPage(p => p - 1)}
-                                className="flex items-center gap-1.5 rounded-xl border border-[#e5e5e5] dark:border-[#424242] px-3 py-2 text-sm text-[#0d0d0d] dark:text-[#ececec] hover:bg-[#f4f4f4] dark:hover:bg-[#2f2f2f] disabled:opacity-40"
+                                className="flex items-center gap-1 rounded-lg border border-[#e5e5e5] dark:border-[#424242] px-3 py-1.5 text-sm text-[#0d0d0d] dark:text-[#ececec] hover:bg-[#f4f4f4] dark:hover:bg-[#2f2f2f] disabled:opacity-40 disabled:cursor-not-allowed"
                             >
-                                <ChevronLeft className="w-4 h-4" /> Previous
+                                <ChevronLeft className="w-4 h-4" /> Prev
                             </button>
-                            <div className="flex flex-wrap justify-center gap-1">
-                                {Array.from({ length: data.totalPages }, (_, i) => i + 1).map(n => (
-                                    <button
-                                        key={n}
-                                        onClick={() => setPage(n)}
-                                        className={`h-8 min-w-8 rounded-lg px-2 text-sm transition-colors ${n === data.page
-                                            ? 'text-white'
-                                            : 'text-[#666666] dark:text-[#b4b4b4] hover:bg-[#f4f4f4] dark:hover:bg-[#2f2f2f]'
-                                            }`}
-                                        style={n === data.page ? { backgroundColor: ACCENT } : undefined}
-                                    >
-                                        {n}
-                                    </button>
-                                ))}
-                            </div>
+
+                            {/* Page numbers with ellipsis */}
+                            {(() => {
+                                const total = data.totalPages;
+                                const cur = data.page;
+                                const pages: (number | 'dot')[] = [];
+
+                                if (total <= 7) {
+                                    for (let i = 1; i <= total; i++) pages.push(i);
+                                } else {
+                                    pages.push(1);
+                                    if (cur > 4) pages.push('dot');
+                                    const start = Math.max(2, cur - 2);
+                                    const end = Math.min(total - 1, cur + 2);
+                                    for (let i = start; i <= end; i++) pages.push(i);
+                                    if (cur < total - 3) pages.push('dot');
+                                    pages.push(total);
+                                }
+
+                                return pages.map((n, idx) =>
+                                    n === 'dot' ? (
+                                        <span key={`dot-${idx}`} className="px-1 text-[#8e8e8e] select-none">…</span>
+                                    ) : (
+                                        <button
+                                            key={n}
+                                            onClick={() => setPage(n)}
+                                            className={`h-8 min-w-[32px] rounded-lg px-2 text-sm font-medium transition-colors ${n === cur
+                                                ? 'text-white'
+                                                : 'text-[#666666] dark:text-[#b4b4b4] hover:bg-[#f4f4f4] dark:hover:bg-[#2f2f2f]'
+                                                }`}
+                                            style={n === cur ? { backgroundColor: ACCENT } : undefined}
+                                        >
+                                            {n}
+                                        </button>
+                                    )
+                                );
+                            })()}
+
+                            {/* Next */}
                             <button
                                 disabled={page >= data.totalPages || loading}
                                 onClick={() => setPage(p => p + 1)}
-                                className="flex items-center gap-1.5 rounded-xl border border-[#e5e5e5] dark:border-[#424242] px-3 py-2 text-sm text-[#0d0d0d] dark:text-[#ececec] hover:bg-[#f4f4f4] dark:hover:bg-[#2f2f2f] disabled:opacity-40"
+                                className="flex items-center gap-1 rounded-lg border border-[#e5e5e5] dark:border-[#424242] px-3 py-1.5 text-sm text-[#0d0d0d] dark:text-[#ececec] hover:bg-[#f4f4f4] dark:hover:bg-[#2f2f2f] disabled:opacity-40 disabled:cursor-not-allowed"
                             >
                                 Next <ChevronRight className="w-4 h-4" />
                             </button>

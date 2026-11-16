@@ -722,6 +722,11 @@ export default function ChatView({
                     </div>
                 )}
 
+                {/* Optimize prompt pill — above the input box */}
+                <div className="flex justify-start mb-1.5 px-1">
+                    <EnhanceButton value={input} onChange={setInput} disabled={isProcessingFile} />
+                </div>
+
                 {/* ChatGPT-style input container */}
                 <div className={`relative flex items-end gap-2 rounded-3xl px-3 py-2 transition-colors shadow-sm ${isTemporaryMode
                     ? 'bg-[#383838] border border-transparent'
@@ -798,11 +803,6 @@ export default function ChatView({
                             <X className="w-3 h-3" />
                         </button>
                     )}
-
-                    {/* Optimize prompt pill — always visible above the textarea */}
-                    <div className="w-full flex justify-start pb-1">
-                        <EnhanceButton value={input} onChange={setInput} disabled={isProcessingFile} />
-                    </div>
 
                     {/* Text input */}
                     <textarea

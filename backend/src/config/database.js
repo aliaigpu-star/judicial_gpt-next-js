@@ -15,7 +15,7 @@ const getPool = () => {
                 connectionString: process.env.DATABASE_URL,
                 max: 20,
                 idleTimeoutMillis: 30000,
-                connectionTimeoutMillis: 2000,
+                connectionTimeoutMillis: 10000,
             });
         } else {
             poolInstance = new Pool({
@@ -26,7 +26,7 @@ const getPool = () => {
                 password: process.env.DB_PASSWORD || '',
                 max: 20,
                 idleTimeoutMillis: 30000,
-                connectionTimeoutMillis: 2000,
+                connectionTimeoutMillis: 10000,
             });
         }
         

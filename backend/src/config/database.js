@@ -10,12 +10,18 @@ let poolInstance = null;
 
 const getPool = () => {
     if (!poolInstance) {
+        // 10 per process × 2 cluster processes = 20 total DB connections
+        // Avoids exhausting the pool under concurrent load
+        const poolConfig = {
+            max: 10,
+            idleTimeoutMillis: 30000,
+            connectionTimeoutMillis: 10000,
+        };
+
         if (process.env.DATABASE_URL) {
             poolInstance = new Pool({
                 connectionString: process.env.DATABASE_URL,
-                max: 20,
-                idleTimeoutMillis: 30000,
-                connectionTimeoutMillis: 10000,
+                ...poolConfig,
             });
         } else {
             poolInstance = new Pool({
@@ -24,9 +30,7 @@ const getPool = () => {
                 database: process.env.DB_NAME || 'judicialgpt2',
                 user: process.env.DB_USER || 'postgres',
                 password: process.env.DB_PASSWORD || '',
-                max: 20,
-                idleTimeoutMillis: 30000,
-                connectionTimeoutMillis: 10000,
+                ...poolConfig,
             });
         }
         

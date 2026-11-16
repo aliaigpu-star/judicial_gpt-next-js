@@ -234,6 +234,9 @@ export default function LawAgentChat({
             }}
             className="w-full"
         >
+            <div className="flex justify-start mb-1.5 px-1">
+                <EnhanceButton value={query} onChange={setQuery} disabled={isProcessing} />
+            </div>
             <div className="relative flex items-end gap-2 bg-[#f4f4f4] dark:bg-[#2f2f2f] rounded-3xl px-4 py-3 border border-transparent focus-within:border-[#e5e5e5] dark:focus-within:border-[#424242] transition-colors">
                 <textarea
                     ref={inputRef}
@@ -250,7 +253,6 @@ export default function LawAgentChat({
                     className="flex-1 bg-transparent resize-none outline-none text-[#0d0d0d] dark:text-[#ececec] text-base max-h-[320px] py-1"
                     disabled={isProcessing}
                 />
-                <EnhanceButton value={query} onChange={setQuery} disabled={isProcessing} />
                 <button
                     type="submit"
                     disabled={!query.trim() || isProcessing}

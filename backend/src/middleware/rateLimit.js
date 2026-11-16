@@ -23,7 +23,7 @@ const getIp = (req) => {
  */
 const rateLimiter = rateLimit({
     windowMs: config.RATE_LIMIT_WINDOW_MS || 15 * 60 * 1000,
-    max: config.RATE_LIMIT_MAX_REQUESTS || 100,
+    max: config.RATE_LIMIT_MAX_REQUESTS || 500,
     standardHeaders: true,
     legacyHeaders: false,
     keyGenerator: getIp,

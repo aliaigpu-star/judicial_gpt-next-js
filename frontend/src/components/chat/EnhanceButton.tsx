@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Loader2, Sparkles } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { api } from '@/lib/api';
 
 interface EnhanceButtonProps {
@@ -10,14 +10,14 @@ interface EnhanceButtonProps {
     disabled?: boolean;
 }
 
-/** Rewrites the text in a question field into a clearer prompt when clicked. Hidden while the field is empty. */
 export default function EnhanceButton({ value, onChange, disabled }: EnhanceButtonProps) {
     const [busy, setBusy] = useState(false);
     const [failed, setFailed] = useState(false);
 
-    if (!value.trim()) return null;
+    const isEmpty = !value.trim();
 
     const handleClick = async () => {
+        if (isEmpty) return;
         setBusy(true);
         setFailed(false);
         try {
@@ -35,12 +35,22 @@ export default function EnhanceButton({ value, onChange, disabled }: EnhanceButt
         <button
             type="button"
             onClick={handleClick}
-            disabled={busy || disabled}
-            className={`p-1.5 rounded-lg transition-colors disabled:opacity-50 hover:bg-[#e5e5e5] dark:hover:bg-[#424242] ${failed ? 'text-red-500' : 'text-[#666666] dark:text-[#b4b4b4] hover:text-[#00a859]'}`}
-            title={failed ? 'Could not enhance. Click to retry' : 'Enhance prompt'}
-            aria-label="Enhance prompt"
+            disabled={busy || disabled || isEmpty}
+            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-colors border
+                ${isEmpty
+                    ? 'opacity-40 cursor-default border-[#d9d9d9] dark:border-[#424242] text-[#999999] dark:text-[#666666] bg-transparent'
+                    : failed
+                        ? 'border-red-300 text-red-500 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30'
+                        : 'border-[#d9d9d9] dark:border-[#424242] text-[#555555] dark:text-[#aaaaaa] bg-white dark:bg-[#2f2f2f] hover:border-[#00a859] hover:text-[#00a859] hover:bg-[#00a859]/5'
+                }`}
+            title={failed ? 'Could not enhance. Click to retry' : isEmpty ? 'Type something to optimize your prompt' : 'Optimize prompt'}
+            aria-label="Optimize prompt"
         >
-            {busy ? <Loader2 className="w-5 h-5 animate-spin text-[#00a859]" /> : <Sparkles className="w-5 h-5" />}
+            {busy
+                ? <Loader2 className="w-3 h-3 animate-spin" />
+                : <span className="text-[11px] leading-none">✦</span>
+            }
+            <span>{failed ? 'Retry enhance' : 'Optimize prompt'}</span>
         </button>
     );
 }

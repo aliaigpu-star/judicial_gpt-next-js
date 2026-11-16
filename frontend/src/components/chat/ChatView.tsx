@@ -799,6 +799,11 @@ export default function ChatView({
                         </button>
                     )}
 
+                    {/* Optimize prompt pill — always visible above the textarea */}
+                    <div className="w-full flex justify-start pb-1">
+                        <EnhanceButton value={input} onChange={setInput} disabled={isProcessingFile} />
+                    </div>
+
                     {/* Text input */}
                     <textarea
                         ref={inputRef}
@@ -821,7 +826,6 @@ export default function ChatView({
                             }`}
                     />
 
-                    <EnhanceButton value={input} onChange={setInput} disabled={isProcessingFile} />
                     {/* Voice recording button */}
                     <button
                         type="button"

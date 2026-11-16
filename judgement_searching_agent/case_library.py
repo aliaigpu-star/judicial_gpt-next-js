@@ -2,6 +2,7 @@
 Case Library: read-only browsing of approved judgments from the LexIndex
 database (table approved_cases, full text in judgments.file_content).
 
+
 Served by the Judgment Search agent, so the database stays on this machine:
 the website reaches it through the agent's tunnel and the backend proxy
 (/api/ai/agent/judgment-search/cases).
@@ -20,8 +21,9 @@ from fastapi import APIRouter, HTTPException, Query
 
 router = APIRouter(prefix="/cases", tags=["Case Library"])
 
-# Only the first 100 approved judgments are offered.
-LIBRARY_LIMIT = 100
+# Cap on how many approved judgments the library offers (raised from the
+# original 100 after the Nov 2026 bulk AI-annotation batch brought approved_cases to 1,080+).
+LIBRARY_LIMIT = 5000
 PAGE_SIZE = 10
 
 LIBRARY_CTE = f"""

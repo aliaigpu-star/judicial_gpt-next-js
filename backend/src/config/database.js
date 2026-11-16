@@ -10,10 +10,8 @@ let poolInstance = null;
 
 const getPool = () => {
     if (!poolInstance) {
-        // 10 per process × 2 cluster processes = 20 total DB connections
-        // Avoids exhausting the pool under concurrent load
         const poolConfig = {
-            max: 10,
+            max: 20,
             idleTimeoutMillis: 30000,
             connectionTimeoutMillis: 10000,
         };

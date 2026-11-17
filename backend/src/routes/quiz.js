@@ -3,7 +3,7 @@ const router = express.Router();
 const { query } = require('../config/database');
 const { authenticate, requireAdmin } = require('../middleware/auth');
 const { asyncHandler, ApiError } = require('../middleware/errorHandler');
-const { generateGeminiReply } = require('../utils/gemini');
+const { streamGeminiReply } = require('../utils/gemini');
 const config = require('../config/env');
 
 // Grade a text answer using Gemini (apiKey passed from request context, same as AI route)
@@ -17,19 +17,23 @@ async function gradeTextAnswer(apiKey, model, questionText, expectedAnswer, user
     const prompt = `Grade this quiz answer. Question: "${questionText}". Expected answer: "${expectedAnswer}". Student answer: "${userAnswer}". Score 0-10 (8-10=correct, 5-7=partial, 0-4=wrong). Reply ONLY with JSON: {"score": 7, "feedback": "one sentence"}`;
 
     try {
-        const { text } = await generateGeminiReply(apiKey, {
+        // Use streaming (same endpoint as main chat which is confirmed working)
+        let text = '';
+        for await (const chunk of streamGeminiReply(apiKey, {
             model,
             messages: [{ role: 'user', content: prompt }],
             temperature: 0.1,
             maxTokens: 150
-        });
-        const match = text.match(/\{[\s\S]*?\}/);
+        })) {
+            text += chunk;
+        }
+        const match = text.match(/\{[\s\S]*\}/);
         if (match) {
             const result = JSON.parse(match[0]);
             const score = Math.min(10, Math.max(0, Number(result.score) || 0));
             return { score, feedback: String(result.feedback || '').trim() };
         }
-        console.error('[Quiz grading] Gemini response not JSON:', text?.slice(0, 200));
+        console.error('[Quiz grading] Gemini response not JSON:', text?.slice(0, 300));
     } catch (e) {
         console.error('[Quiz grading] Gemini error:', e?.message || e);
     }

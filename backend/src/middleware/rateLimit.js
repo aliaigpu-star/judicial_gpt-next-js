@@ -3,19 +3,15 @@
  * Prevents abuse and protects against DDoS
  */
 
-const rateLimit = require('express-rate-limit');
+const { rateLimit, ipKeyGenerator } = require('express-rate-limit');
 const config = require('../config/env');
 
-/**
- * Get client identifier from request (used for IP-based limiting)
- */
 const getIp = (req) => {
-    // Try to get real IP behind proxy
     const forwardedFor = req.headers['x-forwarded-for'];
     if (forwardedFor) {
-        return forwardedFor.split(',')[0].trim();
+        return ipKeyGenerator(forwardedFor.split(',')[0].trim());
     }
-    return req.ip || req.socket.remoteAddress || 'unknown';
+    return ipKeyGenerator(req.ip || req.socket.remoteAddress || 'unknown');
 };
 
 /**
@@ -27,7 +23,7 @@ const rateLimiter = rateLimit({
     standardHeaders: true,
     legacyHeaders: false,
     keyGenerator: getIp,
-    validate: { ip: false },
+    validate: { keyGeneratorIpFallback: false },
     skip: (req) => req.path === '/health',
     handler: (req, res, next, options) => {
         res.status(429).json({
@@ -47,7 +43,7 @@ const authRateLimiter = rateLimit({
     standardHeaders: true,
     legacyHeaders: false,
     keyGenerator: getIp,
-    validate: { ip: false },
+    validate: { keyGeneratorIpFallback: false },
     handler: (req, res, next, options) => {
         res.status(429).json({
             error: 'Too many authentication attempts. Please try again later.',
@@ -66,7 +62,7 @@ const aiRateLimiter = rateLimit({
     standardHeaders: true,
     legacyHeaders: false,
     keyGenerator: (req) => req.user?.id || getIp(req),
-    validate: { ip: false },
+    validate: { keyGeneratorIpFallback: false },
     handler: (req, res, next, options) => {
         res.status(429).json({
             error: 'Rate limit exceeded. Please wait before sending more messages.',

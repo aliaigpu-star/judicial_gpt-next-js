@@ -14,7 +14,8 @@ import {
     FileText,
     Sun,
     Moon,
-    ThumbsUp
+    ThumbsUp,
+    ClipboardList
 } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 import BrandLogo from '@/components/ui/BrandLogo';
@@ -48,6 +49,7 @@ const navGroups = [
         label: 'AI Quality',
         items: [
             { href: '/admin/feedback', icon: ThumbsUp, label: 'Feedback' },
+            { href: '/admin/quiz', icon: ClipboardList, label: 'Quiz' },
         ],
     },
     {

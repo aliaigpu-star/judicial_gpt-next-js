@@ -72,9 +72,13 @@ export default function QuizPage() {
         if (!user) return;
         setInfo(i => ({ ...i, name: user.name || '', personal_email: user.email || '' }));
         fetch(`${API}/api/quiz/questions`, { headers: { Authorization: `Bearer ${api.getToken()}` } })
-            .then(r => r.json())
-            .then(d => { setQuestions(d.questions || []); setLoadingQ(false); })
-            .catch(() => { setFetchError('Failed to load quiz.'); setLoadingQ(false); });
+            .then(async r => {
+                const d = await r.json();
+                if (!r.ok) throw new Error(d.message || 'Error loading quiz');
+                setQuestions(d.questions || []);
+                setLoadingQ(false);
+            })
+            .catch(() => { setFetchError('Failed to load quiz. Please refresh the page.'); setLoadingQ(false); });
     }, [user]);
 
     if (authLoading || (!user && !authLoading)) {
@@ -88,6 +92,8 @@ export default function QuizPage() {
         if (!info.name.trim() || !info.personal_email.trim() || !info.designation.trim() || !info.posting.trim() || !info.contact_no.trim()) {
             setInfoError('Please fill all required fields.'); return;
         }
+        if (fetchError) { setInfoError('Quiz failed to load. Please refresh the page.'); return; }
+        if (!loadingQ && questions.length === 0) { setInfoError('No quiz questions available yet.'); return; }
         setInfoError('');
         setStage('quiz');
         window.scrollTo({ top: 0, behavior: 'smooth' });

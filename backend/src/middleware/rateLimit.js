@@ -27,6 +27,7 @@ const rateLimiter = rateLimit({
     standardHeaders: true,
     legacyHeaders: false,
     keyGenerator: getIp,
+    validate: { ip: false },
     skip: (req) => req.path === '/health',
     handler: (req, res, next, options) => {
         res.status(429).json({
@@ -46,6 +47,7 @@ const authRateLimiter = rateLimit({
     standardHeaders: true,
     legacyHeaders: false,
     keyGenerator: getIp,
+    validate: { ip: false },
     handler: (req, res, next, options) => {
         res.status(429).json({
             error: 'Too many authentication attempts. Please try again later.',
@@ -64,6 +66,7 @@ const aiRateLimiter = rateLimit({
     standardHeaders: true,
     legacyHeaders: false,
     keyGenerator: (req) => req.user?.id || getIp(req),
+    validate: { ip: false },
     handler: (req, res, next, options) => {
         res.status(429).json({
             error: 'Rate limit exceeded. Please wait before sending more messages.',

@@ -14,38 +14,26 @@ async function gradeTextAnswer(questionText, expectedAnswer, userAnswer) {
     if (!config.GEMINI_API_KEY) {
         return { score: 5, feedback: 'AI grading unavailable — no API key configured.' };
     }
-    const prompt = `You are grading a quiz answer for a workshop on AI in the legal domain.
-
-Question: ${questionText}
-Expected answer (key points): ${expectedAnswer}
-Student's answer: ${userAnswer}
-
-Grade the student's answer on a scale of 0 to 10:
-- 8-10: Captures the key points well, even if worded differently
-- 5-7: Partially correct, missing some key points
-- 1-4: Minimal understanding shown
-- 0: Completely wrong or empty
-
-Respond ONLY with valid JSON in this exact format (no extra text):
-{"score": <number 0-10>, "feedback": "<1-2 sentences of constructive feedback>"}`;
+    // Single-message prompt without system instruction (more compatible)
+    const prompt = `Grade this quiz answer. Question: "${questionText}". Expected answer: "${expectedAnswer}". Student answer: "${userAnswer}". Score 0-10 (8-10=correct, 5-7=partial, 0-4=wrong). Reply ONLY with JSON: {"score": 7, "feedback": "one sentence"}`;
 
     try {
         const { text } = await generateGeminiReply(config.GEMINI_API_KEY, {
             model: config.GEMINI_MODEL,
-            systemPrompt: 'You are a strict but fair quiz grader. Respond only with valid JSON.',
             messages: [{ role: 'user', content: prompt }],
             temperature: 0.1,
-            maxTokens: 200
+            maxTokens: 150
         });
         const match = text.match(/\{[\s\S]*?\}/);
         if (match) {
             const result = JSON.parse(match[0]);
-            return {
-                score: Math.min(10, Math.max(0, Number(result.score) || 0)),
-                feedback: String(result.feedback || '').trim()
-            };
+            const score = Math.min(10, Math.max(0, Number(result.score) || 0));
+            return { score, feedback: String(result.feedback || '').trim() };
         }
-    } catch (e) { /* ignore */ }
+        console.error('[Quiz grading] Gemini response not JSON:', text?.slice(0, 200));
+    } catch (e) {
+        console.error('[Quiz grading] Gemini error:', e?.message || e);
+    }
     return { score: 0, feedback: 'Unable to grade automatically.' };
 }
 

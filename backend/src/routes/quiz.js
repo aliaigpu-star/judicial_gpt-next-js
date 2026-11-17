@@ -27,17 +27,19 @@ async function gradeTextAnswer(apiKey, model, questionText, expectedAnswer, user
         })) {
             text += chunk;
         }
+        console.log('[Quiz grading] Raw response:', text?.slice(0, 300));
         const match = text.match(/\{[\s\S]*\}/);
         if (match) {
             const result = JSON.parse(match[0]);
             const score = Math.min(10, Math.max(0, Number(result.score) || 0));
             return { score, feedback: String(result.feedback || '').trim() };
         }
-        console.error('[Quiz grading] Gemini response not JSON:', text?.slice(0, 300));
+        // Return raw response as feedback so we can see what Gemini is sending
+        return { score: 0, feedback: `[Debug] Raw: ${text?.slice(0, 150) || 'empty response'}` };
     } catch (e) {
         console.error('[Quiz grading] Gemini error:', e?.message || e);
+        return { score: 0, feedback: `[Debug] Error: ${e?.message || String(e)}` };
     }
-    return { score: 0, feedback: 'Unable to grade automatically.' };
 }
 
 // GET /api/quiz/questions — any logged-in user (no correct_option, no expected_answer)

@@ -6,20 +6,19 @@ const { asyncHandler, ApiError } = require('../middleware/errorHandler');
 const { generateGeminiReply } = require('../utils/gemini');
 const config = require('../config/env');
 
-// Grade a text answer using Gemini
-async function gradeTextAnswer(questionText, expectedAnswer, userAnswer) {
+// Grade a text answer using Gemini (apiKey passed from request context, same as AI route)
+async function gradeTextAnswer(apiKey, model, questionText, expectedAnswer, userAnswer) {
     if (!userAnswer || !userAnswer.trim()) {
         return { score: 0, feedback: 'No answer provided.' };
     }
-    if (!config.GEMINI_API_KEY) {
+    if (!apiKey) {
         return { score: 5, feedback: 'AI grading unavailable — no API key configured.' };
     }
-    // Single-message prompt without system instruction (more compatible)
     const prompt = `Grade this quiz answer. Question: "${questionText}". Expected answer: "${expectedAnswer}". Student answer: "${userAnswer}". Score 0-10 (8-10=correct, 5-7=partial, 0-4=wrong). Reply ONLY with JSON: {"score": 7, "feedback": "one sentence"}`;
 
     try {
-        const { text } = await generateGeminiReply(config.GEMINI_API_KEY, {
-            model: config.GEMINI_MODEL,
+        const { text } = await generateGeminiReply(apiKey, {
+            model,
             messages: [{ role: 'user', content: prompt }],
             temperature: 0.1,
             maxTokens: 150
@@ -103,6 +102,10 @@ router.post('/submit', authenticate, asyncHandler(async (req, res) => {
     const questionIds = Object.keys(answers).map(Number).filter(Boolean);
     if (!questionIds.length) throw new ApiError(400, 'No answers provided', 'EMPTY_ANSWERS');
 
+    // Use Vault secrets if available (same pattern as AI route)
+    const geminiKey = req.app.locals.secrets?.GEMINI_API_KEY || config.GEMINI_API_KEY;
+    const geminiModel = req.app.locals.secrets?.GEMINI_MODEL || config.GEMINI_MODEL;
+
     const result = await query(
         'SELECT id, question_text, correct_option, question_type, expected_answer FROM quiz_questions WHERE id = ANY($1)',
         [questionIds]
@@ -116,7 +119,7 @@ router.post('/submit', authenticate, asyncHandler(async (req, res) => {
     await Promise.all(result.rows.map(async (q) => {
         const userAnswer = answers[q.id] || '';
         if (q.question_type === 'text') {
-            const { score: aiScore, feedback } = await gradeTextAnswer(q.question_text, q.expected_answer, userAnswer);
+            const { score: aiScore, feedback } = await gradeTextAnswer(geminiKey, geminiModel, q.question_text, q.expected_answer, userAnswer);
             const isCorrect = aiScore >= 6;
             if (isCorrect) score++;
             breakdown[q.id] = { correct: isCorrect, question_type: 'text', user_answer: userAnswer, ai_score: aiScore, ai_feedback: feedback };

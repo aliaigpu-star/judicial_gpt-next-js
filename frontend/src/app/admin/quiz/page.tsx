@@ -17,14 +17,16 @@ interface Question {
     question_order: number;
 }
 
-const emptyForm = { question_text: '', option_a: '', option_b: '', option_c: '', option_d: '', correct_option: 'a' as const };
+type CorrectOption = 'a' | 'b' | 'c' | 'd';
+interface FormState { question_text: string; option_a: string; option_b: string; option_c: string; option_d: string; correct_option: CorrectOption; }
+const emptyForm: FormState = { question_text: '', option_a: '', option_b: '', option_c: '', option_d: '', correct_option: 'a' };
 
 export default function AdminQuizPage() {
     const [questions, setQuestions] = useState<Question[]>([]);
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
     const [editing, setEditing] = useState<Question | null>(null);
-    const [form, setForm] = useState(emptyForm);
+    const [form, setForm] = useState<FormState>(emptyForm);
     const [saving, setSaving] = useState(false);
     const [deleteId, setDeleteId] = useState<number | null>(null);
     const [error, setError] = useState('');
@@ -42,7 +44,7 @@ export default function AdminQuizPage() {
     useEffect(() => { load(); }, []);
 
     const openAdd = () => { setEditing(null); setForm(emptyForm); setError(''); setShowForm(true); };
-    const openEdit = (q: Question) => { setEditing(q); setForm({ question_text: q.question_text, option_a: q.option_a, option_b: q.option_b, option_c: q.option_c, option_d: q.option_d, correct_option: q.correct_option }); setError(''); setShowForm(true); };
+    const openEdit = (q: Question) => { setEditing(q); setForm({ question_text: q.question_text, option_a: q.option_a, option_b: q.option_b, option_c: q.option_c, option_d: q.option_d, correct_option: q.correct_option as CorrectOption }); setError(''); setShowForm(true); };
 
     const save = async () => {
         if (!form.question_text.trim() || !form.option_a.trim() || !form.option_b.trim() || !form.option_c.trim() || !form.option_d.trim()) {
@@ -132,7 +134,7 @@ export default function AdminQuizPage() {
                             <div>
                                 <label className="text-xs font-medium text-[#555] dark:text-[#aaa] mb-1 block">Correct Answer</label>
                                 <div className="flex gap-2">
-                                    {(['a', 'b', 'c', 'd'] as const).map(opt => (
+                                    {(['a', 'b', 'c', 'd'] as CorrectOption[]).map(opt => (
                                         <button key={opt} type="button" onClick={() => setForm(f => ({ ...f, correct_option: opt }))} className={`flex-1 py-2 rounded-xl text-sm font-semibold transition-colors ${form.correct_option === opt ? 'bg-[#00a859] text-white' : 'bg-[#f4f4f4] dark:bg-[#2a2a2a] text-[#555] dark:text-[#aaa] hover:bg-[#e5e5e5] dark:hover:bg-[#333]'}`}>
                                             {opt.toUpperCase()}
                                         </button>

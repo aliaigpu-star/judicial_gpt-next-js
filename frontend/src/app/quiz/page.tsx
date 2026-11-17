@@ -219,6 +219,15 @@ export default function QuizPage() {
     return (
         <div className="min-h-screen bg-[#f0ebf8] py-8 px-4">
             <div className="max-w-[640px] mx-auto space-y-4">
+                {/* Same header as info page */}
+                <div className="rounded-2xl overflow-hidden shadow-sm">
+                    <div className="h-2.5 bg-[#673ab7]" />
+                    <div className="bg-white px-6 py-4 border border-t-0 border-[#e0e0e0] rounded-b-2xl">
+                        <h1 className="text-lg font-normal text-[#202124]">Workshop on Generative AI &amp; Its Applications in the Legal and Judicial Domains</h1>
+                        <p className="mt-1 text-sm text-[#444746]">Final Quiz</p>
+                    </div>
+                </div>
+
                 {/* Progress */}
                 <div className="bg-white rounded-2xl border border-[#e0e0e0] shadow-sm px-6 py-3 flex items-center gap-3">
                     <div className="flex-1 h-1.5 bg-[#e0e0e0] rounded-full overflow-hidden">
@@ -237,12 +246,13 @@ export default function QuizPage() {
                         {(['a', 'b', 'c', 'd'] as const).map(opt => {
                             const selected = answers[q.id] === opt;
                             return (
-                                <label key={opt} className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors border ${selected ? 'border-[#673ab7] bg-[#f3eefb]' : 'border-transparent hover:bg-[#f8f9fa]'}`}>
+                                <div key={opt} onClick={() => select(opt)}
+                                    className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors border ${selected ? 'border-[#673ab7] bg-[#f3eefb]' : 'border-transparent hover:bg-[#f8f9fa]'}`}>
                                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${selected ? 'border-[#673ab7]' : 'border-[#aaa]'}`}>
                                         {selected && <div className="w-2.5 h-2.5 rounded-full bg-[#673ab7]" />}
                                     </div>
                                     <span className="text-sm text-[#202124]">{q[optionKey(opt)] as string}</span>
-                                </label>
+                                </div>
                             );
                         })}
                     </div>
@@ -251,11 +261,12 @@ export default function QuizPage() {
                 {/* Navigation */}
                 <div className="flex items-center justify-between pb-4">
                     <div className="flex gap-2">
-                        {current > 0 && (
-                            <button onClick={() => setCurrent(c => c - 1)} className="flex items-center gap-1 px-4 py-2 rounded-md text-sm text-[#673ab7] hover:bg-[#e8def8] transition-colors font-medium">
-                                <ChevronLeft className="w-4 h-4" /> Back
-                            </button>
-                        )}
+                        {/* Back to info page on Q1, back to prev question otherwise */}
+                        <button
+                            onClick={() => current === 0 ? setStage('info') : setCurrent(c => c - 1)}
+                            className="flex items-center gap-1 px-4 py-2 rounded-md text-sm text-[#673ab7] hover:bg-[#e8def8] transition-colors font-medium">
+                            <ChevronLeft className="w-4 h-4" /> Back
+                        </button>
                         {current < total - 1 ? (
                             <button onClick={() => setCurrent(c => c + 1)} className="flex items-center gap-1 px-5 py-2 bg-[#673ab7] text-white rounded-md text-sm font-medium hover:bg-[#5c2fa0] transition-colors">
                                 Next <ChevronRight className="w-4 h-4" />

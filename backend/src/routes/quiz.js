@@ -59,9 +59,9 @@ router.delete('/questions/:id', authenticate, requireAdmin, asyncHandler(async (
     res.json({ success: true });
 }));
 
-// POST /api/quiz/submit — submit answers, returns score + per-question result
+// POST /api/quiz/submit — submit answers + personal info, returns score + per-question result
 router.post('/submit', authenticate, asyncHandler(async (req, res) => {
-    const { answers } = req.body; // { [questionId]: 'a'|'b'|'c'|'d' }
+    const { answers, name, personal_email, designation, posting, years_experience, contact_no } = req.body;
     if (!answers || typeof answers !== 'object') {
         throw new ApiError(400, 'answers object required', 'MISSING_ANSWERS');
     }
@@ -82,7 +82,21 @@ router.post('/submit', authenticate, asyncHandler(async (req, res) => {
         breakdown[q.id] = { correct: isCorrect, correct_option: q.correct_option, user_answer: userAnswer };
     }
 
+    // Store submission
+    await query(
+        'INSERT INTO quiz_submissions (user_id, name, personal_email, designation, posting, years_experience, contact_no, score, total, answers) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',
+        [req.user.id, name, personal_email, designation, posting, years_experience, contact_no, score, result.rows.length, JSON.stringify(answers)]
+    );
+
     res.json({ score, total: result.rows.length, breakdown });
+}));
+
+// GET /api/quiz/submissions — view all submissions (admin only)
+router.get('/submissions', authenticate, requireAdmin, asyncHandler(async (req, res) => {
+    const result = await query(
+        'SELECT * FROM quiz_submissions ORDER BY submitted_at DESC'
+    );
+    res.json({ submissions: result.rows });
 }));
 
 module.exports = router;

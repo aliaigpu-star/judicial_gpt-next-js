@@ -7,7 +7,7 @@ const { asyncHandler, ApiError } = require('../middleware/errorHandler');
 // GET /api/billing/subscriptions
 router.get('/subscriptions', authenticate, requireAdmin, asyncHandler(async (req, res) => {
     const result = await query(`
-        SELECT *, EXTRACT(DAY FROM (expiry_date - CURRENT_DATE))::integer as remaining_days
+        SELECT *, (expiry_date - CURRENT_DATE)::integer as remaining_days
         FROM subscriptions ORDER BY expiry_date ASC NULLS LAST, created_at DESC
     `);
     res.json({ subscriptions: result.rows });
@@ -46,7 +46,7 @@ router.delete('/subscriptions/:id', authenticate, requireAdmin, asyncHandler(asy
 // GET /api/billing/alerts — subscriptions expiring within 15 days
 router.get('/alerts', authenticate, requireAdmin, asyncHandler(async (req, res) => {
     const result = await query(`
-        SELECT *, EXTRACT(DAY FROM (expiry_date - CURRENT_DATE))::integer as remaining_days
+        SELECT *, (expiry_date - CURRENT_DATE)::integer as remaining_days
         FROM subscriptions
         WHERE expiry_date IS NOT NULL AND expiry_date <= CURRENT_DATE + INTERVAL '15 days'
         ORDER BY expiry_date ASC

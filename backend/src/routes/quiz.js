@@ -14,27 +14,34 @@ async function gradeTextAnswer(apiKey, model, questionText, expectedAnswer, user
     if (!apiKey) {
         return { score: 5, feedback: 'AI grading unavailable — no API key configured.' };
     }
-    const prompt = `Grade this quiz answer. Question: "${questionText}". Expected answer: "${expectedAnswer}". Student answer: "${userAnswer}". Score 0-10 (8-10=correct, 5-7=partial, 0-4=wrong). Reply ONLY with JSON: {"score": 7, "feedback": "one sentence"}`;
+    const prompt = `You are a quiz grader. Return ONLY a JSON object, no extra text, no markdown.
+
+Question: ${questionText}
+Expected answer: ${expectedAnswer}
+Student answer: ${userAnswer}
+
+Score 0-10 where 8-10=correct, 5-7=partially correct, 0-4=wrong.
+Respond with exactly: {"score": 8, "feedback": "One sentence explanation"}`;
 
     try {
-        // Use streaming (same endpoint as main chat which is confirmed working)
         let text = '';
         for await (const chunk of streamGeminiReply(apiKey, {
             model,
             messages: [{ role: 'user', content: prompt }],
             temperature: 0.1,
-            maxTokens: 150
+            maxTokens: 300
         })) {
             text += chunk;
         }
         console.log('[Quiz grading] Raw response:', text?.slice(0, 300));
-        const match = text.match(/\{[\s\S]*\}/);
+        // Strip markdown code fences if Gemini wraps in ```json ... ```
+        const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+        const match = cleaned.match(/\{[\s\S]*\}/);
         if (match) {
             const result = JSON.parse(match[0]);
             const score = Math.min(10, Math.max(0, Number(result.score) || 0));
             return { score, feedback: String(result.feedback || '').trim() };
         }
-        // Return raw response as feedback so we can see what Gemini is sending
         return { score: 0, feedback: `[Debug] Raw: ${text?.slice(0, 150) || 'empty response'}` };
     } catch (e) {
         console.error('[Quiz grading] Gemini error:', e?.message || e);

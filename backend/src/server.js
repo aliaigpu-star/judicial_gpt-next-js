@@ -25,6 +25,7 @@ const adminRoutes = require('./routes/admin');
 const serviceRoutes = require('./routes/services');
 const shareRoutes = require('./routes/share');
 const quizRoutes = require('./routes/quiz');
+const billingRoutes = require('./routes/billing');
 
 // Import middleware
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
@@ -135,6 +136,7 @@ const startServer = async () => {
         app.use('/api/services', serviceRoutes);
         app.use('/api/share', shareRoutes);
         app.use('/api/quiz', quizRoutes);
+        app.use('/api/billing', billingRoutes);
 
         // 4. Mount error handlers (Must be after routes)
         app.use(notFoundHandler);
@@ -162,6 +164,14 @@ const startServer = async () => {
             await UserProfile.ensureSchema();
         } catch (err) {
             console.error('⚠️ Could not update the user status constraint:', err.message);
+        }
+
+        // Start subscription expiry cron
+        try {
+            const { startSubscriptionCron } = require('./services/subscriptionCron');
+            startSubscriptionCron();
+        } catch (err) {
+            console.error('⚠️ Could not start subscription cron (is node-cron installed?):', err.message);
         }
 
         // Start listening

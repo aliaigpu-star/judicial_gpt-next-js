@@ -149,7 +149,8 @@ async function handleGeminiChat(req, res, { apiKey, messages, temperature, maxTo
         systemPrompt: buildSystemPrompt(req.user),
         messages: truncateMessages(messages.filter(m => m.role !== 'system'), 30000),
         temperature,
-        maxTokens
+        maxTokens,
+        agentName: 'Chat'
     };
 
     const startTime = Date.now();

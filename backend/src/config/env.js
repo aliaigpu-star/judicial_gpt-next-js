@@ -37,6 +37,9 @@ const config = {
     GEMINI_MODEL: process.env.GEMINI_MODEL || 'gemini-3.6-flash',
 
     
+    // Admin notifications
+    ADMIN_EMAIL: process.env.ADMIN_EMAIL || '',
+
     // Email (Nodemailer)
     SMTP_HOST: process.env.SMTP_HOST || 'smtp.gmail.com',
     SMTP_PORT: parseInt(process.env.SMTP_PORT) || 587,

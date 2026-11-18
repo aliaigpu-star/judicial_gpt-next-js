@@ -32,7 +32,8 @@ Respond with exactly: {"score": 8, "feedback": "Brief reason here"}`;
             model,
             messages: [{ role: 'user', content: prompt }],
             temperature: 0.1,
-            maxTokens: 500
+            maxTokens: 500,
+            agentName: 'Quiz Grader'
         })) {
             text += chunk;
         }

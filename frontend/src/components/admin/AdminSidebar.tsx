@@ -15,7 +15,8 @@ import {
     Sun,
     Moon,
     ThumbsUp,
-    ClipboardList
+    ClipboardList,
+    CreditCard
 } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 import BrandLogo from '@/components/ui/BrandLogo';
@@ -55,6 +56,7 @@ const navGroups = [
     {
         label: 'System',
         items: [
+            { href: '/admin/billing', icon: CreditCard, label: 'Billing' },
             { href: '/admin/logs', icon: FileText, label: 'Logs' },
             { href: '/admin/settings', icon: Settings, label: 'Settings' },
         ],

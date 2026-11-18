@@ -12,7 +12,9 @@ import {
     Search,
     ThumbsUp,
     ThumbsDown,
-    ArrowRight
+    ArrowRight,
+    AlertTriangle,
+    CreditCard
 } from 'lucide-react';
 import StatCard from '@/components/admin/StatCard';
 import SystemStatus from '@/components/admin/SystemStatus';
@@ -28,6 +30,7 @@ export default function AdminDashboard() {
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [billingAlerts, setBillingAlerts] = useState<any[]>([]);
 
     const loadData = useCallback(async () => {
         try {
@@ -42,6 +45,10 @@ export default function AdminDashboard() {
             setError(null);
             // Feedback is optional: the dashboard still works if it fails.
             adminApi.getFeedbackStats().then(r => setQuality(r.stats)).catch(() => {});
+            // Billing alerts (non-blocking)
+            const API = process.env.NEXT_PUBLIC_API_URL || '';
+            fetch(`${API}/api/billing/alerts`, { headers: { Authorization: `Bearer ${(await import('@/lib/api')).api.getToken()}` } })
+                .then(r => r.ok ? r.json() : null).then(d => d && setBillingAlerts(d.alerts || [])).catch(() => {});
         } catch (err: any) {
             setError(err.message || 'Failed to load dashboard data');
         } finally {
@@ -108,6 +115,40 @@ export default function AdminDashboard() {
                     className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-xl mb-6"
                 >
                     {error}
+                </motion.div>
+            )}
+
+            {/* Billing Alerts Banner */}
+            {billingAlerts.length > 0 && (
+                <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
+                    {billingAlerts.some(a => a.remaining_days <= 7) && (
+                        <div className="flex items-start gap-3 bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 mb-2">
+                            <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                            <div className="flex-1 min-w-0">
+                                <p className="text-red-400 font-semibold text-sm">Critical: Subscriptions expiring soon</p>
+                                <p className="text-red-300/80 text-xs mt-0.5">
+                                    {billingAlerts.filter(a => a.remaining_days <= 7).map(a => `${a.service_name} (${a.remaining_days}d)`).join(' · ')}
+                                </p>
+                            </div>
+                            <Link href="/admin/billing" className="text-xs text-red-400 hover:text-red-300 font-medium flex-shrink-0 flex items-center gap-1">
+                                Manage <ArrowRight className="w-3 h-3" />
+                            </Link>
+                        </div>
+                    )}
+                    {billingAlerts.some(a => a.remaining_days > 7 && a.remaining_days <= 15) && (
+                        <div className="flex items-start gap-3 bg-yellow-500/10 border border-yellow-500/30 rounded-xl px-4 py-3">
+                            <AlertTriangle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+                            <div className="flex-1 min-w-0">
+                                <p className="text-yellow-400 font-semibold text-sm">Warning: Subscriptions expiring within 15 days</p>
+                                <p className="text-yellow-300/80 text-xs mt-0.5">
+                                    {billingAlerts.filter(a => a.remaining_days > 7 && a.remaining_days <= 15).map(a => `${a.service_name} (${a.remaining_days}d)`).join(' · ')}
+                                </p>
+                            </div>
+                            <Link href="/admin/billing" className="text-xs text-yellow-400 hover:text-yellow-300 font-medium flex-shrink-0 flex items-center gap-1">
+                                Manage <ArrowRight className="w-3 h-3" />
+                            </Link>
+                        </div>
+                    )}
                 </motion.div>
             )}
 

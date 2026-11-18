@@ -78,7 +78,8 @@ async function enhancePrompt({ apiKey, model, targetPrompt, prompt }) {
         systemPrompt: enhancerSystemPrompt(targetPrompt),
         messages: [{ role: 'user', content: `<user_message>\n${original}\n</user_message>` }],
         temperature: 0.4,
-        maxTokens: 1500
+        maxTokens: 1500,
+        agentName: 'Prompt Enhancer'
     });
 
     const enhanced = cleanOutput(text);

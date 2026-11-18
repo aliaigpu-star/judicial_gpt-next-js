@@ -21,7 +21,8 @@ Expected answer: ${expectedAnswer}
 Student answer: ${userAnswer}
 
 Score 0-10 where 8-10=correct, 5-7=partially correct, 0-4=wrong.
-Respond with exactly: {"score": 8, "feedback": "One sentence explanation"}`;
+Keep feedback under 15 words.
+Respond with exactly: {"score": 8, "feedback": "Brief reason here"}`;
 
     try {
         let text = '';
@@ -29,7 +30,7 @@ Respond with exactly: {"score": 8, "feedback": "One sentence explanation"}`;
             model,
             messages: [{ role: 'user', content: prompt }],
             temperature: 0.1,
-            maxTokens: 300
+            maxTokens: 500
         })) {
             text += chunk;
         }

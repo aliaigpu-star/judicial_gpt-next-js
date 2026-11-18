@@ -206,18 +206,19 @@ export default function QuizPage() {
                         if (q.question_type === 'text') {
                             const aiScore = bd.ai_score ?? 0;
                             const isGood = aiScore >= 6;
+                            const cleanFeedback = bd.ai_feedback?.replace(/^\[Debug\]\s*(Raw:|Error:)?\s*/i, '').trim() || '';
                             return (
                                 <div key={q.id} className={`bg-white rounded-2xl border shadow-sm px-6 py-5 ${isGood ? 'border-green-300' : 'border-orange-200'}`}>
                                     <div className="flex items-start gap-2 mb-3">
-                                        <span className={`text-sm font-bold flex-shrink-0 ${isGood ? 'text-green-500' : 'text-orange-400'}`}>{aiScore}/10</span>
+                                        {isGood ? <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" /> : <XCircle className="w-5 h-5 text-orange-400 flex-shrink-0 mt-0.5" />}
                                         <p className="text-sm font-medium text-[#202124]"><span className="text-[#70757a] mr-1">{i + 1}.</span>{q.question_text}</p>
                                     </div>
-                                    <div className="ml-9 space-y-2">
+                                    <div className="ml-7 space-y-2">
                                         <div className="bg-[#f8f9fa] rounded-lg px-3 py-2 text-sm text-[#444746] italic">&quot;{bd.user_answer || 'No answer'}&quot;</div>
-                                        {bd.ai_feedback && (
+                                        {cleanFeedback && (
                                             <div className="flex gap-2 text-sm">
                                                 <span className="text-[#673ab7] font-semibold flex-shrink-0">AI Feedback:</span>
-                                                <span className="text-[#444746]">{bd.ai_feedback}</span>
+                                                <span className="text-[#444746]">{cleanFeedback}</span>
                                             </div>
                                         )}
                                     </div>

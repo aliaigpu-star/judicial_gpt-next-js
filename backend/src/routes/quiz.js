@@ -17,10 +17,12 @@ async function gradeTextAnswer(apiKey, model, questionText, expectedAnswer, user
     const prompt = `You are a quiz grader. Return ONLY a JSON object, no extra text, no markdown.
 
 Question: ${questionText}
-Expected answer: ${expectedAnswer}
+Reference answer (example only, not the only correct answer): ${expectedAnswer}
 Student answer: ${userAnswer}
 
-Score 0-10 where 8-10=correct, 5-7=partially correct, 0-4=wrong.
+Grade based on whether the student's answer is CORRECT, not whether it matches the reference exactly.
+If the student gives any valid correct answer (even different from reference), score 8-10.
+If partially correct, score 5-7. If wrong or irrelevant, score 0-4.
 Keep feedback under 15 words.
 Respond with exactly: {"score": 8, "feedback": "Brief reason here"}`;
 

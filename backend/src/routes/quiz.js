@@ -161,4 +161,22 @@ router.get('/submissions', authenticate, requireAdmin, asyncHandler(async (req, 
     res.json({ submissions: result.rows });
 }));
 
+// PUT /api/quiz/submissions/:id — update personal info (admin only)
+router.put('/submissions/:id', authenticate, requireAdmin, asyncHandler(async (req, res) => {
+    const { name, personal_email, designation, posting, years_experience, contact_no, batch } = req.body;
+    const result = await query(
+        'UPDATE quiz_submissions SET name=$1, personal_email=$2, designation=$3, posting=$4, years_experience=$5, contact_no=$6, batch=$7 WHERE id=$8 RETURNING *',
+        [name, personal_email, designation, posting, years_experience, contact_no, batch || null, req.params.id]
+    );
+    if (!result.rows.length) throw new ApiError(404, 'Submission not found', 'NOT_FOUND');
+    res.json({ submission: result.rows[0] });
+}));
+
+// DELETE /api/quiz/submissions/:id — delete submission (admin only)
+router.delete('/submissions/:id', authenticate, requireAdmin, asyncHandler(async (req, res) => {
+    const result = await query('DELETE FROM quiz_submissions WHERE id=$1 RETURNING id', [req.params.id]);
+    if (!result.rows.length) throw new ApiError(404, 'Submission not found', 'NOT_FOUND');
+    res.json({ success: true });
+}));
+
 module.exports = router;

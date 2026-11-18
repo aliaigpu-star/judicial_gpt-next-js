@@ -79,6 +79,10 @@ export default function AdminQuizPage() {
     const [filterName, setFilterName] = useState('');
     const [filterBatch, setFilterBatch] = useState('');
     const [filterScore, setFilterScore] = useState<ScoreFilter>('all');
+    const [deleteSubId, setDeleteSubId] = useState<number | null>(null);
+    const [editSub, setEditSub] = useState<Submission | null>(null);
+    const [editSubForm, setEditSubForm] = useState<Partial<Submission>>({});
+    const [savingSub, setSavingSub] = useState(false);
 
     const headers = () => ({ 'Content-Type': 'application/json', Authorization: `Bearer ${api.getToken()}` });
 
@@ -139,6 +143,23 @@ export default function AdminQuizPage() {
         await fetch(`${API}/api/quiz/questions/${id}`, { method: 'DELETE', headers: headers() });
         setDeleteId(null);
         loadQuestions();
+    };
+
+    const deleteSub = async (id: number) => {
+        await fetch(`${API}/api/quiz/submissions/${id}`, { method: 'DELETE', headers: headers() });
+        setDeleteSubId(null);
+        setExpandedSubId(null);
+        loadSubmissions();
+    };
+
+    const saveSubEdit = async () => {
+        if (!editSub) return;
+        setSavingSub(true);
+        const res = await fetch(`${API}/api/quiz/submissions/${editSub.id}`, {
+            method: 'PUT', headers: headers(), body: JSON.stringify(editSubForm)
+        });
+        setSavingSub(false);
+        if (res.ok) { setEditSub(null); loadSubmissions(); }
     };
 
     const pct = (s: Submission) => s.total ? Math.round((s.score / s.total) * 100) : 0;
@@ -288,6 +309,12 @@ export default function AdminQuizPage() {
                                                 <p className="text-xs text-[#666] dark:text-[#aaa] truncate">{s.personal_email} · {s.designation}</p>
                                                 <p className="text-xs text-[#999] mt-0.5">{s.score}/{s.total} correct · {new Date(s.submitted_at).toLocaleString()}</p>
                                             </div>
+                                                    <div className="flex items-center gap-1 flex-shrink-0">
+                                                <button onClick={e => { e.stopPropagation(); setEditSub(s); setEditSubForm({ name: s.name, personal_email: s.personal_email, designation: s.designation, posting: s.posting, years_experience: s.years_experience, contact_no: s.contact_no, batch: s.batch }); }}
+                                                    className="p-1.5 rounded-lg text-[#666] hover:bg-[#f4f4f4] dark:hover:bg-[#2a2a2a] transition-colors"><Pencil className="w-3.5 h-3.5" /></button>
+                                                <button onClick={e => { e.stopPropagation(); setDeleteSubId(s.id); }}
+                                                    className="p-1.5 rounded-lg text-[#666] hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-500 transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>
+                                            </div>
                                             {expandedSubId === s.id ? <ChevronUp className="w-4 h-4 text-[#999]" /> : <ChevronDown className="w-4 h-4 text-[#999]" />}
                                         </button>
 
@@ -431,7 +458,50 @@ export default function AdminQuizPage() {
                 </div>
             )}
 
-            {/* Delete confirm */}
+            {/* Delete submission confirm */}
+            {deleteSubId !== null && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+                    <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl w-full max-w-sm shadow-2xl p-6 text-center">
+                        <p className="font-semibold text-[#0d0d0d] dark:text-[#ececec] mb-1">Delete this submission?</p>
+                        <p className="text-sm text-[#666] dark:text-[#aaa] mb-5">This action cannot be undone.</p>
+                        <div className="flex justify-center gap-3">
+                            <button onClick={() => setDeleteSubId(null)} className="px-4 py-2 rounded-xl text-sm text-[#555] hover:bg-[#f4f4f4] dark:hover:bg-[#2a2a2a] transition-colors">Cancel</button>
+                            <button onClick={() => deleteSub(deleteSubId)} className="px-4 py-2 rounded-xl text-sm bg-red-500 text-white font-medium hover:bg-red-600 transition-colors">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Edit submission modal */}
+            {editSub && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+                    <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
+                        <div className="flex items-center justify-between px-5 py-4 border-b border-[#e5e5e5] dark:border-[#333] sticky top-0 bg-white dark:bg-[#1a1a1a]">
+                            <h2 className="font-semibold text-[#0d0d0d] dark:text-[#ececec]">Edit Submission</h2>
+                            <button onClick={() => setEditSub(null)} className="p-1.5 rounded-lg hover:bg-[#f4f4f4] dark:hover:bg-[#2a2a2a]"><X className="w-4 h-4" /></button>
+                        </div>
+                        <div className="p-5 space-y-3">
+                            {([['name', 'Name'], ['personal_email', 'Personal Email'], ['designation', 'Designation'], ['posting', 'Posting'], ['years_experience', 'Years of Experience'], ['contact_no', 'Contact No.'], ['batch', 'Batch No.']] as const).map(([key, label]) => (
+                                <div key={key}>
+                                    <label className="text-xs font-medium text-[#555] dark:text-[#aaa] mb-1 block">{label}</label>
+                                    <input value={(editSubForm[key] as string) || ''} onChange={e => setEditSubForm(f => ({ ...f, [key]: e.target.value }))}
+                                        className="w-full px-3 py-2 rounded-xl border border-[#e5e5e5] dark:border-[#333] bg-[#f9f9f9] dark:bg-[#111] text-sm text-[#0d0d0d] dark:text-[#ececec] outline-none" />
+                                </div>
+                            ))}
+                        </div>
+                        <div className="px-5 pb-5 flex justify-end gap-2">
+                            <button onClick={() => setEditSub(null)} className="px-4 py-2 rounded-xl text-sm text-[#555] hover:bg-[#f4f4f4] dark:hover:bg-[#2a2a2a] transition-colors">Cancel</button>
+                            <button onClick={saveSubEdit} disabled={savingSub}
+                                className="px-4 py-2 rounded-xl text-sm bg-[#00a859] text-white font-medium hover:bg-[#009048] disabled:opacity-60 transition-colors flex items-center gap-2">
+                                {savingSub && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                                Save Changes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Delete question confirm */}
             {deleteId !== null && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
                     <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl w-full max-w-sm shadow-2xl p-6 text-center">

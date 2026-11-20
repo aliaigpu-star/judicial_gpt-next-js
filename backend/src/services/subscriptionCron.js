@@ -7,7 +7,7 @@ async function checkSubscriptions() {
     console.log('[Billing Cron] Checking subscription expiries...');
     try {
         const result = await query(`
-            SELECT *, EXTRACT(DAY FROM (expiry_date - CURRENT_DATE))::integer as remaining_days
+            SELECT *, (expiry_date - CURRENT_DATE)::integer as remaining_days
             FROM subscriptions
             WHERE expiry_date IS NOT NULL AND expiry_date >= CURRENT_DATE
             ORDER BY expiry_date ASC
